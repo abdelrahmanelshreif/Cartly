@@ -20,9 +20,7 @@ Pods/
 Podfile.lock
 !.gitignore
 
-# SwiftPM
-.swiftpm/
-Package.resolved
+
 
 # Carthage
 Carthage/Build/
