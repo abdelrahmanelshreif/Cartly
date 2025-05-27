@@ -10,7 +10,8 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    @StateObject private var authViewModel = AuthViewModel()
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
         animation: .default)
@@ -18,30 +19,45 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+            if authViewModel.user != nil {
+                // User is logged in - show main content
+                mainContentView
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Sign Out") {
+                                authViewModel.signOut()
+                            }
+                        }
                     }
-                }
-                .onDelete(perform: deleteItems)
+            } else {
+                // User is not logged in - show auth views
+                LoginView(authViewModel: authViewModel)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
         }
     }
-
+    
+    private var mainContentView: some View {
+        List {
+            ForEach(items) { item in
+                NavigationLink {
+                    Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                } label: {
+                    Text(item.timestamp!, formatter: itemFormatter)
+                }
+            }
+            .onDelete(perform: deleteItems)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+            ToolbarItem {
+                Button(action: addItem) {
+                    Label("Add Item", systemImage: "plus")
+                }
+            }
+        }
+    }
     private func addItem() {
         withAnimation {
             let newItem = Item(context: viewContext)

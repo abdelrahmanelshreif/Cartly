@@ -29,7 +29,7 @@ struct CartlyApp: App {
     WindowGroup {
       NavigationView {
         ContentView()
-//              .environment(\.managedObjectContext, persistenceController.container.viewContext)
+              .environment(\.managedObjectContext, persistenceController.container.viewContext)
       }
     }
   }
