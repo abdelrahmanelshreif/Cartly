@@ -28,7 +28,7 @@ struct CartlyApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        ContentView()
+          TestView()
 //              .environment(\.managedObjectContext, persistenceController.container.viewContext)
       }
     }

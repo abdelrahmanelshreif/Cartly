@@ -35,9 +35,25 @@
 		72EB163A2DE3195000C45508 /* CartlyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CartlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		78F93A292DE7B28000CD666A /* Exceptions for "Cartly" folder in "Cartly" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/DataSources/Local/dummy.swift,
+				Data/Mapper/dummy.swift,
+				Domain/Entities/dummy.swift,
+				Presentation/Components/dummy.swift,
+			);
+			target = 72EB161A2DE3194600C45508 /* Cartly */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		72EB161D2DE3194600C45508 /* Cartly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				78F93A292DE7B28000CD666A /* Exceptions for "Cartly" folder in "Cartly" target */,
+			);
 			path = Cartly;
 			sourceTree = "<group>";
 		};
