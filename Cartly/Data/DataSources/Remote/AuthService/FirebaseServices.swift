@@ -1,16 +1,17 @@
-//
-//  FirebaseServices.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 28/5/25.
-//
 import FirebaseAuth
 
-final class FirebaseServices{
+protocol FirebaseServiceProtocol{
     
-    static let shared = FirebaseServices()
+    func signIn(email: String, password: String) async throws -> String?
     
-    private init(){}
+    func signup(email: String, password: String) async throws -> String?
+    
+    func signOut() throws
+    
+    func getCurrentUser() -> String?
+}
+
+final class FirebaseServices: FirebaseServiceProtocol{
     
     func signIn(email: String, password: String) async throws -> String? {
         do{
@@ -41,6 +42,4 @@ final class FirebaseServices{
     func getCurrentUser() -> String? {
         return Auth.auth().currentUser?.email
     }
-    
-    
 }

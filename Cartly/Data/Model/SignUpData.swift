@@ -1,10 +1,3 @@
-//
-//  SignUpData.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 29/5/25.
-//
-
 struct SignUpData : Codable{
     let firstname:String
     let lastname:String
