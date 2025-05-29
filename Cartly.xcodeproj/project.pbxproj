@@ -36,7 +36,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		78F93A292DE7B28000CD666A /* Exceptions for "Cartly" folder in "Cartly" target */ = {
+		72AAAB5A2DE7B2F00052D37C /* Exceptions for "Cartly" folder in "Cartly" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Data/DataSources/Local/dummy.swift,
@@ -52,7 +52,7 @@
 		72EB161D2DE3194600C45508 /* Cartly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				78F93A292DE7B28000CD666A /* Exceptions for "Cartly" folder in "Cartly" target */,
+				72AAAB5A2DE7B2F00052D37C /* Exceptions for "Cartly" folder in "Cartly" target */,
 			);
 			path = Cartly;
 			sourceTree = "<group>";
