@@ -71,15 +71,11 @@
 		};
 		72EB16332DE3195000C45508 /* CartlyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = CartlyTests;
 			sourceTree = "<group>";
 		};
 		72EB163D2DE3195000C45508 /* CartlyUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = CartlyUITests;
 			sourceTree = "<group>";
 		};
@@ -126,7 +122,6 @@
 				5C6839AA30BC17EADF2C1C90 /* Pods-CartlyTests.debug.xcconfig */,
 				701803F66CAF5BC32212E958 /* Pods-CartlyTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

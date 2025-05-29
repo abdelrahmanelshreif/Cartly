@@ -1,13 +1,21 @@
+//
+//  AuthRepositoryImpl.swift
+//  Cartly
+//
+//  Created by Abdelrahman Elshreif on 29/5/25.
+//
+
 import Foundation
 
-class AuthRepositoryImpl: AuthRepositoryProtocol {
+class AuthRepositoryImpl: AuthRepositoryProtocol{
     
     typealias CredentialsType = EmailCredentials
     typealias SignUpDataType = SignUpData
     typealias UserType = Customer
+    typealias Token = String
     
     let firebaseAuthClient: FirebaseServiceProtocol
-    let shopifyAuthClient: any ShopifyServicesProtocol
+    let shopifyAuthClient: ShopifyServices
     
     static let shared = AuthRepositoryImpl()
     
@@ -17,26 +25,37 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
     }
     
     func signup(signUpData: SignUpData) async throws -> Customer {
-            
-    }
-    
-    func signIn(credentials: EmailCredentials) async throws -> Customer {
-    }
-    
-    func signOut() throws {
-        
-    }
-    
-    func getCurrentUser() -> Customer? {
-        // we will return customer
-    }
-    
-    func isUserVerified() -> Bool {
-        return false
-    }
-    
-    func isUserLoggedIn() -> Bool {
-        return false
+        do{
+            guard let customer = try await shopifyAuthClient.signup(userData: signUpData) else{
+                throw AuthError.shopifySignUpFailed
+            }
+            guard let _ = try await firebaseAuthClient.signup(email: signUpData.email, password: signUpData.password) else{
+                throw AuthError.firebaseSignUpFailed
+            }
+            return customer
+        }catch(let error){
+            throw error
+        }
     }
 
+    func signIn(credentials: EmailCredentials) async throws -> String {
+        do{
+            guard let email = try? await firebaseAuthClient.signIn(email: credentials.email, password: credentials.password) else{
+                throw AuthError.signinFalied
+            }
+            return email
+        }catch(let error){
+            throw error
+        }
+    }
+    
+    
+    func signOut() throws {
+        do{
+            try firebaseAuthClient.signOut()
+        }catch(let error){
+            throw error
+        }
+        
+    }
 }
