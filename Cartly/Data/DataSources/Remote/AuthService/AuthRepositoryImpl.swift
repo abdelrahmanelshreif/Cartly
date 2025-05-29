@@ -3,13 +3,10 @@ import Foundation
 class AuthRepositoryImpl: AuthRepositoryProtocol {
     
     typealias CredentialsType = EmailCredentials
-    
     typealias SignUpDataType = SignUpData
-    
     typealias UserType = Customer
     
     let firebaseAuthClient: FirebaseServiceProtocol
-    
     let shopifyAuthClient: any ShopifyServicesProtocol
     
     static let shared = AuthRepositoryImpl()
@@ -20,7 +17,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
     }
     
     func signup(signUpData: SignUpData) async throws -> Customer {
-        
+            
     }
     
     func signIn(credentials: EmailCredentials) async throws -> Customer {

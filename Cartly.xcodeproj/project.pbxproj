@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5EF5DCFD16061910E2B1D76D /* Pods_CartlyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347457CF75F85AD8F10AC8A6 /* Pods_CartlyTests.framework */; };
 		72AAAA462DE50A730052D37C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 72AAAA452DE50A730052D37C /* FirebaseAuth */; };
 		72AAAA482DE50A730052D37C /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 72AAAA472DE50A730052D37C /* FirebaseAuthCombine-Community */; };
 		72AAAA4A2DE50A730052D37C /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72AAAA492DE50A730052D37C /* FirebaseCore */; };
+		9979B773FF0B50BB3A45278B /* Pods_Cartly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46BA9C392137B88982CB5131 /* Pods_Cartly.framework */; };
+		C8D9D2C0A0A1E63DB96E7256 /* Pods_Cartly_CartlyUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4120A310AEA7179EAF688742 /* Pods_Cartly_CartlyUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,9 +33,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		347457CF75F85AD8F10AC8A6 /* Pods_CartlyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CartlyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		37C682120AA793A5A465817D /* Pods-Cartly-CartlyUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cartly-CartlyUITests.debug.xcconfig"; path = "Target Support Files/Pods-Cartly-CartlyUITests/Pods-Cartly-CartlyUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		4120A310AEA7179EAF688742 /* Pods_Cartly_CartlyUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cartly_CartlyUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		46BA9C392137B88982CB5131 /* Pods_Cartly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cartly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C6839AA30BC17EADF2C1C90 /* Pods-CartlyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartlyTests.debug.xcconfig"; path = "Target Support Files/Pods-CartlyTests/Pods-CartlyTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6696EBD1452F43791D98A089 /* Pods-Cartly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cartly.release.xcconfig"; path = "Target Support Files/Pods-Cartly/Pods-Cartly.release.xcconfig"; sourceTree = "<group>"; };
+		701803F66CAF5BC32212E958 /* Pods-CartlyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartlyTests.release.xcconfig"; path = "Target Support Files/Pods-CartlyTests/Pods-CartlyTests.release.xcconfig"; sourceTree = "<group>"; };
 		72EB161B2DE3194600C45508 /* Cartly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cartly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EB16302DE3195000C45508 /* CartlyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CartlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EB163A2DE3195000C45508 /* CartlyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CartlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		947EA436BD069DF7A4F1960D /* Pods-Cartly-CartlyUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cartly-CartlyUITests.release.xcconfig"; path = "Target Support Files/Pods-Cartly-CartlyUITests/Pods-Cartly-CartlyUITests.release.xcconfig"; sourceTree = "<group>"; };
+		B5CCBDC1E1ADA36F84DBC05F /* Pods-Cartly.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cartly.debug.xcconfig"; path = "Target Support Files/Pods-Cartly/Pods-Cartly.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -59,11 +71,15 @@
 		};
 		72EB16332DE3195000C45508 /* CartlyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = CartlyTests;
 			sourceTree = "<group>";
 		};
 		72EB163D2DE3195000C45508 /* CartlyUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = CartlyUITests;
 			sourceTree = "<group>";
 		};
@@ -77,6 +93,7 @@
 				72AAAA462DE50A730052D37C /* FirebaseAuth in Frameworks */,
 				72AAAA4A2DE50A730052D37C /* FirebaseCore in Frameworks */,
 				72AAAA482DE50A730052D37C /* FirebaseAuthCombine-Community in Frameworks */,
+				9979B773FF0B50BB3A45278B /* Pods_Cartly.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EF5DCFD16061910E2B1D76D /* Pods_CartlyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,12 +109,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8D9D2C0A0A1E63DB96E7256 /* Pods_Cartly_CartlyUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07B2FFEAC583C59A95BF1C61 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B5CCBDC1E1ADA36F84DBC05F /* Pods-Cartly.debug.xcconfig */,
+				6696EBD1452F43791D98A089 /* Pods-Cartly.release.xcconfig */,
+				37C682120AA793A5A465817D /* Pods-Cartly-CartlyUITests.debug.xcconfig */,
+				947EA436BD069DF7A4F1960D /* Pods-Cartly-CartlyUITests.release.xcconfig */,
+				5C6839AA30BC17EADF2C1C90 /* Pods-CartlyTests.debug.xcconfig */,
+				701803F66CAF5BC32212E958 /* Pods-CartlyTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		61C98E1BC58099D8EB986D6C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				46BA9C392137B88982CB5131 /* Pods_Cartly.framework */,
+				4120A310AEA7179EAF688742 /* Pods_Cartly_CartlyUITests.framework */,
+				347457CF75F85AD8F10AC8A6 /* Pods_CartlyTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		72EB16122DE3194600C45508 = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +147,8 @@
 				72EB16332DE3195000C45508 /* CartlyTests */,
 				72EB163D2DE3195000C45508 /* CartlyUITests */,
 				72EB161C2DE3194600C45508 /* Products */,
+				07B2FFEAC583C59A95BF1C61 /* Pods */,
+				61C98E1BC58099D8EB986D6C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,9 +169,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 72EB16442DE3195000C45508 /* Build configuration list for PBXNativeTarget "Cartly" */;
 			buildPhases = (
+				7635894A261F021063510480 /* [CP] Check Pods Manifest.lock */,
 				72EB16172DE3194600C45508 /* Sources */,
 				72EB16182DE3194600C45508 /* Frameworks */,
 				72EB16192DE3194600C45508 /* Resources */,
+				5F292E96C12E421990B6DBF5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -149,6 +196,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 72EB16472DE3195000C45508 /* Build configuration list for PBXNativeTarget "CartlyTests" */;
 			buildPhases = (
+				8A94B2294371B80BD3580D55 /* [CP] Check Pods Manifest.lock */,
 				72EB162C2DE3195000C45508 /* Sources */,
 				72EB162D2DE3195000C45508 /* Frameworks */,
 				72EB162E2DE3195000C45508 /* Resources */,
@@ -162,8 +210,6 @@
 				72EB16332DE3195000C45508 /* CartlyTests */,
 			);
 			name = CartlyTests;
-			packageProductDependencies = (
-			);
 			productName = CartlyTests;
 			productReference = 72EB16302DE3195000C45508 /* CartlyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -172,9 +218,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 72EB164A2DE3195000C45508 /* Build configuration list for PBXNativeTarget "CartlyUITests" */;
 			buildPhases = (
+				F941F168952FBD69BAE6CE51 /* [CP] Check Pods Manifest.lock */,
 				72EB16362DE3195000C45508 /* Sources */,
 				72EB16372DE3195000C45508 /* Frameworks */,
 				72EB16382DE3195000C45508 /* Resources */,
+				CAA54C85B3E82622A6E6A73D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -185,8 +233,6 @@
 				72EB163D2DE3195000C45508 /* CartlyUITests */,
 			);
 			name = CartlyUITests;
-			packageProductDependencies = (
-			);
 			productName = CartlyUITests;
 			productReference = 72EB163A2DE3195000C45508 /* CartlyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -261,6 +307,109 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5F292E96C12E421990B6DBF5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cartly/Pods-Cartly-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cartly/Pods-Cartly-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Cartly/Pods-Cartly-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7635894A261F021063510480 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Cartly-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A94B2294371B80BD3580D55 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CartlyTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CAA54C85B3E82622A6E6A73D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cartly-CartlyUITests/Pods-Cartly-CartlyUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cartly-CartlyUITests/Pods-Cartly-CartlyUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Cartly-CartlyUITests/Pods-Cartly-CartlyUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F941F168952FBD69BAE6CE51 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Cartly-CartlyUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		72EB16172DE3194600C45508 /* Sources */ = {
@@ -421,6 +570,7 @@
 		};
 		72EB16452DE3195000C45508 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5CCBDC1E1ADA36F84DBC05F /* Pods-Cartly.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -449,6 +599,7 @@
 		};
 		72EB16462DE3195000C45508 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6696EBD1452F43791D98A089 /* Pods-Cartly.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -477,6 +628,7 @@
 		};
 		72EB16482DE3195000C45508 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C6839AA30BC17EADF2C1C90 /* Pods-CartlyTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -495,6 +647,7 @@
 		};
 		72EB16492DE3195000C45508 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 701803F66CAF5BC32212E958 /* Pods-CartlyTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -513,6 +666,7 @@
 		};
 		72EB164B2DE3195000C45508 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37C682120AA793A5A465817D /* Pods-Cartly-CartlyUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -529,6 +683,7 @@
 		};
 		72EB164C2DE3195000C45508 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 947EA436BD069DF7A4F1960D /* Pods-Cartly-CartlyUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
