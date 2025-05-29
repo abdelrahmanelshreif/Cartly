@@ -10,6 +10,7 @@ protocol ShopifyServicesProtocol{
     func getCurrentUser() -> UserType?
 }
 
+
 final class ShopifyServices: ShopifyServicesProtocol{
     
     typealias SignUpDataType = SignUpData
