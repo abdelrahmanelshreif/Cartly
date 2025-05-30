@@ -5,10 +5,10 @@ struct ProductListResponse: Codable {
     let products: [Product]
 }
 
-/// The root object of the API response containing the product data.
-struct ProductResponse: Codable {
-    var product: Product?
-}
+///// The root object of the API response containing the product data.
+//struct ProductResponse: Codable {
+//    var product: Product?
+//}
 
 /// Represents a product in the Shopify store, including details, variants, options, and images.
 struct Product: Codable {

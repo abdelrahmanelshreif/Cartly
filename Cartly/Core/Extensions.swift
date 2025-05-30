@@ -1,7 +1,12 @@
-//
-//  Extensions.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 27/5/25.
-//
+import Alamofire
 
+extension HTTPMethod {
+    init(rawValue: Method) {
+        switch rawValue {
+        case .GET: self = .get
+        case .POST: self = .post
+        case .PUT: self = .put
+        case .DELETE: self = .delete
+        }
+    }
+}

@@ -1,6 +1,7 @@
-//
-//  Utils.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 27/5/25.
-//
+import Foundation
+
+enum ResultState<Value>{
+    case loading
+    case success(Value)
+    case failure(Error)
+}
