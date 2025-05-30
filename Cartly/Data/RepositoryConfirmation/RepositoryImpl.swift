@@ -8,7 +8,7 @@
 import Combine
 
 class RepositoryImpl: RepositoryProtocol{
-    func getProducts(for collectionID: Int) -> AnyPublisher<[Product], any Error> {
+    func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, any Error> {
         return remoteDataSource.getProducts(from: collectionID)
     }
     
@@ -18,9 +18,9 @@ class RepositoryImpl: RepositoryProtocol{
             self.remoteDataSource = remoteDataSource
         }
 
-        func getBrands() -> AnyPublisher<[SmartCollection], Error> {
+        func getBrands() -> AnyPublisher<[SmartCollection]?, Error> {
             return remoteDataSource.getBrands()
-                .map { $0.smartCollections ?? [] }
+                .map { $0?.smartCollections ?? [] }
                 .eraseToAnyPublisher()
         }
 }

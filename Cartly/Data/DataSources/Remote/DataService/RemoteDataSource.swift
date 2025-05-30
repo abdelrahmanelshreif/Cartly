@@ -7,20 +7,22 @@
 import Combine
 
 protocol RemoteDataSourceProtocol {
-    func getBrands() -> AnyPublisher<SmartCollectionsResponse, Error>
+    
+    func getBrands() -> AnyPublisher<SmartCollectionsResponse?, Error>
 
-    func getProducts(from collection_id: Int) -> AnyPublisher<[Product], Error>
+    func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, Error>
     
 }
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
-    func getProducts(from collection_id: Int) -> AnyPublisher<[Product], any Error> {
+    func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, any Error> {
+        
         let path = "/products.json?collection_id=\(collection_id)"
         let apiRequest = APIRequest(withPath: path)
 
         return networkService.request(apiRequest, responseType: ProductListResponse.self)
             .map {
-                $0.products
+                $0?.products ?? []
             }
             .eraseToAnyPublisher()
     }
@@ -31,7 +33,7 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
         self.networkService = networkService
     }
 
-    func getBrands() -> AnyPublisher<SmartCollectionsResponse, Error> {
+    func getBrands() -> AnyPublisher<SmartCollectionsResponse?, Error> {
         let request = APIRequest(
             withPath: "/smart_collections.json"
         )

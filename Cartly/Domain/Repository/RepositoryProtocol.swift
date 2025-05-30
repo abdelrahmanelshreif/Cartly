@@ -8,8 +8,8 @@
 import Combine
 
 protocol RepositoryProtocol{
-    func getBrands() -> AnyPublisher<[SmartCollection], Error>
+    func getBrands() -> AnyPublisher<[SmartCollection]?, Error>
     
-    func getProducts(for collectionID: Int) -> AnyPublisher<[Product], Error>
+    func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, Error>
 }
  

@@ -1,31 +1,42 @@
+//
+//  ShopifyServicesProtocol.swift
+//  Cartly
+//
+//  Created by Abdelrahman Elshreif on 29/5/25.
+//
 
-protocol ShopifyServicesProtocol{
-    
-    associatedtype SignUpDataType : Codable
-    
-    associatedtype UserType : Codable
+import Combine
+import Alamofire
 
-    func signup(userData : SignUpDataType) async throws -> UserType?
+protocol ShopifyServicesProtocol {
+    associatedtype SignUpDataType: Codable
+    associatedtype UserType: Codable
     
-    func getCurrentUser() -> UserType?
+    func signup(userData: SignUpDataType) -> AnyPublisher<UserType?, Error>
 }
 
-
-final class ShopifyServices: ShopifyServicesProtocol{
-    
+final class ShopifyServices: ShopifyServicesProtocol {
     typealias SignUpDataType = SignUpData
+    typealias UserType = CustomerResponse
+    typealias Credentials = EmailCredentials
+    let networkService: NetworkServiceProtocol = AlamofireService()
     
-    typealias UserType = Customer
-    
-    func signup(userData: SignUpData) async throws -> Customer? {
-        /// 1- Shopify Post request with alamofire
-        /// 2- if step 1 success then store Customer_ID in keyChain
-        /// 3- login with firebase -> firebaseAuthClient.signIn(email, password).
-        ///
-        return nil 
+    func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
+        let parameters: [String: Any] = [
+            "customer": [
+                "first_name": userData.firstname,
+                "last_name": userData.lastname,
+                "email": userData.email,
+                "phone": userData.phone,
+                "verified_email": true,
+                "password": userData.password,
+                "password_confirmation": userData.password,
+                "send_email_welcome": false
+            ]
+        ]
+        let request = APIRequest.init(withMethod: .POST, withPath: "/customers.json", withParameters: parameters)
+        let customer = networkService.request(request, responseType: CustomerResponse.self)
+        return customer.eraseToAnyPublisher()
     }
     
-    func getCurrentUser() -> Customer? {
-        return nil
-    }
 }
