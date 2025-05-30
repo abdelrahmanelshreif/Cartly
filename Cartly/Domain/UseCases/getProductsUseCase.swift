@@ -7,7 +7,7 @@ final class GetProductsUseCase {
         self.repository = repository
     }
 
-    func execute(collectionID: Int) -> AnyPublisher<[Product], Error> {
+    func execute(collectionID: Int) -> AnyPublisher<[Product]?, Error> {
         return repository.getProducts(for: collectionID)
     }
 }

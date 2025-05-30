@@ -18,7 +18,7 @@ struct APIConfig {
     /// https://{apikey}:{password}@{hostname}/admin/api/{version}/{resource}.json
     /// Example: https://{75497c7d6393ab0bc059533f558aeb79}:{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}@{mad45-ios2-sv.myshopify.com}/admin/api/{2024-07}/{custom_collections}.json
     static var baseURL: String {
-        return "https://\(APIKey):\(AccessToken)@\(StoreName).myshopify.com/admin/api/\(APIVersion)"
+        return "https://\(StoreName).myshopify.com/admin/api/\(APIVersion)"
     }
 }
 

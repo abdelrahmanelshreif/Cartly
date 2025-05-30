@@ -23,7 +23,7 @@ final class ProductsViewModel: ObservableObject {
                 }
 
             }, receiveValue: { [weak self] products in
-                self?.state = .success(products)
+                self?.state = .success(products ?? [])
             })
             .store(in: &cancellables)
     }

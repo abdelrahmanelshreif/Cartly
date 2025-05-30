@@ -14,7 +14,7 @@ final class GetBrandsUseCase {
         self.repository = repository
     }
 
-    func execute() -> AnyPublisher<Result<[SmartCollection], Error>, Never> {
+    func execute() -> AnyPublisher<Result<[SmartCollection]?, Error>, Never> {
             return repository.getBrands()
                 .map { Result.success($0) }
                 .catch { error in
