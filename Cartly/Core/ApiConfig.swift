@@ -7,18 +7,15 @@ enum Method {
 
 /// Contains static configuration for Shopify API access.
 struct APIConfig {
-    static let APIKey = "75497c7d6393ab0bc059533f558aeb79"
-
     static let APIVersion = "2024-07"
 
     static let StoreName = "mad45-ios2-sv"
 
     static let AccessToken = "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"
 
-    /// https://{apikey}:{password}@{hostname}/admin/api/{version}/{resource}.json
-    /// Example: https://{75497c7d6393ab0bc059533f558aeb79}:{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}@{mad45-ios2-sv.myshopify.com}/admin/api/{2024-07}/{custom_collections}.json
+    /// https://{{store_name}}.myshopify.com/admin/api/{{api_version}}/smart_collections.json
     static var baseURL: String {
-        return "https://\(APIKey):\(AccessToken)@\(StoreName).myshopify.com/admin/api/\(APIVersion)"
+        return "https://\(StoreName).myshopify.com/admin/api/\(APIVersion)"
     }
 }
 
@@ -50,9 +47,6 @@ struct APIRequest {
              withMethod: .GET,
              withPath: "/custom_collections.json"
          )
-
-         print(request.url)
-         // https://75497c7d6393ab0bc059533f558aeb79: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@mad45-ios2-sv.myshopify.com/admin/api/2024-07/custom_collections.json
          ```
          */
     init(
