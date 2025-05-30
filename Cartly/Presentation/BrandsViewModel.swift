@@ -25,7 +25,7 @@ final class BrandsViewModel: ObservableObject {
                 guard let self = self else { return }
                 switch result {
                 case .success(let data):
-                    self.brands = data
+                    self.brands = data ?? []
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
                 }

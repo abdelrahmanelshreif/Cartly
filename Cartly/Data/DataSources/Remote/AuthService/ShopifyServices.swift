@@ -17,14 +17,11 @@ protocol ShopifyServicesProtocol {
 
 final class ShopifyServices: ShopifyServicesProtocol {
     typealias SignUpDataType = SignUpData
-    typealias UserType = Customer
+    typealias UserType = CustomerResponse
     typealias Credentials = EmailCredentials
+    let networkService: NetworkServiceProtocol = AlamofireService()
     
-    private let baseURL = "https://mad45-ios2-sv.myshopify.com/admin/api/2024-07"
-    
-    func signup(userData: SignUpData) -> AnyPublisher<Customer?, Error> {
-        let endpoint = "\(baseURL)/customers.json"
-        
+    func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
         let parameters: [String: Any] = [
             "customer": [
                 "first_name": userData.firstname,
@@ -37,26 +34,9 @@ final class ShopifyServices: ShopifyServicesProtocol {
                 "send_email_welcome": false
             ]
         ]
-        
-        return AF.request(
-            endpoint,
-            method: .post,
-            parameters: parameters,
-            encoding: JSONEncoding.default,
-            headers: createHeaders()
-        )
-        .validate()
-        .publishDecodable(type: CustomerResponse.self)
-        .value()
-        .map { $0.customer }
-        .mapError { $0 as Error }
-        .eraseToAnyPublisher()
+        let request = APIRequest.init(withMethod: .POST, withPath: "/customers.json", withParameters: parameters)
+        let customer = networkService.request(request, responseType: CustomerResponse.self)
+        return customer.eraseToAnyPublisher()
     }
     
-    private func createHeaders() -> HTTPHeaders {
-        return [
-            "X-Shopify-Access-Token": Constants.APIKey,
-           
-        ]
-    }
 }

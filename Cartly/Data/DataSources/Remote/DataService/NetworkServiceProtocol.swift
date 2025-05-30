@@ -10,7 +10,7 @@ protocol NetworkServiceProtocol {
        ///   - request: An `APIRequest` containing endpoint info, method, headers, and parameters.
        ///   - responseType: The expected response type conforming to `Codable`.
        /// - Returns: A Combine `AnyPublisher` that emits the decoded response or an error.
-    func request<T: Codable>(_ request: APIRequest, responseType: T.Type) -> AnyPublisher<T, Error>
+    func request<T: Codable>(_ request: APIRequest, responseType: T.Type) -> AnyPublisher<T?, Error>
 }
 
 /// A concrete implementation of `NetworkServiceProtocol` using Alamofire.
@@ -23,7 +23,7 @@ final class AlamofireService: NetworkServiceProtocol {
      ///   - request: An `APIRequest` object that holds the URL, HTTP method, parameters, and headers.
      ///   - responseType: The type to decode the response into. Must conform to `Decodable` and `Encodable`.
      /// - Returns: An `AnyPublisher<T, Error>` that publishes a decoded object of type `T` or an error.
-    func request<T>(_ request: APIRequest, responseType: T.Type) -> AnyPublisher<T, any Error> where T: Decodable, T: Encodable {
+    func request<T>(_ request: APIRequest, responseType: T.Type) -> AnyPublisher<T?, any Error> where T: Decodable, T: Encodable {
         return AF.request(request.url,
                      method: HTTPMethod(rawValue: request.httpMethod),
                      parameters: request.parameters,

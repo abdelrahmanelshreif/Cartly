@@ -11,7 +11,7 @@ import Combine
 class AuthRepositoryImpl: AuthRepositoryProtocol {
     typealias CredentialsType = EmailCredentials
     typealias SignUpDataType = SignUpData
-    typealias UserType = Customer
+    typealias UserType = CustomerResponse
     typealias Token = String
     
     let firebaseAuthClient: FirebaseServiceProtocol
@@ -24,10 +24,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
         shopifyAuthClient = ShopifyServices()
     }
     
-    func signup(signUpData: SignUpData) -> AnyPublisher<Customer, Error> {
+    func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
 
         return shopifyAuthClient.signup(userData: signUpData)
-            .flatMap { [weak self] customer -> AnyPublisher<Customer, Error> in
+            .flatMap { [weak self] customer -> AnyPublisher<CustomerResponse?, Error> in
                 guard let self = self, let customer = customer else {
                     return Fail(error: AuthError.shopifySignUpFailed)
                         .eraseToAnyPublisher()
@@ -38,7 +38,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                     password: signUpData.password
                 )
                 .map { _ in customer }
-                .catch { error -> AnyPublisher<Customer, Error> in
+                .catch { error -> AnyPublisher<CustomerResponse?, Error> in
                     return Fail(error: AuthError.firebaseSignUpFailed)
                         .eraseToAnyPublisher()
                 }
@@ -47,7 +47,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
             .eraseToAnyPublisher()
     }
     
-    func signIn(credentials: EmailCredentials) -> AnyPublisher<String, Error> {
+    func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error> {
         return firebaseAuthClient.signIn(
             email: credentials.email,
             password: credentials.password
