@@ -7,13 +7,15 @@
 
 import SwiftUI
 import FirebaseCore
-
+import Combine
+import Foundation
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
+    private var cancellables = Set<AnyCancellable>()
+
+    func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     FirebaseApp.configure()
-
     return true
   }
 }
@@ -24,33 +26,13 @@ struct CartlyApp: App {
 
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-
   var body: some Scene {
     WindowGroup {
       NavigationView {
           TestView()
-//              .environment(\.managedObjectContext, persistenceController.container.viewContext)
+              .environment(\.managedObjectContext, persistenceController.container.viewContext)
       }
     }
   }
 }
-
-//import SwiftUI
-//import Firebase
-//
-//@main
-//struct CartlyApp: App {
-//    let persistenceController = PersistenceController.shared
-//
-//    init(){
-//        FirebaseApp.configure()
-//    }
-//    var body: some Scene {
-//        WindowGroup {
-//            ContentView()
-//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-//        }
-//    }
-//}
-//
 

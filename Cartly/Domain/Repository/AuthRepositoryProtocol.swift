@@ -4,7 +4,7 @@
 //
 //  Created by Abdelrahman Elshreif on 29/5/25.
 //
-
+import Combine
 protocol AuthRepositoryProtocol{
     
     associatedtype UserType : Codable
@@ -12,10 +12,8 @@ protocol AuthRepositoryProtocol{
     associatedtype SignUpDataType : Codable
     associatedtype Token : Codable
     
-    func signIn(credentials:CredentialsType) async throws -> Token
-    
-    func signup(signUpData:SignUpDataType) async throws -> UserType
-    
-    func signOut() throws
+    func signIn(credentials:CredentialsType) async throws -> AnyPublisher<Token,Error>
+    func signup(signUpData:SignUpDataType) async throws -> AnyPublisher<UserType,Error>
+    func signOut() -> AnyPublisher<Void,Error>
 
 }

@@ -1,49 +1,62 @@
 //
-//  ShopifyServicesProtocol.swift
+//  FirebaseServiceProtocol.swift
 //  Cartly
 //
 //  Created by Abdelrahman Elshreif on 29/5/25.
 //
 
+import Combine
 import FirebaseAuth
 
-protocol FirebaseServiceProtocol{
-    
-    func signIn(email: String, password: String) async throws -> String?
-    
-    func signup(email: String, password: String) async throws -> String?
-    
-    func signOut() throws
-    
+protocol FirebaseServiceProtocol {
+    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signup(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
 }
 
-final class FirebaseServices: FirebaseServiceProtocol{
+final class FirebaseServices: FirebaseServiceProtocol {
     
-    func signIn(email: String, password: String) async throws -> String? {
-        do{
-            let result = try await Auth.auth().signIn(withEmail: email, password: password)
-            return result.user.email
-        }catch(let error){
-            throw error
+    func signIn(email: String, password: String) -> AnyPublisher<String?, Error> {
+        return Future { promise in
+            Auth.auth().signIn(withEmail: email, password: password) { result, error in
+                if let error = error {
+                    promise(.failure(error))
+                } else if let user = result?.user {
+                    promise(.success(user.email))
+                } else {
+                    promise(.success(nil))
+                }
+            }
         }
+        .eraseToAnyPublisher()
     }
     
-    func signup(email: String, password: String) async throws -> String? {
-        do{
-            let result = try await Auth.auth().createUser(withEmail: email, password: password)
-            return result.user.email
-        }catch(let error){
-            throw error
+    func signup(email: String, password: String) -> AnyPublisher<String?, Error> {
+        return Future { promise in
+            Auth.auth().createUser(withEmail: email, password: password) { result, error in
+                if let error = error {
+                    promise(.failure(error))
+                } else if let user = result?.user {
+                    promise(.success(user.email))
+                } else {
+                    promise(.success(nil))
+                }
+            }
         }
+        .eraseToAnyPublisher()
     }
     
-    func signOut() throws {
-        do{
-            try Auth.auth().signOut()
-        }catch(let error){
-            throw error
+    func signOut() -> AnyPublisher<Void, Error> {
+        return Future { promise in
+            do {
+                try Auth.auth().signOut()
+                promise(.success(()))
+            } catch {
+                promise(.failure(error))
+            }
         }
+        .eraseToAnyPublisher()
     }
     
     func getCurrentUser() -> String? {

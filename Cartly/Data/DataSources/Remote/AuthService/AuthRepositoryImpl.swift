@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import Combine
 
-class AuthRepositoryImpl: AuthRepositoryProtocol{
-    
+class AuthRepositoryImpl: AuthRepositoryProtocol {
     typealias CredentialsType = EmailCredentials
     typealias SignUpDataType = SignUpData
     typealias UserType = Customer
@@ -19,43 +19,46 @@ class AuthRepositoryImpl: AuthRepositoryProtocol{
     
     static let shared = AuthRepositoryImpl()
     
-    private init(){
+    private init() {
         firebaseAuthClient = FirebaseServices()
         shopifyAuthClient = ShopifyServices()
     }
     
-    func signup(signUpData: SignUpData) async throws -> Customer {
-        do{
-            guard let customer = try await shopifyAuthClient.signup(userData: signUpData) else{
-                throw AuthError.shopifySignUpFailed
-            }
-            guard let _ = try await firebaseAuthClient.signup(email: signUpData.email, password: signUpData.password) else{
-                throw AuthError.firebaseSignUpFailed
-            }
-            return customer
-        }catch(let error){
-            throw error
-        }
-    }
+    func signup(signUpData: SignUpData) -> AnyPublisher<Customer, Error> {
 
-    func signIn(credentials: EmailCredentials) async throws -> String {
-        do{
-            guard let email = try? await firebaseAuthClient.signIn(email: credentials.email, password: credentials.password) else{
-                throw AuthError.signinFalied
+        return shopifyAuthClient.signup(userData: signUpData)
+            .flatMap { [weak self] customer -> AnyPublisher<Customer, Error> in
+                guard let self = self, let customer = customer else {
+                    return Fail(error: AuthError.shopifySignUpFailed)
+                        .eraseToAnyPublisher()
+                }
+                
+                return self.firebaseAuthClient.signup(
+                    email: signUpData.email,
+                    password: signUpData.password
+                )
+                .map { _ in customer }
+                .catch { error -> AnyPublisher<Customer, Error> in
+                    return Fail(error: AuthError.firebaseSignUpFailed)
+                        .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
-            return email
-        }catch(let error){
-            throw error
-        }
+            .eraseToAnyPublisher()
     }
     
+    func signIn(credentials: EmailCredentials) -> AnyPublisher<String, Error> {
+        return firebaseAuthClient.signIn(
+            email: credentials.email,
+            password: credentials.password
+        )
+        .compactMap { $0 }
+        .mapError { _ in AuthError.signinFalied }
+        .eraseToAnyPublisher()
+    }
     
-    func signOut() throws {
-        do{
-            try firebaseAuthClient.signOut()
-        }catch(let error){
-            throw error
-        }
-        
+    func signOut() -> AnyPublisher<Void, Error> {
+        return firebaseAuthClient.signOut()
+            .eraseToAnyPublisher()
     }
 }
