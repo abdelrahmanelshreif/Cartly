@@ -26,13 +26,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             print("🧪 Testing Auth Flow...")
             
             // Create test data
-            let testEmail = "tees2t@example.com"
+            let testEmail = "tees23t@example.com"
             let signUpData = SignUpData(
                 firstname: "Test",
                 lastname: "User",
                 email: testEmail,
                 password: "password123",
-                phone:"+201119498802",
+                phone:"+201119498812",
                 passwordConfirm: "password123",
                 sendinEmailVerification: true
             )
