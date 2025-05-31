@@ -5,3 +5,4 @@ enum ResultState<Value>{
     case success(Value)
     case failure(Error)
 }
+
