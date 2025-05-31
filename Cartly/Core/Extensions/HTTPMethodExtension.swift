@@ -1,4 +1,5 @@
 import Alamofire
+import Foundation
 
 extension HTTPMethod {
     init(rawValue: Method) {
