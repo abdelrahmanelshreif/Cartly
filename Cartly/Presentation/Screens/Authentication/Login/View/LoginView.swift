@@ -21,7 +21,6 @@ struct LoginView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
-
                 Image(systemName: "lock.shield")
                     .resizable()
                     .frame(width: 80, height: 80)

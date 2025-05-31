@@ -7,7 +7,9 @@
 
 import FirebaseCore
 import SwiftUI
+import GoogleSignIn
 import Combine
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     private var cancellables = Set<AnyCancellable>()
@@ -30,7 +32,7 @@ struct CartlyApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                ProductsListView(viewModel: viewModel, collectionID: 307654197431)
+                LoginView()
             }
         }
     }

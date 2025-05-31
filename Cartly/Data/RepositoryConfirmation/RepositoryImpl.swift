@@ -8,6 +8,14 @@
 import Combine
 
 class RepositoryImpl: RepositoryProtocol{
+//    func getCustomers() -> AnyPublisher<[CustomerResponse]?, any Error> {
+//        <#code#>
+//    }
+//    
+//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
+//        <#code#>
+//    }
+//    
     func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, any Error> {
         return remoteDataSource.getProducts(from: collectionID)
     }
@@ -23,4 +31,6 @@ class RepositoryImpl: RepositoryProtocol{
                 .map { $0?.smartCollections ?? [] }
                 .eraseToAnyPublisher()
         }
+    
+     
 }

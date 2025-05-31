@@ -42,7 +42,9 @@ class LoginViewModel: ObservableObject{
                 switch state {
                 case .success(let token):
                     print(token as Any)
-                    self?.resultState = .success(token ?? "Account not Available")
+                    UserDefaultsManager.saveCustomerID(token!)
+                    UserDefaultsManager.saveLoginStatus(true)
+                    self?.resultState = .success(UserDefaultsManager.getCustomerID() ?? "Account not Available")
                 case .failure(let error):
                     self?.resultState = .failure(error)
                 case .loading:
