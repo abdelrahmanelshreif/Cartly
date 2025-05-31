@@ -14,57 +14,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
-        
-        // Test your auth implementation
-            testAuthFlow()
-            
             return true
         }
-        
-        private func testAuthFlow() {
-            print("🧪 Testing Auth Flow...")
-            
-            // Create test data
-            let testEmail = "tees23t@example.com"
-            let signUpData = SignUpData(
-                firstname: "Test",
-                lastname: "User",
-                email: testEmail,
-                password: "password123",
-                phone:"+201119498812",
-                passwordConfirm: "password123",
-                sendinEmailVerification: true
-            )
-            
-            // Test sign upN
-            AuthRepositoryImpl.shared.signup(signUpData: signUpData)
-                .flatMap { customerResponse -> AnyPublisher<String?, Error> in
-                    print("✅ Sign up successful! Customer: \(customerResponse?.customer.email ?? "NA")")
-                    
-                    // Now test sign in
-                    let credentials = EmailCredentials(
-                        email: testEmail,
-                        password: "password123"
-                    )
-                    return AuthRepositoryImpl.shared.signIn(credentials: credentials)
-                }
-                .sink(
-                    receiveCompletion: { completion in
-                        switch completion {
-                        case .finished:
-                            print("✅ Full auth flow completed!")
-                        case .failure(let error):
-                            print("❌ Auth flow failed: \(error)")
-                        }
-                    },
-                    receiveValue: { token in
-                        print("🔑 Final token: \(token ?? "NA")")
-                    }
-                )
-                .store(in: &cancellables)
-        }
-    
 }
 
 @main

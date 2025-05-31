@@ -5,6 +5,10 @@ enum Method {
     case GET, POST, PUT, DELETE
 }
 
+struct BuissnessStrategies{
+    static let sendEmails = true
+}
+
 /// Contains static configuration for Shopify API access.
 struct APIConfig {
     static let APIKey = "75497c7d6393ab0bc059533f558aeb79"
@@ -14,6 +18,8 @@ struct APIConfig {
     static let StoreName = "mad45-ios2-sv"
 
     static let AccessToken = "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"
+    
+    
 
     /// https://{apikey}:{password}@{hostname}/admin/api/{version}/{resource}.json
     /// Example: https://{75497c7d6393ab0bc059533f558aeb79}:{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}@{mad45-ios2-sv.myshopify.com}/admin/api/{2024-07}/{custom_collections}.json

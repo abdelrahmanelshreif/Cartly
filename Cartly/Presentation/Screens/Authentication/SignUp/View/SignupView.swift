@@ -1,13 +1,14 @@
 //
-//  LoginView.swift
+//  SignupView.swift
 //  Cartly
 //
-//  Created by Abdelrahman Elshreif on 28/5/25.
+//  Created by Abdelrahman Elshreif on 30/5/25.
 //
+
 import SwiftUI
 
-struct LoginView: View {
-    @StateObject var viewModel = LoginViewModel(loginUseCase: LoginUseCase(authRepository: AuthRepositoryImpl.shared), validator: LoginValidator())
+struct SignupView: View {
+    @StateObject var viewModel = SignUpViewModel(createAccountUseCase: CreateAccountUseCase(authRepository: AuthRepositoryImpl.shared), validator: SignUpValidator())
 
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
@@ -15,21 +16,24 @@ struct LoginView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text("Login")
+                Text("Create Account")
                     .font(.largeTitle)
                     .bold()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
 
-                Image(systemName: "lock.shield")
+                Image(systemName: "person.crop.circle.badge.plus")
                     .resizable()
                     .frame(width: 80, height: 80)
                     .foregroundColor(Color.blue)
                     .padding(.vertical, 20)
 
                 VStack(spacing: 16) {
+                    CustomTextField(placeHolder: "First Name", text: $viewModel.firstName, icon: "person.fill")
+                    CustomTextField(placeHolder: "Last Name", text: $viewModel.lastName, icon: "person.fill")
                     CustomTextField(placeHolder: "Email", text: $viewModel.email, icon: "envelope.fill", keyboardType: .emailAddress)
+                    CustomTextField(placeHolder: "Phone", text: $viewModel.phone, icon: "phone.fill", keyboardType: .phonePad)
                     CustomSecureField(placeHolder: "Password", text: $viewModel.password, isVisible: $isPasswordVisible, icon: "lock.fill")
 
                     if let validationError = viewModel.validationError {
@@ -41,8 +45,8 @@ struct LoginView: View {
                     switch viewModel.resultState {
                     case .loading:
                         ProgressView()
-                    case .success(let user):
-                        Text("Welcome back, \(user)!")
+                    case .success(let customer):
+                        Text("Welcome, \(customer)!")
                             .foregroundColor(.green)
                     case .failure(let error):
                         Text("Error: \(error.localizedDescription)")
@@ -52,9 +56,9 @@ struct LoginView: View {
                     }
 
                     Button(action: {
-                        viewModel.login()
+                        viewModel.createAccount()
                     }) {
-                        Text("Login")
+                        Text("Register")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -64,12 +68,13 @@ struct LoginView: View {
                     }
 
                     Button(action: {}) {
-                        Text("Don't have acoount ?")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                        Text("Register")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
+                        Text("Guest Mode")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 55)
+                            .background(Color.gray)
+                            .cornerRadius(15)
                     }
                 }.padding()
             }
@@ -77,6 +82,9 @@ struct LoginView: View {
     }
 }
 
+
 #Preview {
-    LoginView()
+    SignupView()
 }
+
+
