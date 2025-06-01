@@ -36,7 +36,7 @@ struct CartlyApp: App {
 
                Ads()
 
-                LoginView()
+              //  LoginView()
 
             }
         }
