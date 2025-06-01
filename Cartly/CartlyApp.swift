@@ -18,6 +18,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
             return true
         }
+
 }
 
 @main
@@ -32,7 +33,11 @@ struct CartlyApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
+
+               Ads()
+
                 LoginView()
+
             }
         }
     }
