@@ -7,19 +7,18 @@
 
 import FirebaseCore
 import SwiftUI
+import GoogleSignIn
 import Combine
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     private var cancellables = Set<AnyCancellable>()
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
             return true
         }
-        
-        
-    
+
 }
 
 @main
@@ -34,7 +33,11 @@ struct CartlyApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
+
                Ads()
+
+                LoginView()
+
             }
         }
     }

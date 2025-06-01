@@ -12,8 +12,8 @@ protocol AuthRepositoryProtocol{
     associatedtype SignUpDataType : Codable
     associatedtype Token : Codable
     
-    func signIn(credentials:CredentialsType) async throws -> AnyPublisher<Token?,Error>
-    func signup(signUpData:SignUpDataType) async throws -> AnyPublisher<UserType?,Error>
+    func signIn(credentials:CredentialsType) -> AnyPublisher<Token?,Error>
+    func signup(signUpData:SignUpDataType) -> AnyPublisher<UserType?,Error>
     func signOut() -> AnyPublisher<Void,Error>
-
+    
 }

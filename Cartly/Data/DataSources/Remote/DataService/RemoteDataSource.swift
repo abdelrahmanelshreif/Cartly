@@ -7,6 +7,7 @@
 import Combine
 
 protocol RemoteDataSourceProtocol {
+    
     func getBrands() -> AnyPublisher<SmartCollectionsResponse?, Error>
 
     func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, Error>
@@ -15,6 +16,7 @@ protocol RemoteDataSourceProtocol {
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
     func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, any Error> {
+        
         let path = "/products.json?collection_id=\(collection_id)"
         let apiRequest = APIRequest(withPath: path)
 
