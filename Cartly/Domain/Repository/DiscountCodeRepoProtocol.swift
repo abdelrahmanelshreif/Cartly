@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
-protocol PriceRuleRepositoryProtocol {
-    func getPriceRules() -> AnyPublisher<[PriceRule], Error>
+
+protocol DiscountCodeRepositoryProtocol {
+    func fetchAllDiscountCodes() -> AnyPublisher<[PriceRule], Error>
 }
