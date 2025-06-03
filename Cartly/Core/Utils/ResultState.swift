@@ -5,3 +5,20 @@ enum ResultState<Value>{
     case success(Value)
     case failure(Error)
 }
+
+enum ResultStateViewLayer<Value> {
+    case loading
+    case success(Value)
+    case failure(AppError)
+}
+
+enum AppError: Error {
+    case failedFetchingDataFromNetwork
+    
+    var errorDescription: String? {
+        switch self {
+        case .failedFetchingDataFromNetwork:
+            return "Failed to get product data, please try again later"
+        }
+    }
+}

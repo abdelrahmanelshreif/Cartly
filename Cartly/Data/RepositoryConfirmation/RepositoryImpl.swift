@@ -8,29 +8,35 @@
 import Combine
 
 class RepositoryImpl: RepositoryProtocol{
-//    func getCustomers() -> AnyPublisher<[CustomerResponse]?, any Error> {
-//        <#code#>
-//    }
-//    
-//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
-//        <#code#>
-//    }
-//    
+    
+    private let remoteDataSource: RemoteDataSourceProtocol
+    
+    init(remoteDataSource: RemoteDataSourceProtocol) {
+        self.remoteDataSource = remoteDataSource
+    }
+    
+    func getBrands() -> AnyPublisher<[SmartCollection]?, Error> {
+        return remoteDataSource.getBrands()
+            .map { $0?.smartCollections ?? [] }
+            .eraseToAnyPublisher()
+    }
+    
     func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, any Error> {
         return remoteDataSource.getProducts(from: collectionID)
     }
     
-    private let remoteDataSource: RemoteDataSourceProtocol
-
-        init(remoteDataSource: RemoteDataSourceProtocol) {
-            self.remoteDataSource = remoteDataSource
-        }
-
-        func getBrands() -> AnyPublisher<[SmartCollection]?, Error> {
-            return remoteDataSource.getBrands()
-                .map { $0?.smartCollections ?? [] }
-                .eraseToAnyPublisher()
-        }
+    func getSingleProduct(for productId: Int) -> AnyPublisher<SingleProductResponse?, any Error> {
+        return remoteDataSource.getSingleProduct(for: productId)
+    }
     
-     
+    
+//    func getCustomers() -> AnyPublisher<[CustomerResponse]?, any Error> {
+//        <#code#>
+//    }
+//
+//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
+//        <#code#>
+//    }
+//
+    
 }

@@ -34,7 +34,7 @@ struct CartlyApp: App {
         WindowGroup {
             NavigationView {
 
-               Ads()
+//               Ads()
 
               //  LoginView()
 
