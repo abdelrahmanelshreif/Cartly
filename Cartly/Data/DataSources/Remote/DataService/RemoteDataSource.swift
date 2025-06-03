@@ -14,10 +14,14 @@ protocol RemoteDataSourceProtocol {
     
     func getSingleProduct(for productId:Int) -> AnyPublisher<SingleProductResponse? , Error>
     
+    func getCustomers() -> AnyPublisher<AllCustomerResponse?, Error>
+    
+    func getSingleCustomer(for customerId:String) -> AnyPublisher<CustomerResponse?, Error>
+    
 }
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
-  
+   
  
     private let networkService: NetworkServiceProtocol
     
@@ -51,4 +55,18 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
         return networkService.request(requset, responseType: SingleProductResponse.self)
     }
     
+    func getCustomers() -> AnyPublisher<AllCustomerResponse?, any Error> {
+        let request = APIRequest(
+            withMethod: .GET,
+            withPath: "/customers.json")
+        return networkService.request(request, responseType: AllCustomerResponse.self)
+    }
+    
+    func getSingleCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
+        let request = APIRequest(
+            withMethod: .GET,
+            withPath: "/customers/\(customerId).json")
+        
+        return networkService.request(request, responseType: CustomerResponse.self)
+    }
 }

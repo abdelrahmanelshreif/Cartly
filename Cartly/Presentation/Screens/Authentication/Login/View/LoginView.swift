@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject var viewModel = LoginViewModel(loginUseCase: LoginUseCase(authRepository: AuthRepositoryImpl.shared), validator: LoginValidator())
-
+    @StateObject var viewModel = LoginViewModel(loginUseCase: FirebaseShopifyLoginUseCase(authRepository: AuthRepositoryImpl.shared, customerRepository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())), userSessionService: UserSessionService()), validator: LoginValidator())
+    	
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
 
@@ -44,7 +44,7 @@ struct LoginView: View {
                         Text("Welcome back, \(user)!")
                             .foregroundColor(.green)
                     case .failure(let error):
-                        Text("Error: \(error.localizedDescription)")
+                        Text("Error: \(error)")
                             .foregroundColor(.red)
                     case .none:
                         EmptyView()

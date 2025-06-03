@@ -17,34 +17,34 @@ class LoginViewModel: ObservableObject{
     private var cancellables = Set<AnyCancellable>()
     
     
-    let loginUseCase:LoginUseCase
+    let loginUseCase:FirebaseShopifyLoginUseCase
     let validator:LoginValidator
     
-    init(loginUseCase: LoginUseCase, validator: LoginValidator) {
+    init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator) {
         self.loginUseCase = loginUseCase
         self.validator = validator
     }
    
-    func login(){
+    func login(){	
         let emailsCredentials = EmailCredentials(email: email, password: password)
-    
+        
         switch validator.validate(emailsCredentials) {
         case .valid:
             validationError = nil
+            performLogin(with: emailsCredentials)
         case .invalid(let error):
             validationError = error.localizedDescription
+            return
         }
-                
-        
-        loginUseCase.execute(emailCredentials: emailsCredentials)
+    }
+
+    private func performLogin(with credentials: EmailCredentials) {
+        loginUseCase.execute(credentials: credentials)
             .receive(on: DispatchQueue.main)
-            .sink{ [weak self] state in
+            .sink{ [weak self]  (state: ResultState<CustomerResponse?>) in
                 switch state {
-                case .success(let token):
-                    print(token as Any)
-                    UserDefaultsManager.saveCustomerID(token!)
-                    UserDefaultsManager.saveLoginStatus(true)
-                    self?.resultState = .success(UserDefaultsManager.getCustomerID() ?? "Account not Available")
+                case .success(let customerResponse):
+                    self?.resultState = .success(customerResponse?.customer.firstName ?? "User")
                 case .failure(let error):
                     self?.resultState = .failure(error)
                 case .loading:
@@ -52,11 +52,4 @@ class LoginViewModel: ObservableObject{
                 }
             }.store(in: &cancellables)
     }
-
-    private func clearForm() {
-        email = ""
-        password = ""
-    }
-    
-    
 }

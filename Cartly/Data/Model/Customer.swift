@@ -4,6 +4,9 @@ struct CustomerResponse: Codable {
     let customer: Customer
 }
 
+struct AllCustomerResponse: Codable {
+    let customers: [Customer]
+}
 // MARK: - Customer Model
 struct Customer: Codable {
     let id: Int64 

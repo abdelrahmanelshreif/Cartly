@@ -9,11 +9,7 @@ import Foundation
 import Combine	
 
 class AuthRepositoryImpl: AuthRepositoryProtocol {
-    typealias CredentialsType = EmailCredentials
-    typealias SignUpDataType = SignUpData
-    typealias UserType = CustomerResponse
-    typealias Token = String
-    
+
     let firebaseAuthClient: FirebaseServiceProtocol
     let shopifyAuthClient: ShopifyServices		
     

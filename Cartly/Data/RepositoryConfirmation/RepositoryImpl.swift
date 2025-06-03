@@ -30,13 +30,11 @@ class RepositoryImpl: RepositoryProtocol{
     }
     
     
-//    func getCustomers() -> AnyPublisher<[CustomerResponse]?, any Error> {
-//        <#code#>
-//    }
-//
-//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
-//        <#code#>
-//    }
-//
-    
+    func getCustomers() -> AnyPublisher<AllCustomerResponse?, any Error> {
+        return remoteDataSource.getCustomers()
+    }
+
+    func getSingleCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
+        return remoteDataSource.getSingleCustomer(for: customerId)
+    }
 }

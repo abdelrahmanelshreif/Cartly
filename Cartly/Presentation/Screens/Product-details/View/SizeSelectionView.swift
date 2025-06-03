@@ -14,7 +14,7 @@ struct SizeSelectionView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Size")
                 .font(.headline)
-            
+            	
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
                 ForEach(sizes, id: \.self) { size in
                     Button(action: {

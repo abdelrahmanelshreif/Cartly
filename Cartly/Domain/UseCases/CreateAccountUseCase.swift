@@ -11,21 +11,30 @@ protocol CreateAccountUseCaseProtocol {
     func execute(signUpData: SignUpData) -> AnyPublisher<ResultState<CustomerResponse?>, Never>
 }
 
-class CreateAccountUseCase: CreateAccountUseCaseProtocol {
+class CreateAccountUseCase: CreateAccountUseCaseProtocol{
     
-    private let authRepository:AuthRepositoryImpl
+    private let authRepository: AuthRepositoryProtocol
+    private let userSessionService: UserSessionServiceProtocol
     
-    init(authRepository: AuthRepositoryImpl) {
-        self.authRepository = authRepository
-    }
+    init(authRepository: AuthRepositoryProtocol,
+           userSessionService: UserSessionServiceProtocol) {
+          self.authRepository = authRepository
+          self.userSessionService = userSessionService
+      }
+    
     
     func execute(signUpData: SignUpData) -> AnyPublisher<ResultState<CustomerResponse?>, Never> {
         return authRepository.signup(signUpData: signUpData)
-            .map { ResultState.success($0) }
+               .map { [weak self] response in
+                   if let customer = response?.customer {
+                    self?.userSessionService.saveUserSession(customer)
+                }
+                return ResultState.success(response)
+            }
             .catch { error in
                 Just(ResultState.failure(error))
             }
-            .prepend(.loading)
+            .prepend(ResultState.loading)
             .eraseToAnyPublisher()
     }
 }
