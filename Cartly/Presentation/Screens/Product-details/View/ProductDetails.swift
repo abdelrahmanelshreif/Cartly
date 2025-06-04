@@ -15,7 +15,6 @@ struct ProductDetailsView: View {
     @State private var selectedSize = ""
     @State private var selectedColor = ""
     @State private var quantity = 1
-
   
     init(productId: Int, getProductUseCase: GetProductDetailsUseCaseProtocol) {
         self.productId = productId
@@ -33,6 +32,7 @@ struct ProductDetailsView: View {
                         case .success(let product):
                             ProductDetailsContentView(
                                 product: product,
+                                reviews: MockReviewData.productReviews,
                                 selectedImageIndex: $selectedImageIndex,
                                 selectedSize: $selectedSize,
                                 selectedColor: $selectedColor,
@@ -50,7 +50,6 @@ struct ProductDetailsView: View {
                     }
                 }
             }
-
         }
         .onAppear {
             viewModel.getProduct(for: productId)
@@ -60,11 +59,14 @@ struct ProductDetailsView: View {
 
 struct ProductDetailsContentView: View {
     let product: ProductInformationEntity
-    let reviews = MockReviewData.productReviews
+    let reviews: [ReviewEntity]
+    @State private var showAllReviews = false
     @Binding var selectedImageIndex: Int
     @Binding var selectedSize: String
     @Binding var selectedColor: String
     @Binding var quantity: Int
+    
+    private let maxPreviewReviews = 2
     
     var body: some View {
         ScrollView {
@@ -84,12 +86,14 @@ struct ProductDetailsContentView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
+                    
                     HStack {
                         RatingView(rating: product.rating)
                         Text("(\(product.reviewCount) reviews)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                    
                     HStack {
                         Text("$\(product.price, specifier: "%.2f")")
                             .font(.title)
@@ -103,37 +107,70 @@ struct ProductDetailsContentView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    
                     Divider()
+                    
                     if !product.availableSizes.isEmpty {
                         SizeSelectionView(
                             sizes: product.availableSizes,
                             selectedSize: $selectedSize
                         )
                     }
+                    
                     if !product.availableColors.isEmpty {
                         ColorSelectionView(
                             colors: product.availableColors,
                             selectedColor: $selectedColor
                         )
                     }
+                    
                     QuantitySelectionView(quantity: $quantity)
+                    
                     Divider()
+                    
                     ProductDescriptionView(description: product.description)
+                    
                     Divider()
 
+                    // MARK: - Reviews Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Customer Reviews")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-
+                        HStack {
+                            Text("Customer Reviews")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                            
+                            Spacer()
+                            
+                            if reviews.count > maxPreviewReviews {
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        showAllReviews.toggle()
+                                    }
+                                }) {
+                                    HStack(spacing: 4) {
+                                        Text(showAllReviews ? "Show Less" : "Show All (\(reviews.count))")
+                                        Image(systemName: showAllReviews ? "chevron.up" : "chevron.down")
+                                            .font(.caption2)
+                                    }
+                                }
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            }
+                        }
+                        
                         LazyVStack(spacing: 12) {
-                            ForEach(reviews, id: \.id) { review in
+                            ForEach(showAllReviews ? reviews : Array(reviews.prefix(maxPreviewReviews)), id: \.id) { review in
                                 ReviewCardView(review: review)
+                                    .transition(.asymmetric(
+                                        insertion: .opacity.combined(with: .move(edge: .top)),
+                                        removal: .opacity.combined(with: .move(edge: .top))
+                                    ))
                             }
                         }
                     }
 
                     Button(action: {
+                        
                     }) {
                         Text("Add to Cart")
                             .font(.headline)
@@ -155,8 +192,7 @@ struct ProductDetailsContentView: View {
 
     private func isValidSelection() -> Bool {
         let sizeValid = product.availableSizes.isEmpty || !selectedSize.isEmpty
-        let colorValid =
-            product.availableColors.isEmpty || !selectedColor.isEmpty
+        let colorValid = product.availableColors.isEmpty || !selectedColor.isEmpty
         return sizeValid && colorValid
     }
 }
@@ -164,7 +200,6 @@ struct ProductDetailsContentView: View {
 // MARK: - Preview
 struct ProductDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-
         ProductDetailsView(
             productId: 8_135_647_101_111,
             getProductUseCase: GetProductDetailsUseCase(
