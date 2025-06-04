@@ -10,21 +10,24 @@ import SwiftUI
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
     let productId: Int
-    
+
     @State private var selectedImageIndex = 0
     @State private var selectedSize = ""
     @State private var selectedColor = ""
     @State private var quantity = 1
-    
+
+  
     init(productId: Int, getProductUseCase: GetProductDetailsUseCaseProtocol) {
         self.productId = productId
-        self._viewModel = StateObject(wrappedValue: ProductDetailsViewModel(getProductUseCase: getProductUseCase))
+        self._viewModel = StateObject(
+            wrappedValue: ProductDetailsViewModel(
+                getProductUseCase: getProductUseCase))
     }
-    
+
     var body: some View {
         NavigationView {
             Group {
-                VStack{
+                VStack {
                     if let resultState = viewModel.resultState {
                         switch resultState {
                         case .success(let product):
@@ -46,8 +49,8 @@ struct ProductDetailsView: View {
                         LoadingView()
                     }
                 }
-                }
-            
+            }
+
         }
         .onAppear {
             viewModel.getProduct(for: productId)
@@ -57,6 +60,7 @@ struct ProductDetailsView: View {
 
 struct ProductDetailsContentView: View {
     let product: ProductInformationEntity
+    let reviews = MockReviewData.productReviews
     @Binding var selectedImageIndex: Int
     @Binding var selectedSize: String
     @Binding var selectedColor: String
@@ -75,7 +79,7 @@ struct ProductDetailsContentView: View {
                         Text(product.name)
                             .font(.title2)
                             .fontWeight(.bold)
-                        
+
                         Text("by \(product.vendor)")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -91,7 +95,7 @@ struct ProductDetailsContentView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
-                        
+
                         if product.originalPrice > product.price {
                             Text("$\(product.originalPrice, specifier: "%.2f")")
                                 .font(.body)
@@ -115,7 +119,20 @@ struct ProductDetailsContentView: View {
                     QuantitySelectionView(quantity: $quantity)
                     Divider()
                     ProductDescriptionView(description: product.description)
-                   
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Customer Reviews")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+
+                        LazyVStack(spacing: 12) {
+                            ForEach(reviews, id: \.id) { review in
+                                ReviewCardView(review: review)
+                            }
+                        }
+                    }
+
                     Button(action: {
                     }) {
                         Text("Add to Cart")
@@ -127,7 +144,7 @@ struct ProductDetailsContentView: View {
                             .cornerRadius(10)
                     }
                     .disabled(!isValidSelection())
-                    
+
                     Spacer(minLength: 20)
                 }
                 .padding(.horizontal)
@@ -135,10 +152,11 @@ struct ProductDetailsContentView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
     }
-    
+
     private func isValidSelection() -> Bool {
         let sizeValid = product.availableSizes.isEmpty || !selectedSize.isEmpty
-        let colorValid = product.availableColors.isEmpty || !selectedColor.isEmpty
+        let colorValid =
+            product.availableColors.isEmpty || !selectedColor.isEmpty
         return sizeValid && colorValid
     }
 }
@@ -146,10 +164,13 @@ struct ProductDetailsContentView: View {
 // MARK: - Preview
 struct ProductDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-      
+
         ProductDetailsView(
-            productId: 8135647101111,
-            getProductUseCase: GetProductDetailsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())))
+            productId: 8_135_647_101_111,
+            getProductUseCase: GetProductDetailsUseCase(
+                repository: RepositoryImpl(
+                    remoteDataSource: RemoteDataSourceImpl(
+                        networkService: AlamofireService())))
         )
     }
 }

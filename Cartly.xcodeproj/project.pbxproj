@@ -55,6 +55,7 @@
 			membershipExceptions = (
 				Data/DataSources/Local/dummy.swift,
 				Presentation/Components/dummy.swift,
+				"Presentation/Screens/Favourite-screen/View/Untitled.swift",
 			);
 			target = 72EB161A2DE3194600C45508 /* Cartly */;
 		};
