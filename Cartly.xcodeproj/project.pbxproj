@@ -53,9 +53,6 @@
 		78F93A292DE7B28000CD666A /* Exceptions for "Cartly" folder in "Cartly" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Data/DataSources/Local/dummy.swift,
-				Data/Mapper/dummy.swift,
-				Domain/Entities/dummy.swift,
 				Presentation/Components/dummy.swift,
 			);
 			target = 72EB161A2DE3194600C45508 /* Cartly */;

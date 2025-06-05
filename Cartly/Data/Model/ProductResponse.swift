@@ -6,9 +6,9 @@ struct ProductListResponse: Codable {
 }
 
 ///// The root object of the API response containing the product data.
-//struct ProductResponse: Codable {
-//    var product: Product?
-//}
+ struct ProductResponse: Codable {
+    var product: Product?
+ }
 
 /// Represents a product in the Shopify store, including details, variants, options, and images.
 struct Product: Codable {
@@ -30,7 +30,7 @@ struct Product: Codable {
     var options: [Option]?
     var images: [ProductImage]?
     var image: ProductImage?
-    
+
     enum CodingKeys: String, CodingKey {
         case id, title, vendor, handle, tags, status, variants, options, images, image
         case bodyHtml = "body_html"

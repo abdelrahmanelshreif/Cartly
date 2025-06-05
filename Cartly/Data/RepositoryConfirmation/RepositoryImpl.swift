@@ -1,36 +1,20 @@
-//
-//  Repository.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 27/5/25.
-//
-
 import Combine
 
-class RepositoryImpl: RepositoryProtocol{
-//    func getCustomers() -> AnyPublisher<[CustomerResponse]?, any Error> {
-//        <#code#>
-//    }
-//    
-//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
-//        <#code#>
-//    }
-//    
-    func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, any Error> {
-        return remoteDataSource.getProducts(from: collectionID)
-    }
-    
+class RepositoryImpl: RepositoryProtocol {
     private let remoteDataSource: RemoteDataSourceProtocol
 
-        init(remoteDataSource: RemoteDataSourceProtocol) {
-            self.remoteDataSource = remoteDataSource
-        }
+    init(remoteDataSource: RemoteDataSourceProtocol) {
+        self.remoteDataSource = remoteDataSource
+    }
 
-        func getBrands() -> AnyPublisher<[SmartCollection]?, Error> {
-            return remoteDataSource.getBrands()
-                .map { $0?.smartCollections ?? [] }
-                .eraseToAnyPublisher()
-        }
-    
-     
+    func fetchBrands() -> AnyPublisher<[BrandMapper], Error> {
+        return remoteDataSource.fetchBrands()
+            .tryMap {
+                guard let collections = $0?.smartCollections else {
+                    throw ErrorType.noData
+                }
+                return DataMapper.createBrands(from: collections)
+            }
+            .eraseToAnyPublisher()
+    }
 }

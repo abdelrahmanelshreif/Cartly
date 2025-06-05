@@ -49,7 +49,7 @@ struct SignupView: View {
                         Text("Welcome, \(customer)!")
                             .foregroundColor(.green)
                     case .failure(let error):
-                        Text("Error: \(error.localizedDescription)")
+                        Text("Error: \(error)")
                             .foregroundColor(.red)
                     case .none:
                         EmptyView()

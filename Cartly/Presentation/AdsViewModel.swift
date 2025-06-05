@@ -28,7 +28,7 @@ final class PriceRulesViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.state = .failure(error)
+                    self?.state = .failure(error.localizedDescription)
                     print("Fetch failed: \(error.localizedDescription)")
                 }
             } receiveValue: { [weak self] rules in

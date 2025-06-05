@@ -18,7 +18,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
             return true
         }
-
 }
 
 @main
@@ -27,17 +26,12 @@ struct CartlyApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
-    let viewModel = ProductsViewModel(useCase: GetProductsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()))))
-
+    let viewModel = HomeViewModel(getBrandUseCase: GetBrandsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()))))
 
     var body: some Scene {
         WindowGroup {
             NavigationView {
-
-               Ads()
-
-              //  LoginView()
-
+                HomeTabView()
             }
         }
     }

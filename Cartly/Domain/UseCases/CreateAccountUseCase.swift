@@ -23,7 +23,7 @@ class CreateAccountUseCase: CreateAccountUseCaseProtocol {
         return authRepository.signup(signUpData: signUpData)
             .map { ResultState.success($0) }
             .catch { error in
-                Just(ResultState.failure(error))
+                Just(ResultState.failure(error.localizedDescription))
             }
             .prepend(.loading)
             .eraseToAnyPublisher()

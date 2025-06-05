@@ -44,7 +44,7 @@ struct LoginView: View {
                         Text("Welcome back, \(user)!")
                             .foregroundColor(.green)
                     case .failure(let error):
-                        Text("Error: \(error.localizedDescription)")
+                        Text("Error: \(error)")
                             .foregroundColor(.red)
                     case .none:
                         EmptyView()
