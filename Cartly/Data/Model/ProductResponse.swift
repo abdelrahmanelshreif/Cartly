@@ -9,6 +9,9 @@ struct ProductListResponse: Codable {
  struct ProductResponse: Codable {
     var product: Product?
  }
+struct SingleProductResponse:Codable{
+    let product:Product
+}
 
 /// Represents a product in the Shopify store, including details, variants, options, and images.
 struct Product: Codable {

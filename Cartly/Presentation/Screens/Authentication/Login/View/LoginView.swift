@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject var viewModel = LoginViewModel(loginUseCase: LoginUseCase(authRepository: AuthRepositoryImpl.shared), validator: LoginValidator())
-
+    @StateObject var viewModel = LoginViewModel(loginUseCase: FirebaseShopifyLoginUseCase(authRepository: AuthRepositoryImpl.shared, customerRepository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())), userSessionService: UserSessionService()), validator: LoginValidator())
+    	
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
 

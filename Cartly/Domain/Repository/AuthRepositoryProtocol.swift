@@ -4,16 +4,11 @@
 //
 //  Created by Abdelrahman Elshreif on 29/5/25.
 //
+
 import Combine
-protocol AuthRepositoryProtocol{
-    
-    associatedtype UserType : Codable
-    associatedtype CredentialsType : Codable
-    associatedtype SignUpDataType : Codable
-    associatedtype Token : Codable
-    
-    func signIn(credentials:CredentialsType) -> AnyPublisher<Token?,Error>
-    func signup(signUpData:SignUpDataType) -> AnyPublisher<UserType?,Error>
-    func signOut() -> AnyPublisher<Void,Error>
-    
+
+protocol AuthRepositoryProtocol {
+    func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error>
+    func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>
+    func signOut() -> AnyPublisher<Void, Error>
 }

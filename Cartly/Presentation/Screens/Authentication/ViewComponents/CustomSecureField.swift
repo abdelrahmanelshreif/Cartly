@@ -21,7 +21,7 @@ struct CustomSecureField: View {
                 .foregroundColor(.gray)
                 .frame(width:20)
             
-            TextField(placeHolder , text:$text)
+            SecureField(placeHolder , text:$text)
                 .keyboardType(keyboardType)
                 .autocapitalization(.none)
             

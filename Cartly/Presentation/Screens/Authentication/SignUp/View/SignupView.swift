@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignupView: View {
-    @StateObject var viewModel = SignUpViewModel(createAccountUseCase: CreateAccountUseCase(authRepository: AuthRepositoryImpl.shared), validator: SignUpValidator())
+    @StateObject var viewModel = SignUpViewModel(createAccountUseCase: CreateAccountUseCase(authRepository: AuthRepositoryImpl.shared, userSessionService: UserSessionService()), validator: SignUpValidator())
 
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss

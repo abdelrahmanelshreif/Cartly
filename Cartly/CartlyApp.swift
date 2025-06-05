@@ -5,19 +5,18 @@
 //  Created by Abdelrahman Elshreif on 25/5/25.
 //
 
-import FirebaseCore
-import SwiftUI
-import GoogleSignIn
 import Combine
-
+import FirebaseCore
+import GoogleSignIn
+import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     private var cancellables = Set<AnyCancellable>()
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-            return true
-        }
+        return true
+    }
 }
 
 @main
@@ -25,7 +24,7 @@ struct CartlyApp: App {
     let persistenceController = PersistenceController.shared
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     let viewModel = HomeViewModel(getBrandUseCase: GetBrandsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()))))
 
     var body: some Scene {
@@ -36,4 +35,3 @@ struct CartlyApp: App {
         }
     }
 }
-
