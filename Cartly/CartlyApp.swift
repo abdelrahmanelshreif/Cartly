@@ -29,9 +29,7 @@ struct CartlyApp: App {
 
     let viewModel = HomeViewModel(
         getBrandUseCase: GetBrandsUseCase(
-            repository: RepositoryImpl(
-                remoteDataSource: RemoteDataSourceImpl(
-                    networkService: AlamofireService()))))
+            repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices()))))
 
     var body: some Scene {
 

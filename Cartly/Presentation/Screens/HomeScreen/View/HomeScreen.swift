@@ -7,8 +7,7 @@ struct HomeScreen: View {
         _viewModel = StateObject(wrappedValue:
             HomeViewModel(
                 getBrandUseCase: GetBrandsUseCase(
-                    repository: RepositoryImpl(
-                        remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())
+                    repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
                     )
                 )
             )

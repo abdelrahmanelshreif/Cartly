@@ -203,9 +203,7 @@ struct ProductDetailsView_Previews: PreviewProvider {
         ProductDetailsView(
             productId: 8_135_647_101_111,
             getProductUseCase: GetProductDetailsUseCase(
-                repository: RepositoryImpl(
-                    remoteDataSource: RemoteDataSourceImpl(
-                        networkService: AlamofireService())))
+                repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))
         )
     }
 }

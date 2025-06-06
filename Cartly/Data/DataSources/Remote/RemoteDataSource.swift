@@ -1,6 +1,7 @@
 import Combine
 
 protocol RemoteDataSourceProtocol {
+    
     func fetchBrands() -> AnyPublisher<SmartCollectionsResponse?, Error>
 
     func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, Error>
