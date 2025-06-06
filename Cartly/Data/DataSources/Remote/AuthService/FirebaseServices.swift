@@ -24,8 +24,9 @@ protocol FirebaseServiceProtocol {
 final class FirebaseServices: FirebaseServiceProtocol {
     
     private let firestore: Firestore
-    private let collection = "users"
-    private let subcollection = "wishlist"
+    private let userCollection = "users"
+    private let wishlist = "wishlist"
+    private let cart = "cart"
     
     
     init(firestore: Firestore = Firestore.firestore()) {
@@ -89,12 +90,12 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 promise(.failure(AppError.firestoreNotAvailable))
                 return
             }
-            let productData = mapProductToFirestoreData(product)
+            let productData = try! Firestore.Encoder().encode(product)
             self.firestore
-                .collection(self.collection)
+                .collection(self.userCollection)
                 .document(userId)
-                .collection(self.subcollection)
-                .document(product.id ?? "")
+                .collection(self.wishlist)
+                .document(product.id ?? UUID().uuidString)
                 .setData(productData){ error in
                     if let error = error {
                         promise(.failure(error))
@@ -113,19 +114,19 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 return
             }
             self.firestore
-                .collection(self.collection)
+                .collection(self.userCollection)
                 .document(userId)
-                .collection(self.subcollection)
+                .collection(self.wishlist)
                 .document(productId)
                 .delete{ error in
                     if let error = error {
-                        promise(.failure(AppError.firestoreNotAvailable))
+                        promise(.failure(error))
                     }
                     
                 }
         }.eraseToAnyPublisher()
     }
-    
+
     func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, any Error> {
         return Future{ [weak self] promise in
             guard let self = self else{
@@ -133,27 +134,41 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 return
             }
             self.firestore
-                .collection(self.collection)
+                .collection(self.userCollection)
                 .document(userId)
-                .collection(self.subcollection)
+                .collection(self.wishlist)
                 .getDocuments{ snapshot , error in
-                    guard let error = error else{
-                        promise(.failure(AppError.failedFetchingDataFromNetwork))
+                    if let error = error {
+                        print("Firestore error: \(error)")
+                        promise(.failure(error))
                         return
                     }
+                    
                     guard let documents = snapshot?.documents else {
+                        print("No documents found")
                         promise(.success([]))
                         return
                     }
                     
+                    print("Found \(documents.count) documents")
+                    
                     let products : [WishlistProduct] = documents.compactMap{ document in
-                        try? document.data(as: WishlistProduct.self)
+                        do {
+                            let product = try document.data(as: WishlistProduct.self)
+                            print("Decoded product: \(product.title)")
+                            return product
+                        } catch {
+                            print("Failed to decode document \(document.documentID): \(error)")
+                            return nil
+                        }
                     }
+                    
+                    print("Returning \(products.count) products")
                     promise(.success(products))
                 }
         }.eraseToAnyPublisher()
     }
-        
+    
     func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, any Error> {
         return Future { [weak self] promise in
             guard let self = self else {
@@ -161,9 +176,9 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 return
             }
             self.firestore
-                .collection(self.collection)
+                .collection(self.userCollection)
                 .document(userId)
-                .collection(self.subcollection)
+                .collection(self.wishlist)
                 .document(productId)
                 .getDocument { snapshot, error in
                     if let error = error {
@@ -177,17 +192,6 @@ final class FirebaseServices: FirebaseServiceProtocol {
         .eraseToAnyPublisher()
     }
     
-    
-    private func mapProductToFirestoreData(_ product: WishlistProduct) -> [String: Any] {
-           return [
-               "title": product.title,
-               "bodyHtml": product.bodyHtml,
-               "vendor": product.vendor ?? "",
-               "productType": product.productType,
-               "status": product.status ?? "",
-               "image": product.image ?? "",
-               "addedAt": FieldValue.serverTimestamp()
-           ]
-       }
-    
 }
+
+
