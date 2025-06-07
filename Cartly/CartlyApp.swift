@@ -27,7 +27,7 @@ struct CartlyApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-    let viewModel = HomeViewModel(
+    lazy var viewModel = HomeViewModel(
         getBrandUseCase: GetBrandsUseCase(
             repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices()))))
 
@@ -35,7 +35,7 @@ struct CartlyApp: App {
 
         WindowGroup {
             NavigationView {
-                HomeTabView()
+                ProductDetailsView(productId: 8_135_647_985_847)
             }
         }
     }

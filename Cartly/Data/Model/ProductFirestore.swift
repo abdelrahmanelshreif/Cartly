@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct WishlistProduct: Codable, Identifiable, Equatable {
     @DocumentID var id: String?
-    let proudctId: String
+    let productId: String
     let title: String
     let bodyHtml: String
     let vendor: String?

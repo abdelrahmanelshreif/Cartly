@@ -12,11 +12,15 @@ protocol UserSessionServiceProtocol {
     func saveUserSession(_ customer: Customer)
     func clearUserSession()
     func getCurrentUserId() -> String?
-    func isUserLoggedIn() -> Bool
+    func getCurrentUserVerificationStatus() -> String?
+    func getCurrentUserEmail() -> String?
+    func isUserLoggedIn() -> Bool?
+    func isUserEmailVerified() -> Bool?
 }
 
 // MARK: - User Session Implementation
 class UserSessionService: UserSessionServiceProtocol {
+  
     private let userDefaults = UserDefaults.standard
     
     private enum Keys {
@@ -47,7 +51,21 @@ class UserSessionService: UserSessionServiceProtocol {
         return userDefaults.string(forKey: Keys.userId)
     }
     
-    func isUserLoggedIn() -> Bool {
+    func getCurrentUserEmail() -> String? {
+        return userDefaults.string(forKey: Keys.userEmail)
+    }
+    
+    func getCurrentUserVerificationStatus() -> String? {
+        return userDefaults.string(forKey: Keys.isUserVerified)
+    }
+    
+    func isUserLoggedIn() -> Bool? {
         return userDefaults.bool(forKey: Keys.isLoggedIn)
+    }
+    
+    func isUserEmailVerified() -> Bool? {
+        let veirficationStatus =  userDefaults.string(forKey: Keys.isUserVerified)
+        let status:Bool = veirficationStatus ==  "invited" ? true : false
+        return status
     }
 }
