@@ -85,7 +85,7 @@ struct Ads: View {
                     }
                     
                 case .failure(let error):
-                    Text("Error: \(error.localizedDescription)")
+                    Text("Error: \(error)")
                         .frame(height: 250)
                 }
             }
@@ -132,8 +132,4 @@ struct Ads: View {
         timer?.invalidate()
         timer = nil
     }
-}
-
-#Preview {
-    Ads()
 }

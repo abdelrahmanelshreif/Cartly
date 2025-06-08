@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignupView: View {
-    @StateObject var viewModel = SignUpViewModel(createAccountUseCase: CreateAccountUseCase(authRepository: AuthRepositoryImpl.shared), validator: SignUpValidator())
+    @StateObject var viewModel = SignUpViewModel(createAccountUseCase: CreateAccountUseCase(authRepository: AuthRepositoryImpl.shared, userSessionService: UserSessionService()), validator: SignUpValidator())
 
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
@@ -49,7 +49,7 @@ struct SignupView: View {
                         Text("Welcome, \(customer)!")
                             .foregroundColor(.green)
                     case .failure(let error):
-                        Text("Error: \(error.localizedDescription)")
+                        Text("Error: \(error)")
                             .foregroundColor(.red)
                     case .none:
                         EmptyView()
@@ -81,10 +81,3 @@ struct SignupView: View {
         }
     }
 }
-
-
-#Preview {
-    SignupView()
-}
-
-

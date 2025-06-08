@@ -13,21 +13,22 @@ protocol LoginUseCaseProtocol{
 
 class LoginUseCase : LoginUseCaseProtocol{
     
-    private let authRepository : AuthRepositoryImpl
+    private let authRepository: AuthRepositoryProtocol
+    private let userSessionService: UserSessionServiceProtocol
     
-    init(authRepository: AuthRepositoryImpl) {
-        self.authRepository = authRepository
-    }
+    init(authRepository: AuthRepositoryProtocol,
+           userSessionService: UserSessionServiceProtocol) {
+          self.authRepository = authRepository
+          self.userSessionService = userSessionService
+      }
     
     func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<String?>, Never> {
         return authRepository.signIn(credentials: emailCredentials)
             .map{ResultState.success($0)}
             .catch{error in
-                Just(ResultState.failure(error))
+                Just(ResultState.failure(error.localizedDescription))
             }
             .prepend(.loading)
             .eraseToAnyPublisher()
     }
-    
-    
 }

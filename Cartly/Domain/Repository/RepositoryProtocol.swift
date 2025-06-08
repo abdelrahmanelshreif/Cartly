@@ -1,17 +1,15 @@
-//
-//  RepositoryProtocol.swift
-//  Cartly
-//
-//  Created by Abdelrahman Elshreif on 27/5/25.
-//
-
 import Combine
 
-protocol RepositoryProtocol{
-    
-    func getBrands() -> AnyPublisher<[SmartCollection]?, Error>
-    func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, Error>
-//    func getCustomers() -> AnyPublisher<[CustomerResponse]? , Error>
-//    func getCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, Error>
+protocol RepositoryProtocol {
+    func fetchBrands() -> AnyPublisher<[BrandMapper], Error>
+    func fetchProducts(for collectionID: Int64) -> AnyPublisher<[ProductMapper], Error>
+    func fetchAllProducts() -> AnyPublisher<[ProductMapper], Error>
+  //  func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, Error>
+    func getSingleProduct(for productId: Int64) -> AnyPublisher<SingleProductResponse?, Error>
+    func getCustomers() -> AnyPublisher<AllCustomerResponse?, Error>
+    func getSingleCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, Error>
+    func getWishlistProductsForUser(whoseId id: String) -> AnyPublisher<[WishlistProduct]?, Error>
+    func addWishlistProductForUser(whoseId id: String, withProduct product: WishlistProduct) -> AnyPublisher<Void, Error>
+    func removeWishlistProductForUser(whoseId id: String, withProduct productId: String) -> AnyPublisher<Void, Error>
+    func isProductInWishlist(withProduct productId: String, forUser id: String)-> AnyPublisher<Bool, Error>
 }
- 

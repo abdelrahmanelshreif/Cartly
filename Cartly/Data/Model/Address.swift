@@ -6,6 +6,26 @@
 //
 import Foundation
 
+// MARK: - Address Wrapper
+struct AddressWrapper: Codable {
+    let address: Address
+}
+
+// MARK: - Address Response Wrapper
+struct CustomerAddressResponse: Codable {
+    let customerAddress: Address
+
+    enum CodingKeys: String, CodingKey {
+        case customerAddress = "customer_address"
+    }
+}
+
+// MARK: - Address List Response
+struct AddressesListResponse: Codable {
+    let addresses: [Address]
+}
+
+
 // MARK: - Address Model
 struct Address: Codable {
     let address1: String?
@@ -15,7 +35,7 @@ struct Address: Codable {
     let countryCode: String?
     let countryName: String?
     let company: String?
-    let customerId: Int64?
+    var customerId: Int64? = nil
     let firstName: String?
     let id: Int64?
     let lastName: String?
@@ -24,6 +44,7 @@ struct Address: Codable {
     let province: String?
     let provinceCode: String?
     let zip: String?
+    let isDefault: Bool?
     
     enum CodingKeys: String, CodingKey {
         case address1
@@ -33,7 +54,6 @@ struct Address: Codable {
         case countryCode = "country_code"
         case countryName = "country_name"
         case company
-        case customerId = "customer_id"
         case firstName = "first_name"
         case id
         case lastName = "last_name"
@@ -42,5 +62,16 @@ struct Address: Codable {
         case province
         case provinceCode = "province_code"
         case zip
+        case isDefault = "default"
+
     }
 }
+struct DeleteErrorResponse: Codable {
+    let errors: DeleteError
+
+    struct DeleteError: Codable {
+        let base: [String]
+    }
+}
+
+struct EmptyResponse: Codable {}

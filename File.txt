@@ -1,0 +1,1 @@
+ForEach(showAllReviews ? reviews : Array(reviews.prefix(maxPreviewReviews)), id: \.id) { review in

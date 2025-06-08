@@ -9,19 +9,16 @@ import Foundation
 import Combine	
 
 class AuthRepositoryImpl: AuthRepositoryProtocol {
-    typealias CredentialsType = EmailCredentials
-    typealias SignUpDataType = SignUpData
-    typealias UserType = CustomerResponse
-    typealias Token = String
-    
+
     let firebaseAuthClient: FirebaseServiceProtocol
-    let shopifyAuthClient: ShopifyServices		
-    
+    let shopifyAuthClient: ShopifyServicesProtocol
+    let userSessionServices: UserSessionServiceProtocol
     static let shared = AuthRepositoryImpl()
     
     private init() {
         firebaseAuthClient = FirebaseServices()
         shopifyAuthClient = ShopifyServices()
+        userSessionServices = UserSessionService()
     }
     
     func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
@@ -60,4 +57,21 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
         return firebaseAuthClient.signOut()
             .eraseToAnyPublisher()
     }
+    
+    func getCurrentLoggedInUserId() -> String? {
+        return userSessionServices.getCurrentUserId()
+    }
+    
+    func getCurrentUserEmail() -> String? {
+        return userSessionServices.getCurrentUserEmail()
+    }
+    
+    func getCurrentUserVerificationStatus() -> Bool? {
+        return userSessionServices.isUserEmailVerified()
+    }
+    
+    func isUserLoggedIn() -> Bool? {
+        return userSessionServices.isUserLoggedIn()
+    }
+    
 }
