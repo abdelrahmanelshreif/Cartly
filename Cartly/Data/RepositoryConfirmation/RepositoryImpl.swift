@@ -1,6 +1,5 @@
 import Combine
 
-
 class RepositoryImpl: RepositoryProtocol{
     
     private let remoteDataSource: RemoteDataSourceProtocol
@@ -20,14 +19,31 @@ class RepositoryImpl: RepositoryProtocol{
             .eraseToAnyPublisher()
     }
     
-    func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, any Error> {
-        return remoteDataSource.getProducts(from: collectionID)
+    func fetchProducts(for collectionID: Int64) -> AnyPublisher<[ProductMapper], any Error> {
+        return remoteDataSource.fetchProducts(from: collectionID)
+            .tryMap {
+                guard let products = $0?.products else {
+                    throw ErrorType.noData
+                }
+                return DataMapper.createProducts(from: products)
+            }
+            .eraseToAnyPublisher()
     }
     
-    func getSingleProduct(for productId: Int) -> AnyPublisher<SingleProductResponse?, any Error> {
+    func fetchAllProducts() -> AnyPublisher<[ProductMapper], any Error> {
+        return remoteDataSource.fetchAllProducts()
+            .tryMap {
+                guard let products = $0?.products else {
+                    throw ErrorType.noData
+                }
+                return DataMapper.createProducts(from: products)
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func getSingleProduct(for productId: Int64) -> AnyPublisher<SingleProductResponse?, any Error> {
         return remoteDataSource.getSingleProduct(for: productId)
     }
-    
     
     func getCustomers() -> AnyPublisher<AllCustomerResponse?, any Error> {
         return remoteDataSource.getCustomers()

@@ -15,12 +15,12 @@ struct HomeTabView: View {
                 }
             MyFavouriteScreen()
                 .tabItem {
-                    Image(systemName: "bag")
+                    Image(systemName: "heart.fill")
                     Text("Favourites ")
                 }
             ProfileScreen()
                 .tabItem {
-                    Image(systemName: "bag")
+                    Image(systemName: "person.crop.circle.fill")
                     Text("Profile ")
                 }
         }

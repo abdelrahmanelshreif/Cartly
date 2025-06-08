@@ -118,7 +118,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 .collection(self.subcollection)
                 .document(productId)
                 .delete{ error in
-                    if let error = error {
+                    if error != nil {
                         promise(.failure(AppError.firestoreNotAvailable))
                     }
                     
@@ -137,7 +137,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 .document(userId)
                 .collection(self.subcollection)
                 .getDocuments{ snapshot , error in
-                    guard let error = error else{
+                    guard error != nil else{
                         promise(.failure(AppError.failedFetchingDataFromNetwork))
                         return
                     }

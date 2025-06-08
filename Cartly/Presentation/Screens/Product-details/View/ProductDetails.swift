@@ -9,18 +9,18 @@ import SwiftUI
 
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
-    let productId: Int
+    let productId: Int64
 
     @State private var selectedImageIndex = 0
     @State private var selectedSize = ""
     @State private var selectedColor = ""
     @State private var quantity = 1
-  
-    init(productId: Int, getProductUseCase: GetProductDetailsUseCaseProtocol) {
+
+    init(productId: Int64) {
         self.productId = productId
-        self._viewModel = StateObject(
+        _viewModel = StateObject(
             wrappedValue: ProductDetailsViewModel(
-                getProductUseCase: getProductUseCase))
+                getProductUseCase: GetProductDetailsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())))))
     }
 
     var body: some View {
@@ -29,7 +29,7 @@ struct ProductDetailsView: View {
                 VStack {
                     if let resultState = viewModel.resultState {
                         switch resultState {
-                        case .success(let product):
+                        case let .success(product):
                             ProductDetailsContentView(
                                 product: product,
                                 reviews: MockReviewData.productReviews,
@@ -38,7 +38,7 @@ struct ProductDetailsView: View {
                                 selectedColor: $selectedColor,
                                 quantity: $quantity
                             )
-                        case .failure(let error):
+                        case let .failure(error):
                             ErrorView(error: error) {
                                 viewModel.getProduct(for: productId)
                             }
@@ -65,9 +65,9 @@ struct ProductDetailsContentView: View {
     @Binding var selectedSize: String
     @Binding var selectedColor: String
     @Binding var quantity: Int
-    
+
     private let maxPreviewReviews = 2
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -86,14 +86,14 @@ struct ProductDetailsContentView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     HStack {
                         RatingView(rating: product.rating)
                         Text("(\(product.reviewCount) reviews)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     HStack {
                         Text("$\(product.price, specifier: "%.2f")")
                             .font(.title)
@@ -107,40 +107,41 @@ struct ProductDetailsContentView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     Divider()
-                    
+
                     if !product.availableSizes.isEmpty {
                         SizeSelectionView(
                             sizes: product.availableSizes,
                             selectedSize: $selectedSize
                         )
                     }
-                    
+
                     if !product.availableColors.isEmpty {
                         ColorSelectionView(
                             colors: product.availableColors,
                             selectedColor: $selectedColor
                         )
                     }
-                    
+
                     QuantitySelectionView(quantity: $quantity)
-                    
+
                     Divider()
-                    
+
                     ProductDescriptionView(description: product.description)
-                    
+
                     Divider()
 
                     // MARK: - Reviews Section
+
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Text("Customer Reviews")
                                 .font(.title3)
                                 .fontWeight(.semibold)
-                            
+
                             Spacer()
-                            
+
                             if reviews.count > maxPreviewReviews {
                                 Button(action: {
                                     withAnimation(.easeInOut(duration: 0.3)) {
@@ -157,7 +158,7 @@ struct ProductDetailsContentView: View {
                                 .foregroundColor(.blue)
                             }
                         }
-                        
+
                         LazyVStack(spacing: 12) {
                             ForEach(showAllReviews ? reviews : Array(reviews.prefix(maxPreviewReviews)), id: \.id) { review in
                                 ReviewCardView(review: review)
@@ -170,7 +171,6 @@ struct ProductDetailsContentView: View {
                     }
 
                     Button(action: {
-                        
                     }) {
                         Text("Add to Cart")
                             .font(.headline)
@@ -197,15 +197,19 @@ struct ProductDetailsContentView: View {
     }
 }
 
-// MARK: - Preview
-struct ProductDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProductDetailsView(
-            productId: 8_135_647_101_111,
-            getProductUseCase: GetProductDetailsUseCase(
-                repository: RepositoryImpl(
-                    remoteDataSource: RemoteDataSourceImpl(
-                        networkService: AlamofireService())))
-        )
+#if false
+
+    // MARK: - Preview
+
+    struct ProductDetailsView_Previews: PreviewProvider {
+        static var previews: some View {
+            ProductDetailsView(
+                productId: 8135647101111,
+                getProductUseCase: GetProductDetailsUseCase(
+                    repository: RepositoryImpl(
+                        remoteDataSource: RemoteDataSourceImpl(
+                            networkService: AlamofireService())))
+            )
+        }
     }
-}
+#endif

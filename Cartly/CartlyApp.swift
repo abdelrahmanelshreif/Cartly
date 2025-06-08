@@ -24,14 +24,11 @@ struct CartlyApp: App {
     let persistenceController = PersistenceController.shared
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
-    let viewModel = HomeViewModel(getBrandUseCase: GetBrandsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()))))
-
+    
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                HomeTabView()
-            }
+            RootView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

@@ -2,11 +2,12 @@ import SwiftUI
 
 struct CartButton: View {
     let cartState: ResultState<Int>
-
+    @EnvironmentObject var router: AppRouter
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Button(action: {
                 // Handle cart tap
+                router.push(.Cart)
             }) {
                 Image(systemName: "cart.fill")
                     .resizable()

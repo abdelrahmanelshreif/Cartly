@@ -8,7 +8,7 @@ import Combine
 import Foundation
 
 protocol GetProductDetailsUseCaseProtocol{
-    func execute(productId:Int) -> AnyPublisher<Result<Product?,Error>,Never>
+    func execute(productId:Int64) -> AnyPublisher<Result<Product?,Error>,Never>
 }
 
 class GetProductDetailsUseCase : GetProductDetailsUseCaseProtocol{
@@ -19,7 +19,7 @@ class GetProductDetailsUseCase : GetProductDetailsUseCaseProtocol{
         self.repository = repository
     }
   
-    func execute(productId: Int) -> AnyPublisher<Result<Product?, Error>, Never> {
+    func execute(productId: Int64) -> AnyPublisher<Result<Product?, Error>, Never> {
         return repository.getSingleProduct(for: productId)
             .map{
                 Result.success($0?.product)

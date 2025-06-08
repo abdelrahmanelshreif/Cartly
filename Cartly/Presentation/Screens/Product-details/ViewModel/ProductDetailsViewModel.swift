@@ -18,7 +18,7 @@ class ProductDetailsViewModel:ObservableObject{
     
     private var cancellables = Set<AnyCancellable>()
 
-    func getProduct(for product: Int) {
+    func getProduct(for product: Int64) {
         getProductUseCase.execute(productId: product)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in

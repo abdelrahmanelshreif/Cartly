@@ -1,18 +1,26 @@
-//
-//  ProductSectionBody.swift
-//  Cartly
-//
-//  Created by Khaled Mustafa on 05/06/2025.
-//
-
 import SwiftUI
 
 struct ProductSectionBody: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    let products: [ProductMapper]
+    let onProductTap: (Int64) -> Void
 
-#Preview {
-    ProductSectionBody()
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+            ], spacing: 16) {
+                ForEach(products) { product in
+                    ProductCardView(product: product)
+                        .onTapGesture {
+                            if let product_ID = product.product_ID {
+                                onProductTap(product_ID)
+                            }
+                        }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+        }
+    }
 }

@@ -1,7 +1,7 @@
 import SwiftUI
-
 struct HomeScreen: View {
     @StateObject private var viewModel: HomeViewModel
+    @EnvironmentObject var router: AppRouter
 
     init() {
         _viewModel = StateObject(wrappedValue:
@@ -17,33 +17,40 @@ struct HomeScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            /// 1
             HomeToolbar(cartState: viewModel.cartState)
-            /// 2
+
             Ads()
+
             Spacer()
 
-            /// 3
             SectionHeader(headerText: "Brands")
                 .padding(.horizontal)
-                .padding(.bottom,  4)
+                .padding(.bottom, 4)
+
             Spacer()
-            /// 4
-            Group{
-                switch viewModel.brandState{
+
+            Group {
+                switch viewModel.brandState {
                 case .loading:
-                    ProgressView()
-                case .success(let brands):
-                    BrandSectionBody(brands: brands)
-                case .failure(let error):
-                    Text(error)
+                    ProgressView("Loading brands...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                case let .success(brands):
+                    BrandSectionBody(brands: brands) { brandId, brandTitle in
+                        router.push(.Products(brandId, brandTitle))
+                    }
+                    
+                case .failure(_):
+                    Text("Fail")
                 }
             }
+
             Spacer()
-            .onAppear {
-                viewModel.loadBrands()
-                viewModel.loadCartItemCount()
-            }
         }
+        .onAppear {
+            viewModel.loadBrands()
+            viewModel.loadCartItemCount()
+        }
+        .background(Color(.systemGroupedBackground))
     }
 }

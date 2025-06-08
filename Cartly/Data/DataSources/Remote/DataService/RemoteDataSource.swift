@@ -3,9 +3,11 @@ import Combine
 protocol RemoteDataSourceProtocol {
     func fetchBrands() -> AnyPublisher<SmartCollectionsResponse?, Error>
 
-    func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, Error>
+    func fetchProducts(from collection_id: Int64) -> AnyPublisher<ProductListResponse?, Error>
     
-    func getSingleProduct(for productId:Int) -> AnyPublisher<SingleProductResponse? , Error>
+    func fetchAllProducts() -> AnyPublisher<ProductListResponse?, Error>
+    
+    func getSingleProduct(for productId:Int64) -> AnyPublisher<SingleProductResponse? , Error>
     
     func getCustomers() -> AnyPublisher<AllCustomerResponse?, Error>
     
@@ -13,7 +15,7 @@ protocol RemoteDataSourceProtocol {
 }
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
-   
+    
     private let networkService: NetworkServiceProtocol
     
     init(networkService: NetworkServiceProtocol) {
@@ -27,19 +29,21 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
         return networkService.request(request, responseType: SmartCollectionsResponse.self)
     }
 
-    func getProducts(from collection_id: Int) -> AnyPublisher<[Product]?, any Error> {
-        let path = "/products.json?collection_id=\(collection_id)"
-        let apiRequest = APIRequest(withPath: path)
-
-        return networkService.request(apiRequest, responseType: ProductListResponse.self)
-            .map {
-                $0?.products ?? []
-            }
-            .eraseToAnyPublisher()
+    func fetchProducts(from collection_id: Int64) -> AnyPublisher<ProductListResponse?, any Error> {
+        let request = APIRequest(
+            withPath: "/products.json?collection_id=\(collection_id)"
+        )
+        return networkService.request(request, responseType: ProductListResponse.self)
     }
     
+    func fetchAllProducts() -> AnyPublisher<ProductListResponse?, any Error> {
+        let request = APIRequest(
+            withPath: "/products.json"
+        )
+        return networkService.request(request, responseType: ProductListResponse.self)
+    }
     
-    func getSingleProduct(for productId: Int) -> AnyPublisher<SingleProductResponse?, any Error> {
+    func getSingleProduct(for productId: Int64) -> AnyPublisher<SingleProductResponse?, any Error> {
         let requset = APIRequest(
             withMethod: .GET,
             withPath: "/products/\(productId).json")
