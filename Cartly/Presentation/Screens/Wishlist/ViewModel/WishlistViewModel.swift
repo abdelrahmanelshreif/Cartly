@@ -11,7 +11,10 @@ class WishlistViewModel: ObservableObject {
     @Published var showWishlistAlert = false
     @Published var wishlistAlertMessage = ""
     @Published var atWishlist = false
-
+    @Published var userWishlist:[WishlistProduct] = []
+    @Published var isLoading = true
+    @Published var error = ""
+    @Published var isAuthorized = false
     
     private let getWishlistUseCase: GetWishlistUseCaseProtocol
     private let addProductUseCase: AddProductToWishlistUseCaseProtocol
@@ -104,11 +107,38 @@ class WishlistViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func getUserWishlist(){
+        userWishlist = []
+        isLoading = true
+        getWishlistUseCase.execute(userId: getCurrentUser.execute().id)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("Fetching Wishlist has been Done")
+                case .failure(let error):
+                    print("Fetching Wishlist Failed \(error.localizedDescription)")
+                }
+            }, receiveValue: { [weak self] result in
+                guard let wishlistProducts = result else{
+                    self?.isLoading = false
+                    self?.error = "Failed to fetch you wishlist please try again later..."
+                    return
+                }
+                self?.userWishlist = wishlistProducts
+                self?.isLoading = false
+            }).store(in: &cancellables)
+    }
+    
     func toggleWishlist(product: ProductInformationEntity) {
         if atWishlist {
             removeProductAtWishlist(productId: String(product.id))
         } else {
             addProduct(product: product)
         }
+    }
+    
+    func checkAuthorization(){
+        self.isAuthorized = getCurrentUser.execute().sessionStatus
     }
 }

@@ -16,6 +16,7 @@
 		725E4CB82DF1847C00F900E8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 725E4CB72DF1847C00F900E8 /* FirebaseFirestore */; };
 		725E4CBD2DF1853800F900E8 /* Pods_Cartly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F009826A01BD8CB4D751DB8B /* Pods_Cartly.framework */; };
 		725E4CBE2DF1853800F900E8 /* Pods_Cartly.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F009826A01BD8CB4D751DB8B /* Pods_Cartly.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		72CAA0CB2DF50651007F6AD2 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 72CAA0CA2DF50651007F6AD2 /* Shimmer */; };
 		A15D686B893B73960601A9C4 /* Pods_CartlyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC8A2D5C271F39DE03E8A01E /* Pods_CartlyTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -105,6 +106,7 @@
 				725E4CBD2DF1853800F900E8 /* Pods_Cartly.framework in Frameworks */,
 				725E4CB02DF1847C00F900E8 /* FirebaseAuth in Frameworks */,
 				724662052DEB6CEE00CE2597 /* GoogleSignInSwift in Frameworks */,
+				72CAA0CB2DF50651007F6AD2 /* Shimmer in Frameworks */,
 				725E4CB82DF1847C00F900E8 /* FirebaseFirestore in Frameworks */,
 				725E4CB62DF1847C00F900E8 /* FirebaseDatabase in Frameworks */,
 				725E4CB42DF1847C00F900E8 /* FirebaseCore in Frameworks */,
@@ -204,6 +206,7 @@
 				725E4CB32DF1847C00F900E8 /* FirebaseCore */,
 				725E4CB52DF1847C00F900E8 /* FirebaseDatabase */,
 				725E4CB72DF1847C00F900E8 /* FirebaseFirestore */,
+				72CAA0CA2DF50651007F6AD2 /* Shimmer */,
 			);
 			productName = Cartly;
 			productReference = 72EB161B2DE3194600C45508 /* Cartly.app */;
@@ -289,6 +292,7 @@
 			packageReferences = (
 				724662012DEB6CEE00CE2597 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				725E4CAA2DF1847C00F900E8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				72CAA0C92DF50651007F6AD2 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 72EB161C2DE3194600C45508 /* Products */;
@@ -780,6 +784,14 @@
 				minimumVersion = 11.14.0;
 			};
 		};
+		72CAA0C92DF50651007F6AD2 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -812,6 +824,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 725E4CAA2DF1847C00F900E8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		72CAA0CA2DF50651007F6AD2 /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72CAA0C92DF50651007F6AD2 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

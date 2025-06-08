@@ -17,6 +17,7 @@ struct WishlistProduct: Codable, Identifiable, Equatable {
     let productType: String
     let status: String?
     let image: String?
+    let price: Double?
     
     
     static func == (lhs: WishlistProduct, rhs: WishlistProduct) -> Bool {

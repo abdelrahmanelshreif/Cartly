@@ -15,7 +15,8 @@ extension WishlistProduct {
             vendor: entity.vendor,
             productType: "N/A", 
             status: entity.variants.first?.isAvailable == true ? "active" : "inactive",
-            image: entity.images.first?.url
+            image: entity.images.first?.url,
+            price: entity.price
         )
     }
 }
