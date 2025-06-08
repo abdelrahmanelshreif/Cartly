@@ -9,16 +9,10 @@ import Combine
 import Alamofire
 
 protocol ShopifyServicesProtocol {
-    associatedtype SignUpDataType: Codable
-    associatedtype UserType: Codable
-    
-    func signup(userData: SignUpDataType) -> AnyPublisher<UserType?, Error>
+    func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>
 }
 
 final class ShopifyServices: ShopifyServicesProtocol {
-    typealias SignUpDataType = SignUpData
-    typealias UserType = CustomerResponse
-    typealias Credentials = EmailCredentials
     let networkService: NetworkServiceProtocol = AlamofireService()
     
     func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {

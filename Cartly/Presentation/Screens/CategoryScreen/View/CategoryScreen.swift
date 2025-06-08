@@ -10,14 +10,14 @@ struct CategoryScreen: View {
                 repository: RepositoryImpl(
                     remoteDataSource: RemoteDataSourceImpl(
                         networkService: AlamofireService()
-                    )
+                    ), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
                 )
             ),
             getProductByCategoryUsecase: GetProductsForCategoryId(
                 repository: RepositoryImpl(
                     remoteDataSource: RemoteDataSourceImpl(
                         networkService: AlamofireService()
-                    )
+                    ), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
                 )
             )
         ))

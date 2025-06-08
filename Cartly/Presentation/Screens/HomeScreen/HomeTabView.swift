@@ -13,7 +13,7 @@ struct HomeTabView: View {
                     Image(systemName: "bag")
                     Text("Categories")
                 }
-            MyFavouriteScreen()
+            WishlistScreen()
                 .tabItem {
                     Image(systemName: "heart.fill")
                     Text("Favourites ")

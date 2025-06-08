@@ -10,12 +10,14 @@ import FirebaseFirestore
 
 struct WishlistProduct: Codable, Identifiable, Equatable {
     @DocumentID var id: String?
+    let productId: String
     let title: String
-    let bodyHtml: Double
+    let bodyHtml: String
     let vendor: String?
     let productType: String
     let status: String?
     let image: String?
+    let price: Double?
     
     
     static func == (lhs: WishlistProduct, rhs: WishlistProduct) -> Bool {

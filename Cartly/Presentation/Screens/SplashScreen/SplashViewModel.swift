@@ -9,17 +9,13 @@ import Combine
 import SwiftUI
 
 final class SplashViewModel: ObservableObject {
-
     func navigate(router: AppRouter) {
         router.setRoot(.main)
     }
+//        if UserDefaultsManager.getLoginStatus() {
+//            router.setRoot(.main)
+//        } else {
+//            router.setRoot(.authentication)
+//        }
 }
-
-#if false
-        if UserDefaultsManager.getLoginStatus() {
-            router.setRoot(.main)
-        } else {
-            router.setRoot(.authentication)
-        }
-#endif
 

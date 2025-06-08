@@ -8,7 +8,7 @@ struct ProductScreen: View {
     init(brandId: Int64, brandTitle: String) {
         self.brandId = brandId
         self.brandTitle = brandTitle
-        _viewModel = StateObject(wrappedValue: ProductsViewModel(useCase: GetProductsForBrandId(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService())))))
+        _viewModel = StateObject(wrappedValue: ProductsViewModel(useCase: GetProductsForBrandId(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))))
     }
 
     var body: some View {
@@ -24,6 +24,7 @@ struct ProductScreen: View {
                         EmptyProductsView()
                     } else {
                         ProductSectionBody(products: products) { productId in
+                            print("hiiiiiiiii1")
                             router.push(.productDetail(productId))
                         }
                     }
