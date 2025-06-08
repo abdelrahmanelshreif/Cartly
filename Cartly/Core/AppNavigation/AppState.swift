@@ -11,6 +11,7 @@ enum Route: Hashable {
     case Products(Int64, String)
     case productDetail(Int64)
     case Cart
+    case Search
 }
 
 enum RootState {

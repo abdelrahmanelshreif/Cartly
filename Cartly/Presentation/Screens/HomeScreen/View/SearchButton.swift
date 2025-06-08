@@ -5,6 +5,7 @@ struct SearchButton: View {
     var body: some View {
         Button(action: {
             // Handle search tap to navigate to search screen
+            router.push(.Search)
         }) {
             Image(systemName: "magnifyingglass")
                 .font(.title2)

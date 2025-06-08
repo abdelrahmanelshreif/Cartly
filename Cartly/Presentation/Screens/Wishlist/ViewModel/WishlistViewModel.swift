@@ -171,5 +171,6 @@ class WishlistViewModel: ObservableObject {
     
     func checkAuthorization(){
         self.isAuthorized = getCurrentUser.execute().sessionStatus
+        print("isAuthorized: \(getCurrentUser.execute().sessionStatus)")
     }
 }

@@ -35,12 +35,6 @@ struct WishlistScreen: View {
         }
         .navigationTitle("My Wishlist")
         .navigationBarTitleDisplayMode(.large)
-        .onAppear {
-            wishlistViewModel.checkAuthorization()
-            if wishlistViewModel.isAuthorized {
-                wishlistViewModel.getUserWishlist()
-            }
-        }
     }
 }
 
@@ -65,6 +59,13 @@ struct WishlistContentView: View {
                 }
             }
             .padding(.vertical)
+        }
+        .onAppear {
+            print("khaleeeeeeeed")
+            viewModel.checkAuthorization()
+            if viewModel.isAuthorized {
+                viewModel.getUserWishlist()
+            }
         }
     }
 }

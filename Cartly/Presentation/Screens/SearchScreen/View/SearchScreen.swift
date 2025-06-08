@@ -1,53 +1,33 @@
+//
+//  SearchScreen.swift
+//  Cartly
+//
+//  Created by Khaled Mustafa on 08/06/2025.
+//
+
 import SwiftUI
 
-struct CategoryScreen: View {
-    @StateObject var viewModel: CategoryViewModel
-    
-    init() {
-        _viewModel = StateObject(wrappedValue: CategoryViewModel(
-            allProductsUseCase: GetAllProductsUseCase(
-                repository: RepositoryImpl(
-                    remoteDataSource: RemoteDataSourceImpl(
-                        networkService: AlamofireService()
-                    ), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
-                )
-            ),
-            getProductByCategoryUsecase: GetProductsForCategoryId(
-                repository: RepositoryImpl(
-                    remoteDataSource: RemoteDataSourceImpl(
-                        networkService: AlamofireService()
-                    ), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
-                )
-            )
-        ))
-    }
+struct SearchScreen: View {
+    @StateObject var viewModel: SearchViewModel
+    @EnvironmentObject var router: AppRouter
 
+    init() {
+        _viewModel = StateObject(wrappedValue: SearchViewModel(allProductsUseCase: GetAllProductsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))))
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
-            CategoryToolbar(cartState: viewModel.cartState)
-
             ScrollView {
                 VStack(spacing: 16) {
                     SearchBar(text: $viewModel.searchedText)
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
-
-                    VStack(spacing: 16) {
-                        PriceRangeSlider(
-                            minPrice: $viewModel.currentMinPrice,
-                            maxPrice: $viewModel.currentMaxPrice,
-                            priceRange: viewModel.minPrice ... viewModel.maxPrice
-                        )
-
-                        ProductTypeSegmentControl(selectedType: $viewModel.selectedProductType)
-
-                        CategoryFilterButton(
-                            selectedCategory: viewModel.selectedCategory,
-                            showingSheet: $viewModel.showingCategorySheet
-                        )
-                    }
+                    PriceRangeSlider(
+                        minPrice: $viewModel.currentMinPrice,
+                        maxPrice: $viewModel.currentMaxPrice,
+                        priceRange: viewModel.minPrice ... viewModel.maxPrice
+                    )
                     .padding(.horizontal, 16)
-
                     Group {
                         switch viewModel.productsState {
                         case .loading:
@@ -138,6 +118,7 @@ struct CategoryScreen: View {
                                         ForEach(viewModel.filteratedProducts) { product in
                                             ProductCardView(product: product)
                                                 .transition(.scale.combined(with: .opacity))
+                                                
                                         }
                                     }
                                     .padding(.horizontal, 20)
@@ -154,17 +135,10 @@ struct CategoryScreen: View {
                 viewModel.loadsProducts()
             }
         }
-        .sheet(isPresented: $viewModel.showingCategorySheet) {
-            CategoryBottomSheet(
-                selectedCategory: $viewModel.selectedCategory,
-                onCategorySelected: { category in
-                    viewModel.selectedCategory = category
-                    viewModel.loadProductsByCategory(categoryId: category.id)
-                }
-            )
-        }
+        .navigationTitle("Search in All Products")
+        .navigationBarTitleDisplayMode(.automatic)
+        .navigationBarBackButtonHidden(false)
         .onAppear {
-            viewModel.selectedCategory = .all
             viewModel.loadsProducts()
             viewModel.loadCartItemCount()
         }

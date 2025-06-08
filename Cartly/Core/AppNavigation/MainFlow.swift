@@ -21,6 +21,7 @@ struct MainFlow: View {
                     case let .Products(brandId, brandTitle): ProductScreen(brandId: brandId, brandTitle: brandTitle)
                     case let .productDetail(productId): ProductDetailsView(productId: productId)
                     case .Cart: MyCartDemo()
+                    case .Search: SearchScreen()
                     }
                 }
         }
