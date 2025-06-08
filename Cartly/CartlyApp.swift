@@ -35,7 +35,9 @@ struct CartlyApp: App {
 
         WindowGroup {
             NavigationView {
-                ProductDetailsView(productId: 8_135_647_985_847)
+//                ProductDetailsView(productId: 8_135_647_985_847)
+                WishlistScreen()
+                
             }
         }
     }

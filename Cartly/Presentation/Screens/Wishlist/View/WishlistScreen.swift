@@ -27,9 +27,8 @@ struct WishlistScreen: View {
                 } else {
                     WishlistContentView(
                         isLoading: $wishlistViewModel.isLoading,
-                        wishlistProducts: wishlistViewModel.userWishlist,
-                        viewModel: wishlistViewModel
-                    )
+                        viewModel: wishlistViewModel,
+                        wishlistProducts: wishlistViewModel.userWishlist)
                 }
             } else {
                 GuestModeView()
@@ -48,13 +47,13 @@ struct WishlistScreen: View {
 
 struct WishlistContentView: View {
     @Binding var isLoading: Bool
+    @StateObject var viewModel: WishlistViewModel
     let wishlistProducts: [WishlistProduct]
-    @ObservedObject var viewModel: WishlistViewModel
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 12) { 
-                ForEach(wishlistProducts) { product in
+            LazyVStack(spacing: 12) {
+                ForEach(viewModel.userWishlist) { product in
                     WishlistItemView(
                         isLoading: $isLoading,
                         product: product,
