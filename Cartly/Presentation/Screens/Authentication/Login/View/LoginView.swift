@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject var viewModel = LoginViewModel(loginUseCase: FirebaseShopifyLoginUseCase(authRepository: AuthRepositoryImpl.shared, customerRepository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())), userSessionService: UserSessionService()), validator: LoginValidator())
-    	
+    @EnvironmentObject var router: AppRouter
+    @StateObject var viewModel = DIContainer.shared.resolveLoginViewModel()
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
 
@@ -43,6 +43,10 @@ struct LoginView: View {
                     case .success(let user):
                         Text("Welcome back, \(user)!")
                             .foregroundColor(.green)
+                            .onAppear{
+                                router.setRoot(.main)
+                            }
+                        
                     case .failure(let error):
                         Text("Error: \(error)")
                             .foregroundColor(.red)
@@ -62,7 +66,9 @@ struct LoginView: View {
                             .cornerRadius(15)
                     }
 
-                    Button(action: {}) {
+                    Button(action: {
+                        
+                    }) {
                         Text("Don't have acoount ?")
                             .font(.footnote)
                             .foregroundColor(.gray)

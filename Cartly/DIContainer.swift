@@ -24,7 +24,7 @@ class DIContainer{
         return SearchProductAtWishlistUseCase(repository: resolveShopifyRepository())
     }
     
-    private func resolveLoginViewModel() -> LoginViewModel{
+    func resolveLoginViewModel() -> LoginViewModel{
         return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator)
     }
     
