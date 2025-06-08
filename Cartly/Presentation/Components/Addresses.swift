@@ -1,114 +1,165 @@
-//
-//  Addresses.swift
-//  Cartly
-//
-//  Created by Khalid Amr on 01/06/2025.
-//
-
 import SwiftUI
 import MapKit
 
-struct Addresses: Identifiable {
-    let id = UUID()
-    let name: String
-    let street: String
-    let city: String
-    let postalCode: String
-    let coordinate: CLLocationCoordinate2D
-}
+struct AddressesView: View {
+    @StateObject var viewModel: AddressesViewModel
 
-struct AddressMapView: View {
-    // Dummy address data
-    let dummyAddress = Addresses(
-        name: "Home",
-        street: "123 Main Street",
-        city: "San Francisco",
-        postalCode: "94105",
-        coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-    )
-    
-    @State private var cameraPosition: MapCameraPosition = .automatic
-    @State private var showingNewAddressSheet = false
-    
+    init(viewModel: AddressesViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            // Map Section
-            Map(position: $cameraPosition) {
-                Marker(dummyAddress.name, coordinate: dummyAddress.coordinate)
-                    .tint(.blue)
+        ZStack {
+            if viewModel.isLoading {
+                ProgressView()
+            } else {
+                addressContent
             }
-            .mapStyle(.standard)
-            .frame(height: 300)
-            .onAppear {
-                cameraPosition = .region(
-                    MKCoordinateRegion(
-                        center: dummyAddress.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    )
-                )
-            }
-            
-            // Address Details
-            VStack(alignment: .leading, spacing: 12) {
-                Text("CURRENT ADDRESS")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 16)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(dummyAddress.name)
-                        .font(.headline)
-                    Text(dummyAddress.street)
-                    Text("\(dummyAddress.city), \(dummyAddress.postalCode)")
-                }
-                .padding(.bottom, 8)
-                
-                Divider()
-                
-                // Action Buttons
-                HStack(spacing: 16) {
-                    Button(action: addNewAddress) {
-                        Text("Add New")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.blue)
-                    
-                    Button(action: selectAddress) {
-                        Text("Change")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue)
-                }
-                .padding(.top, 8)
-            }
-            .padding(20)
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .padding(20)
-            .offset(y: -40)
         }
-        .edgesIgnoringSafeArea(.top)
-        .sheet(isPresented: $showingNewAddressSheet) {
-            Text("Add New Address Screen")
-                .presentationDetents([.medium])
+        .fullScreenCover(isPresented: $viewModel.showLocationPicker) {
+            LocationPickerView { coordinate in
+                viewModel.handleLocationSelection(coordinate)
+            }
+        }
+        .sheet(isPresented: $viewModel.showAddAddressForm) {
+            AddressFormView { details in
+                viewModel.saveNewAddress(with: details)
+            }
+        }
+        .onAppear {
+            viewModel.loadAddresses()
+        }
+        .alert(isPresented: $viewModel.showError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.errorMessage),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
-    
-    private func addNewAddress() {
-        showingNewAddressSheet = true
-        print("Add New Address tapped")
+
+    private var addressContent: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                if let defaultAddress = viewModel.defaultAddress {
+                    defaultAddressView(defaultAddress)
+                }
+
+                addressButtons
+            }
+            .padding(.top)
+        }
     }
-    
-    private func selectAddress() {
-        print("Select Address tapped")
-        // Selection logic would go here
+
+    private func defaultAddressView(_ address: Address) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Default Address")
+                .font(.title3)
+                .fontWeight(.semibold)
+
+            HStack {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                Text(address.name ?? "")
+                    .font(.headline)
+            }
+
+            Text(address.address1 ?? "")
+            Text(address.city ?? "")
+            Text(address.phone ?? "")
+
+            if let mapView = mapPreview(for: address) {
+                mapView
+                    .allowsHitTesting(false)
+                    .frame(height: 100)
+                    .cornerRadius(8)
+                    .padding(.top, 8)
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+        .shadow(radius: 1)
+        .padding(.horizontal)
+    }
+
+    private var addressButtons: some View {
+        VStack(spacing: 12) {
+            Button(action: {
+                viewModel.showLocationPicker = true
+            }) {
+                Text("Add New Address")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+
+            Button(action: {
+                // Placeholder for future change-address flow
+                print("Change address tapped")
+            }) {
+                Text("Choose Another Address")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private func mapPreview(for address: Address) -> AnyView? {
+        guard
+            let latStr = address.address2?.split(separator: ",").first,
+            let lonStr = address.address2?.split(separator: ",").last,
+            let lat = Double(latStr),
+            let lon = Double(lonStr)
+        else {
+            return nil
+        }
+
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+
+        return Map(position: .constant(.camera(MapCamera(centerCoordinate: coordinate, distance: 1000)))) {
+            Annotation("Address Pin", coordinate: coordinate) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.title)
+                    .foregroundColor(.blue)
+                    .background(Color.white)
+                    .clipShape(Circle())
+            }
+        }
+        .eraseToAnyView()
     }
 }
 
-struct AddressMapView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddressMapView()
+extension View {
+    func eraseToAnyView() -> AnyView {
+        AnyView(self)
     }
+}
+
+#Preview {
+    AddressesView(
+        viewModel: AddressesViewModel(
+            fetchAddressesUseCase: FetchCustomerAddressesUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            ),
+            addAddressUseCase: AddCustomerAddressUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            ),
+            setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            )
+        )
+    )
 }

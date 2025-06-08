@@ -34,8 +34,7 @@ struct CartlyApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-               Ads()
-            }
+                AddressesView(viewModel: AddressesViewModel(fetchAddressesUseCase: FetchCustomerAddressesUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())), addAddressUseCase: AddCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())), setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))))           }
         }
     }
 }
