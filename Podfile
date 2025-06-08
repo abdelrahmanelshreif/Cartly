@@ -8,7 +8,6 @@ target 'Cartly' do
   # Pods for Cartly
   pod 'Alamofire'
 
-
   target 'CartlyTests' do
     inherit! :search_paths
     # Pods for testing

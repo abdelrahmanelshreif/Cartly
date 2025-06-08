@@ -8,6 +8,14 @@
 import Foundation
 
 // MARK: - Root Response Model
+struct AllDraftOrderResponse{
+    let draftOrder: [DraftOrder]
+    
+    enum CodingKeys: String, CodingKey {
+        case draftOrder = "draft_orders"
+    }
+}
+
 struct DraftOrderResponse: Codable {
     let draftOrder: DraftOrder
     

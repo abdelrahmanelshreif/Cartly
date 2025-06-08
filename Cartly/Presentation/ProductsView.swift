@@ -1,43 +1,44 @@
-import SwiftUI
-
-struct ProductsListView: View {
-    @StateObject var viewModel: ProductsViewModel
-    let collectionID: Int
-
-    var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                ProgressView("Loading...")
-
-            case let .failure(error):
-                VStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.largeTitle)
-                        .foregroundColor(.orange)
-                    Text("Failed to load products")
-                        .font(.headline)
-                    Text(error.localizedDescription)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-                .padding()
-
-            case let .success(products):
-                List(products, id: \.id) { product in
-                    VStack(alignment: .leading) {
-                        Text(product.title ?? "Untitled")
-                            .font(.headline)
-                        Text(product.vendor ?? "Unknown Vendor")
-                            .font(.subheadline)
-                    }
-                }
-            }
-        }
-        .onAppear {
-            viewModel.load(for: collectionID) 
-        }
-    }
-}
+//import SwiftUI
+//
+//struct ProductsListView: View {
+//    @StateObject var viewModel: HomeViewModel
+//
+//    var body: some View {
+//        NavigationView {
+//            switch viewModel.state {
+//            case .loading:
+//                ProgressView("Loading...")
+//
+//            case let .failure(errorMessage):
+//                VStack(spacing: 12) {
+//                    Image(systemName: "exclamationmark.triangle.fill")
+//                        .font(.largeTitle)
+//                        .foregroundColor(.orange)
+//                    Text("Failed to load products")
+//                        .font(.headline)
+//                    Text(errorMessage)
+//                        .font(.caption)
+//                        .foregroundColor(.red)
+//                        .multilineTextAlignment(.center)
+//                        .padding(.horizontal)
+//                }
+//                .padding()
+//
+//            case let .success(brands):
+////                List(brands, id: \.id) { brand in
+//                    VStack(alignment: .leading) {
+//                        Text(brand.title)
+//                            .font(.headline)
+//                        Text(brand.subtitle) // Replace with correct property
+//                            .font(.subheadline)
+//                    }
+//                }
+//            }
+//        }
+//        .onAppear {
+//            viewModel.loadBrands()
+//        }
+//        .navigationTitle("Brands")
+//
+//    }
+//}
