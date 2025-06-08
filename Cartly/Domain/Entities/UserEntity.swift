@@ -6,8 +6,8 @@
 //
 
 struct UserEntity : Identifiable{
-    let id: String
-    let email: String
+    let id: String?
+    let email: String?
     let emailVerificationStatus: Bool
     let sessionStatus: Bool
 }

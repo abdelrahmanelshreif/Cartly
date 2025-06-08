@@ -9,6 +9,7 @@ import Combine
 import SwiftUI
 
 struct ProductDetailsView: View {
+    @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel: ProductDetailsViewModel
     let productId: Int64
     @StateObject private var wishlistViewModel: WishlistViewModel
@@ -16,6 +17,8 @@ struct ProductDetailsView: View {
     @State private var selectedSize = ""
     @State private var selectedColor = ""
     @State private var quantity = 1
+    @State private var showLoginAlert = false
+    @State private var showLoginView = false
 
     init(productId: Int64) {
         self.productId = productId
@@ -31,7 +34,6 @@ struct ProductDetailsView: View {
     }
 
     var body: some View {
-        NavigationView {
             Group {
                 VStack {
                     if let resultState = viewModel.resultState {
@@ -45,7 +47,8 @@ struct ProductDetailsView: View {
                                 selectedImageIndex: $selectedImageIndex,
                                 selectedSize: $selectedSize,
                                 selectedColor: $selectedColor,
-                                quantity: $quantity
+                                quantity: $quantity,
+                                showLoginAlert: $showLoginAlert
                             )
                         case let .failure(error):
                             ErrorView(error: error) {
@@ -59,11 +62,37 @@ struct ProductDetailsView: View {
                     }
                 }
             }
+        .navigationBarTitleDisplayMode(.automatic)
+        .navigationBarBackButtonHidden(false)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    handleWishlistAction()
+                }) {
+                    Image(
+                        systemName: wishlistViewModel.atWishlist
+                            ? "heart.fill" : "heart"
+                    )
+                    .foregroundColor(
+                        wishlistViewModel.atWishlist ? .blue : .blue)
+                }
+            }
         }
         .onAppear {
             viewModel.getProduct(for: productId)
-//            wishlistViewModel.searchProductAtWishlist(
-//                productId: String(productId))
+            wishlistViewModel.checkAuthorization()
+            if wishlistViewModel.isAuthorized {
+                wishlistViewModel.searchProductAtWishlist(
+                    productId: String(productId))
+            }
+        }
+        .alert("Login Required", isPresented: $showLoginAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Login") {
+                router.setRoot(.authentication)
+            }
+        } message: {
+            Text(wishlistViewModel.wishlistAlertMessage)
         }
         .alert(isPresented: $wishlistViewModel.showWishlistAlert) {
             Alert(
@@ -71,6 +100,18 @@ struct ProductDetailsView: View {
                 message: Text(wishlistViewModel.wishlistAlertMessage),
                 dismissButton: .default(Text("OK"))
             )
+        }
+    }
+    
+    private func handleWishlistAction() {
+
+        wishlistViewModel.checkAuthorization()
+        if wishlistViewModel.isAuthorized {
+            if case .success(let product) = viewModel.resultState {
+                wishlistViewModel.toggleWishlist(product: product)
+            }
+        } else {
+            showLoginAlert = true
         }
     }
 }
@@ -85,6 +126,7 @@ struct ProductDetailsContentView: View {
     @Binding var selectedSize: String
     @Binding var selectedColor: String
     @Binding var quantity: Int
+    @Binding var showLoginAlert: Bool
 
     private let maxPreviewReviews = 2
 
@@ -207,8 +249,7 @@ struct ProductDetailsContentView: View {
                     }
 
                     Button(action: {
-                        // TODO: Khalid Amr
-                        // TODO: Add to Cart Functionality Will be Here ,....
+                        handleAddToCart()
                     }) {
                         Text("Add to Cart")
                             .font(.headline)
@@ -225,21 +266,6 @@ struct ProductDetailsContentView: View {
                 .padding(.horizontal)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    wishlistViewModel.toggleWishlist(product: product)
-                }) {
-                    Image(
-                        systemName: wishlistViewModel.atWishlist
-                            ? "heart.fill" : "heart"
-                    )
-                    .foregroundColor(
-                        wishlistViewModel.atWishlist ? .blue : .blue)
-                }
-            }
-        }
     }
 
     private func isValidSelection() -> Bool {
@@ -248,15 +274,15 @@ struct ProductDetailsContentView: View {
             product.availableColors.isEmpty || !selectedColor.isEmpty
         return sizeValid && colorValid
     }
-}
+    
+    private func handleAddToCart() {
 
-// MARK: - Preview
-
-struct ProductDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        //        ProductDetailsView(productId: 8_135_647_985_847)
-        ProductDetailsView(productId: 8135647985847)
-        //        ProductDetailsView(productId:  8_135_647_232_183)
-        //        ProductDetailsView(productId: 8_135_647_199_415)
+        wishlistViewModel.checkAuthorization()        
+        if wishlistViewModel.isAuthorized {
+            // TODO: Khalid Amr
+            // TODO: Add to Cart Functionality Will be Here ,....
+        } else {
+            showLoginAlert = true
+        }
     }
 }

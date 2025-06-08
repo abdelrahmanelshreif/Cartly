@@ -24,6 +24,19 @@ class DIContainer{
         return SearchProductAtWishlistUseCase(repository: resolveShopifyRepository())
     }
     
+    private func resolveLoginViewModel() -> LoginViewModel{
+        return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator)
+    }
+    
+    private func resolveLoginUseCase() -> FirebaseShopifyLoginUseCaseProtocol{
+        return FirebaseShopifyLoginUseCase(authRepository: resolveAuthenticationRepository(), customerRepository: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
+    }
+    private func resolveValidators() -> LoginValidatorProtocol{
+        return LoginValidator()
+    }
+    private func resolveUserSessionService() -> UserSessionServiceProtocol{
+        return UserSessionService()
+    }
     private func resolveGettingCurrentInfo() -> GetCurrentUserInfoUseCaseProtocol{
         return GetCurrentUserInfoUseCase(authenticationRepo: resolveAuthenticationRepository())
     }

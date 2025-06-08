@@ -17,8 +17,8 @@ class LoginViewModel: ObservableObject{
     private var cancellables = Set<AnyCancellable>()
     
     
-    let loginUseCase:FirebaseShopifyLoginUseCase
-    let validator:LoginValidator
+    let loginUseCase:FirebaseShopifyLoginUseCaseProtocol
+    let validator:LoginValidatorProtocol
     
     init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator) {
         self.loginUseCase = loginUseCase

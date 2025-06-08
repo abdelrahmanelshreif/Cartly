@@ -39,15 +39,24 @@ class WishlistViewModel: ObservableObject {
         self.searchProductAtWishlistUseCase = searchProductAtWishlistUseCase
     }
     
+    private func isUserAuthorized() -> Bool {
+        let user = getCurrentUser.execute()
+        return user.id != nil && user.sessionStatus
+    }
+    
     func addProduct(product: ProductInformationEntity) {
+        guard isUserAuthorized() else {
+            wishlistAlertMessage = "Please login to add items to your wishlist"
+            showWishlistAlert = true
+            return
+        }
 
         let wishlistProduct = WishlistProduct.from(entity: product)
         
-        addProductUseCase.execute(userId: getCurrentUser.execute().id, product: wishlistProduct)
+        addProductUseCase.execute(userId: getCurrentUser.execute().id!, product: wishlistProduct)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
-
                     if case .failure(let error) = completion {
                         self?.wishlistAlertMessage = "Failed to add product: \(error.localizedDescription)"
                         self?.showWishlistAlert = true
@@ -59,14 +68,18 @@ class WishlistViewModel: ObservableObject {
                     self.atWishlist = true
                     self.wishlistAlertMessage = "Product added to wishlist!"
                     self.showWishlistAlert = true
-
                 }
             )
             .store(in: &cancellables)
     }
     
     func searchProductAtWishlist(productId: String) {
-        searchProductAtWishlistUseCase.execute(userId: getCurrentUser.execute().id, productId: productId)
+        guard isUserAuthorized() else {
+            atWishlist = false
+            return
+        }
+        
+        searchProductAtWishlistUseCase.execute(userId: getCurrentUser.execute().id!, productId: productId)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { completion in
@@ -83,8 +96,13 @@ class WishlistViewModel: ObservableObject {
     }
     
     func removeProductAtWishlist(productId: String) {
+        guard isUserAuthorized() else {
+            wishlistAlertMessage = "Please login to manage your wishlist"
+            showWishlistAlert = true
+            return
+        }
 
-        removeProductUseCase.execute(userId: getCurrentUser.execute().id, productId: productId)
+        removeProductUseCase.execute(userId: getCurrentUser.execute().id!, productId: productId)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] status in
@@ -108,9 +126,16 @@ class WishlistViewModel: ObservableObject {
     }
     
     func getUserWishlist(){
+        guard isUserAuthorized() else {
+            userWishlist = []
+            isLoading = false
+            error = "Please login to view your wishlist"
+            return
+        }
+        
         userWishlist = []
         isLoading = true
-        getWishlistUseCase.execute(userId: getCurrentUser.execute().id)
+        getWishlistUseCase.execute(userId: getCurrentUser.execute().id!)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -131,6 +156,12 @@ class WishlistViewModel: ObservableObject {
     }
     
     func toggleWishlist(product: ProductInformationEntity) {
+        guard isUserAuthorized() else {
+            wishlistAlertMessage = "Please login to manage your wishlist"
+            showWishlistAlert = true
+            return
+        }
+        
         if atWishlist {
             removeProductAtWishlist(productId: String(product.id))
         } else {

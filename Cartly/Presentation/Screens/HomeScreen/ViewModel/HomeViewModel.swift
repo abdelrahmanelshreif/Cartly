@@ -13,7 +13,7 @@ class HomeViewModel: ObservableObject, HomeViewModelProtocol {
     private var cancellables: Set<AnyCancellable> = []
 
     init(
-        getBrandUseCase: GetBrandsUseCase,
+        getBrandUseCase: GetBrandsUseCase
     ) {
         self.getBrandUseCase = getBrandUseCase
     }

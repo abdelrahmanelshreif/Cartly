@@ -56,7 +56,11 @@ class UserSessionService: UserSessionServiceProtocol {
     }
     
     func getCurrentUserVerificationStatus() -> String? {
-        return userDefaults.string(forKey: Keys.isUserVerified)
+        return userDefaults.string(forKey: Keys.isUserVerified) ?? ""
+    }
+    
+    func getCurrentUserName() -> String? {
+        return userDefaults.string(forKey: Keys.userName) ?? "Cartly User"
     }
     
     func isUserLoggedIn() -> Bool? {
@@ -65,7 +69,7 @@ class UserSessionService: UserSessionServiceProtocol {
     
     func isUserEmailVerified() -> Bool? {
         let veirficationStatus =  userDefaults.string(forKey: Keys.isUserVerified)
-        let status:Bool = veirficationStatus ==  "invited" ? true : false
+        let status:Bool = veirficationStatus ?? "disabled" ==  "invited" ? true : false
         return status
     }
 }
