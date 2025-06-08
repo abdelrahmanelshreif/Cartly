@@ -228,9 +228,6 @@
 			);
 			name = Cartly;
 			packageProductDependencies = (
-				72AAAA452DE50A730052D37C /* FirebaseAuth */,
-				72AAAA472DE50A730052D37C /* FirebaseAuthCombine-Community */,
-				72AAAA492DE50A730052D37C /* FirebaseCore */,
 				724662022DEB6CEE00CE2597 /* GoogleSignIn */,
 				724662042DEB6CEE00CE2597 /* GoogleSignInSwift */,
 				72189A502DF100E000BA3F9E /* FirebaseAI */,
@@ -343,7 +340,6 @@
 			mainGroup = 72EB16122DE3194600C45508;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				72AAAA442DE50A730052D37C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				724662012DEB6CEE00CE2597 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				72189A4F2DF100E000BA3F9E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
