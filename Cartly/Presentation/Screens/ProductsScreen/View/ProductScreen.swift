@@ -23,12 +23,8 @@ struct ProductScreen: View {
                     if products.isEmpty {
                         EmptyProductsView()
                     } else {
-                        ProductSectionBody(products: products) { productId in
-                            print("hiiiiiiiii1")
-                            router.push(.productDetail(productId))
-                        }
+                        ProductSectionBody(products: products)
                     }
-
                 case let .failure(error):
                     ProductsErrorView(
                         title: "Failed to load products",

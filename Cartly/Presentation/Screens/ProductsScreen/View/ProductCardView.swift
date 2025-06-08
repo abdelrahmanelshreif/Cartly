@@ -3,6 +3,7 @@ import SwiftUI
 struct ProductCardView: View {
     let product: ProductMapper
     @State private var isFavorited = false
+    @EnvironmentObject var router: AppRouter
 
     #if false
         @AppStorage("selectedCurrency") private var selectedCurrency: String = "USD"
@@ -97,6 +98,9 @@ struct ProductCardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.gray.opacity(0.12), lineWidth: 1)
         )
+        .onTapGesture {
+            router.push(.productDetail(product.product_ID!))
+        }
     }
 
     private func formatPrice(_ priceString: String) -> String {
@@ -121,51 +125,3 @@ struct ProductCardView: View {
         return "Price N/A"
     }
 }
-
-#if false
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 8) {
-                AsyncImage(url: URL(string: product.product_Image)) {
-                    $0.resizable().scaledToFit()
-                } placeholder: {
-                    Color.gray.opacity(0.2)
-                }
-                .frame(height: 150)
-                .clipped()
-                .cornerRadius(10)
-
-                Text(product.product_Title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .padding(.horizontal, 8)
-
-                Text(product.product_Type)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .lineLimit(3)
-                    .padding([.horizontal, .bottom], 8)
-            }
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .gray.opacity(0.2), radius: 6, x: 0, y: 4)
-
-            Button(action: {
-                isFavorited.toggle()
-            }) {
-                Image(systemName: isFavorited ? "heart.fill" : "heart")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(.red)
-                    .padding(10)
-                    .background(Color.white.opacity(0.9))
-                    .clipShape(Circle())
-                    .shadow(radius: 2)
-            }
-            .padding(10)
-        }
-        .padding(4)
-    }
-#endif

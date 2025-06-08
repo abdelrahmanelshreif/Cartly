@@ -14,7 +14,7 @@ struct SearchScreen: View {
     init() {
         _viewModel = StateObject(wrappedValue: SearchViewModel(allProductsUseCase: GetAllProductsUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))))
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -118,7 +118,6 @@ struct SearchScreen: View {
                                         ForEach(viewModel.filteratedProducts) { product in
                                             ProductCardView(product: product)
                                                 .transition(.scale.combined(with: .opacity))
-                                                
                                         }
                                     }
                                     .padding(.horizontal, 20)

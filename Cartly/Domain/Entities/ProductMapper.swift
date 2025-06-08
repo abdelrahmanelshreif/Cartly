@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Product Mapper Model
 struct ProductMapper: Identifiable {
-    var id: AnyHashable  // Allow Int64 or UUID
+    var id: AnyHashable
     var product_ID: Int64?
     var product_Title: String
     var product_Type: String
