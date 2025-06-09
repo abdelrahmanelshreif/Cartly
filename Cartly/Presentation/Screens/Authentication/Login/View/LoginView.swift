@@ -9,6 +9,7 @@ import SwiftUI
 struct LoginView: View {
     @EnvironmentObject var router: AppRouter
     @StateObject var viewModel = DIContainer.shared.resolveLoginViewModel()
+    @State private var presentingViewController: UIViewController?
     @State private var isPasswordVisible = false
     @Environment(\.dismiss) var dismiss
 
@@ -21,6 +22,7 @@ struct LoginView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
+
                 Image(systemName: "lock.shield")
                     .resizable()
                     .frame(width: 80, height: 80)
@@ -28,8 +30,13 @@ struct LoginView: View {
                     .padding(.vertical, 20)
 
                 VStack(spacing: 16) {
-                    CustomTextField(placeHolder: "Email", text: $viewModel.email, icon: "envelope.fill", keyboardType: .emailAddress)
-                    CustomSecureField(placeHolder: "Password", text: $viewModel.password, isVisible: $isPasswordVisible, icon: "lock.fill")
+                    CustomTextField(
+                        placeHolder: "Email", text: $viewModel.email,
+                        icon: "envelope.fill", keyboardType: .emailAddress)
+
+                    CustomSecureField(
+                        placeHolder: "Password", text: $viewModel.password,
+                        isVisible: $isPasswordVisible, icon: "lock.fill")
 
                     if let validationError = viewModel.validationError {
                         Text(validationError)
@@ -43,10 +50,9 @@ struct LoginView: View {
                     case .success(let user):
                         Text("Welcome back, \(user)!")
                             .foregroundColor(.green)
-                            .onAppear{
+                            .onAppear {
                                 router.setRoot(.main)
                             }
-                        
                     case .failure(let error):
                         Text("Error: \(error)")
                             .foregroundColor(.red)
@@ -66,22 +72,35 @@ struct LoginView: View {
                             .cornerRadius(15)
                     }
 
-                    Button(action: {
-                        
-                    }) {
-                        Text("Don't have acoount ?")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                        Text("Register")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
+                    Button("Sign in with Google") {
+                        if let controller = presentingViewController {
+                            viewModel.loginWithGoogle(presenting: controller)
+                        }
                     }
-                }.padding()
+                    .disabled(presentingViewController == nil)
+
+                    .background(
+                        ViewControllerResolver { vc in
+                            self.presentingViewController = vc
+                        }
+                        .frame(width: 0, height: 0)
+                    )
+
+                    Button(action: {
+                        // Route to register screen
+                    }) {
+                        HStack(spacing: 4) {
+                            Text("Don't have an account?")
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+                            Text("Register")
+                                .font(.footnote)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+                .padding()
             }
         }
     }
-}
-
-#Preview {
-    LoginView()
 }

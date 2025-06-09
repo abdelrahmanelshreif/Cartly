@@ -1,4 +1,3 @@
-
 //
 //  FirebaseServiceProtocol.swift
 //  Cartly
@@ -20,7 +19,7 @@ protocol FirebaseServiceProtocol {
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
     func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, Error>
     func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, Error>
-}
+    func signInWithGoogle() -> AnyPublisher<String?, Error>}
 
 final class FirebaseServices: FirebaseServiceProtocol {
 
@@ -28,9 +27,29 @@ final class FirebaseServices: FirebaseServiceProtocol {
     private let userCollection = "users"
     private let wishlist = "wishlist"
     private let cart = "cart"
+    private let googleSignInHelper = GoogleSignInHelper()
 
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
-    {
+    func signInWithGoogle() -> AnyPublisher<String?, Error> {
+        return Future { [weak self] promise in
+            Task {
+                do {
+                    guard
+                        let authResult = try await self?.googleSignInHelper
+                            .signIn()
+                    else {
+                        promise(.failure(AppError.firestoreNotAvailable))
+                        return
+                    }
+                    promise(.success(authResult.user.email))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>{
         return Future { promise in
             Auth.auth().signIn(withEmail: email, password: password) {
                 result, error in
@@ -79,9 +98,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
         return Auth.auth().currentUser?.email
     }
 
-    func addProductToWishlist(userId: String, product: WishlistProduct)
-        -> AnyPublisher<Void, any Error>
-    {
+    func addProductToWishlist(userId: String, product: WishlistProduct)-> AnyPublisher<Void, any Error>{
         return Future { [weak self] promise in
             guard let self = self else {
                 promise(.failure(AppError.firestoreNotAvailable))
@@ -119,7 +136,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 .delete { error in
                     if let error = error {
                         promise(.failure(error))
-                    }else{
+                    } else {
                         promise(.success(()))
                     }
 
@@ -127,7 +144,9 @@ final class FirebaseServices: FirebaseServiceProtocol {
         }.eraseToAnyPublisher()
     }
 
-    func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, any Error> {
+    func getUserWishlist(userId: String) -> AnyPublisher<
+        [WishlistProduct]?, any Error
+    > {
         return Future { [weak self] promise in
             guard let self = self else {
                 promise(.failure(AppError.firestoreNotAvailable))
@@ -173,9 +192,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
         }.eraseToAnyPublisher()
     }
 
-    func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<
-        Bool, any Error
-    > {
+    func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, any Error> {
         return Future { [weak self] promise in
             guard let self = self else {
                 promise(.failure(AppError.firestoreNotAvailable))
@@ -197,5 +214,4 @@ final class FirebaseServices: FirebaseServiceProtocol {
         }
         .eraseToAnyPublisher()
     }
-
 }

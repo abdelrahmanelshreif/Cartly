@@ -23,7 +23,7 @@ class LoginUseCase : LoginUseCaseProtocol{
       }
     
     func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<String?>, Never> {
-        return authRepository.signIn(credentials: emailCredentials)
+        return authRepository.signIn(email: emailCredentials.password, password: emailCredentials.password)
             .map{ResultState.success($0)}
             .catch{error in
                 Just(ResultState.failure(error.localizedDescription))

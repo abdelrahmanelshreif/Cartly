@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine	
+import FirebaseAuth
 
 class AuthRepositoryImpl: AuthRepositoryProtocol {
 
@@ -43,16 +44,20 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
               .eraseToAnyPublisher()
     }
   
-    func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error> {
+    func signIn(email:String,password:String) -> AnyPublisher<String?, Error> {
         return firebaseAuthClient.signIn(
-            email: credentials.email,
-            password: credentials.password
+            email: email,
+            password: password
         )
-        .compactMap { $0 }
+        .compactMap { $0 }	
         .mapError { _ in AuthError.signinFalied }
         .eraseToAnyPublisher()
     }
     
+    func signInWithGoogle() -> AnyPublisher<String?, Error> {
+          return firebaseAuthClient.signInWithGoogle()
+              .eraseToAnyPublisher()
+      }
     func signOut() -> AnyPublisher<Void, Error> {
         return firebaseAuthClient.signOut()
             .eraseToAnyPublisher()
