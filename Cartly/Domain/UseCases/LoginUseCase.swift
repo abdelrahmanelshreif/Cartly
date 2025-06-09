@@ -6,9 +6,10 @@
 //
 import Foundation
 import Combine
+import FirebaseAuth
 
 protocol LoginUseCaseProtocol{
-    func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<String?>,Never>
+    func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<User?>,Never>
 }
 
 class LoginUseCase : LoginUseCaseProtocol{
@@ -22,7 +23,7 @@ class LoginUseCase : LoginUseCaseProtocol{
           self.userSessionService = userSessionService
       }
     
-    func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<String?>, Never> {
+    func execute(emailCredentials:EmailCredentials) -> AnyPublisher<ResultState<User?>, Never> {
         return authRepository.signIn(email: emailCredentials.password, password: emailCredentials.password)
             .map{ResultState.success($0)}
             .catch{error in

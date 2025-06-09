@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 import FirebaseAuth
-
+	
 protocol FirebaseShopifyLoginUseCaseProtocol {
     func execute(credentials: LoginCredentials) -> AnyPublisher<ResultState<CustomerResponse?>, Never>
 }
@@ -25,11 +25,11 @@ class FirebaseShopifyLoginUseCase: FirebaseShopifyLoginUseCaseProtocol {
     func execute(credentials: LoginCredentials) -> AnyPublisher<ResultState<CustomerResponse?>, Never> {
 
         let loginOperation = getFirebaseUserPublisher(for: credentials)
-            .flatMap { email -> AnyPublisher<CustomerResponse?, Error> in
-                guard let email = email else {
+            .flatMap { user -> AnyPublisher<CustomerResponse?, Error> in
+                guard let user = user else {
                     return Fail(error: AuthError.firebaseloginFailed).eraseToAnyPublisher()
                 }
-                return self.getShopifyCustomer(for: email)
+                return self.getShopifyCustomer(for: user.email!)
             }
             .map { customerResponse -> ResultState<CustomerResponse?> in
                 .success(customerResponse)
@@ -43,7 +43,7 @@ class FirebaseShopifyLoginUseCase: FirebaseShopifyLoginUseCaseProtocol {
             .eraseToAnyPublisher()
     }
 
-    private func getFirebaseUserPublisher(for credentials: LoginCredentials) -> AnyPublisher<String?, Error> {
+    private func getFirebaseUserPublisher(for credentials: LoginCredentials) -> AnyPublisher<User?, Error> {
         switch credentials {
         case .email(let emailCreds):
             return authRepository.signIn(email: emailCreds.email, password: emailCreds.password)

@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol FirebaseServiceProtocol {
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>
     func signup(email: String, password: String) -> AnyPublisher<String?, Error>
     func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
@@ -19,7 +19,7 @@ protocol FirebaseServiceProtocol {
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
     func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, Error>
     func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, Error>
-    func signInWithGoogle() -> AnyPublisher<String?, Error>}
+    func signInWithGoogle() -> AnyPublisher<User?, Error>}
 
 final class FirebaseServices: FirebaseServiceProtocol {
 
@@ -29,7 +29,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
     private let cart = "cart"
     private let googleSignInHelper = GoogleSignInHelper()
 
-    func signInWithGoogle() -> AnyPublisher<String?, Error> {
+    func signInWithGoogle() -> AnyPublisher<User?, Error> {
         return Future { [weak self] promise in
             Task {
                 do {
@@ -40,7 +40,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
                         promise(.failure(AppError.firestoreNotAvailable))
                         return
                     }
-                    promise(.success(authResult.user.email))
+                    promise(.success(authResult.user))
                 } catch {
                     promise(.failure(error))
                 }
@@ -49,14 +49,14 @@ final class FirebaseServices: FirebaseServiceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>{
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>{
         return Future { promise in
             Auth.auth().signIn(withEmail: email, password: password) {
                 result, error in
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    promise(.success(user.email))
+                    promise(.success(user))
                 } else {
                     promise(.success(nil))
                 }

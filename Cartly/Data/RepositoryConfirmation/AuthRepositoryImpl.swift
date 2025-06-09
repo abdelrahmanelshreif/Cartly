@@ -32,7 +32,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                   
                   return self.firebaseAuthClient.signup(
                       email: signUpData.email,
-                      password: signUpData.password
+                      password: signUpData.password ?? ""
                   )
                   .map { _ in customer }
                   .catch { error -> AnyPublisher<CustomerResponse?, Error> in
@@ -43,21 +43,38 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
               }
               .eraseToAnyPublisher()
     }
+    
+    func shopifySignup(signUpData:SignUpData) -> AnyPublisher<CustomerResponse?, Error>{
+        return shopifyAuthClient.signup(userData: signUpData)
+    }
   
-    func signIn(email:String,password:String) -> AnyPublisher<String?, Error> {
+    func signIn(email:String,password:String) -> AnyPublisher<User?, Error> {
         return firebaseAuthClient.signIn(
             email: email,
             password: password
-        )
-        .compactMap { $0 }	
-        .mapError { _ in AuthError.signinFalied }
-        .eraseToAnyPublisher()
+        ).eraseToAnyPublisher()
     }
     
-    func signInWithGoogle() -> AnyPublisher<String?, Error> {
+    func signInWithGoogle() -> AnyPublisher<User?, Error> {
           return firebaseAuthClient.signInWithGoogle()
               .eraseToAnyPublisher()
       }
+    
+    func signupWithGoogle() -> AnyPublisher<CustomerResponse?, Error> {
+        return signInWithGoogle()
+            .flatMap { [weak self] user -> AnyPublisher<CustomerResponse?, Error> in
+                guard let self = self, let user = user else {
+                    return Fail(error: AuthError.googleSignInFalied)
+                        .eraseToAnyPublisher()
+                }
+                let newCustomerData = SignUpData(firstname: user.displayName ?? "Google User", lastname: nil, email: user.email!, password: nil, phone: nil, passwordConfirm: nil, sendinEmailVerification: nil)
+             
+                return self.shopifySignup(signUpData: newCustomerData)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    
     func signOut() -> AnyPublisher<Void, Error> {
         return firebaseAuthClient.signOut()
             .eraseToAnyPublisher()

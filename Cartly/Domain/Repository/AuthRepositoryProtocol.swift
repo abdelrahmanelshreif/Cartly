@@ -15,6 +15,6 @@ protocol AuthRepositoryProtocol {
     func getCurrentUserEmail() -> String?
     func getCurrentUserVerificationStatus() -> Bool?
     func isUserLoggedIn() -> Bool?
-    func signIn(email:String,password:String) -> AnyPublisher<String?, Error>
-    func signInWithGoogle() -> AnyPublisher<String?, Error>
+    func signIn(email:String,password:String) -> AnyPublisher<User?, Error>
+    func signInWithGoogle() -> AnyPublisher<User?, Error>
 }

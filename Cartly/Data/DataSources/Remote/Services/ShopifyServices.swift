@@ -19,12 +19,12 @@ final class ShopifyServices: ShopifyServicesProtocol {
         let parameters: [String: Any] = [
             "customer": [
                 "first_name": userData.firstname,
-                "last_name": userData.lastname,
+                "last_name": userData.lastname as Any,
                 "email": userData.email,
-                "phone": userData.phone,	
+                "phone": userData.phone as Any,	
                 "verified_email": true,
-                "password": userData.password,
-                "password_confirmation": userData.password,
+                "password": userData.password as Any,
+                "password_confirmation": userData.password as Any,
                 "send_email_welcome": false
             ]
         ]
@@ -34,3 +34,5 @@ final class ShopifyServices: ShopifyServicesProtocol {
     }
     
 }
+
+

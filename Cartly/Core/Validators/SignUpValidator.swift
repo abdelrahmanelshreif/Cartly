@@ -19,7 +19,7 @@ class SignUpValidator : SignUpValidatorProtocol{
             return .invalid(.emptyFirstName)
         }
         
-        if data.lastname.trimmingCharacters(in: .whitespaces).isEmpty {
+        if data.lastname!.trimmingCharacters(in: .whitespaces).isEmpty {
             return .invalid(.emptyLastName)
         }
         
@@ -27,11 +27,11 @@ class SignUpValidator : SignUpValidatorProtocol{
             return .invalid(.invalidEmail)
         }
         
-        if !GeneralValidator.isValidPhone(data.phone) {
+        if !GeneralValidator.isValidPhone(data.phone!) {
             return .invalid(.invalidPhone)
         }
         
-        if data.password.count < 6 {
+        if data.password!.count < 6 {
             return .invalid(.weakPassword)
         }
         

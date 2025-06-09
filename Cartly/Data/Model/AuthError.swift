@@ -16,6 +16,7 @@ enum AuthError: LocalizedError {
     case shopifyLoginFailed
     case firebaseloginFailed
     case customerNotFoundAtShopify
+    case googleSignInFalied
 
     var errorDescription: String? {
         switch self {
@@ -35,6 +36,9 @@ enum AuthError: LocalizedError {
             return "Firebase login failed. Please try again."
         case .customerNotFoundAtShopify:
             return "No matching customer found in Shopify."
+        case .googleSignInFalied:
+            return "Can't Signin at Google right now , please try again later"
         }
+        
     }
 }
