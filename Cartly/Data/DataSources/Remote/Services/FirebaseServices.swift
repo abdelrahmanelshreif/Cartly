@@ -81,7 +81,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
         }
         .eraseToAnyPublisher()
     }
-
+    
     func signOut() -> AnyPublisher<Void, Error> {
         return Future { promise in
             do {

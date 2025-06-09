@@ -31,10 +31,10 @@ final class AlamofireService: NetworkServiceProtocol {
                           headers: HTTPHeaders(request.header))
         .validate()
         .responseData { response in
-            print("📡 STATUS: \(response.response?.statusCode ?? -1)")
+            print("STATUS: \(response.response?.statusCode ?? -1)")
             if let data = response.data,
                let body = String(data: data, encoding: .utf8) {
-                print("📦 Shopify Raw Response:\n\(body)")
+                print("Shopify Raw Response:\n\(body)")
             }
         }
         /// Validates response status code and return DataRequest Object coming from AF.request func.
