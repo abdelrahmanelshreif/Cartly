@@ -11,23 +11,39 @@ class DIContainer{
 
     static let shared = DIContainer()
     private init() {}
-
+    
+    func resolveSignUpViewModel() -> SignUpViewModel{
+        return SignUpViewModel(createAccountUseCase: resolveCreateAccounttUseCase(), validator: resolveSignUpValidators())
+    }
+    
+    func resolveProfileViewModel() -> ProfileViewModel{
+        return ProfileViewModel(signOutUseCase: resolveSignOutUseCase(), getUserSession: resolveGettingCurrentInfo())
+    }
     func resolveProductDetailsViewModel() -> ProductDetailsViewModel{
         return ProductDetailsViewModel(getProductUseCase: resolveGetProductUseCase())
-    }
-    
-    func resolveWishlistViewModel() -> WishlistViewModel{
-        return WishlistViewModel(getWishlistUseCase: resolveGetWishlistUsecase(), addProductUseCase: resolveAddProductToWishlistUseCase(), removeProductUseCase: resolveRemoveProductFromWishlistUseCase(), getProductDetailsUseCase: resolveGetProductUseCase(), getCurrentUser: resolveGettingCurrentInfo() , searchProductAtWishlistUseCase: resolveSearcingInWishlistUseCase())
-    }
-    
-    private func resolveSearcingInWishlistUseCase() -> SearchProductAtWishlistUseCaseProtocol{
-        return SearchProductAtWishlistUseCase(repository: resolveShopifyRepository())
     }
     
     func resolveLoginViewModel() -> LoginViewModel{
         return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator)
     }
     
+    func resolveWishlistViewModel() -> WishlistViewModel{
+        return WishlistViewModel(getWishlistUseCase: resolveGetWishlistUsecase(), addProductUseCase: resolveAddProductToWishlistUseCase(), removeProductUseCase: resolveRemoveProductFromWishlistUseCase(), getProductDetailsUseCase: resolveGetProductUseCase(), getCurrentUser: resolveGettingCurrentInfo() , searchProductAtWishlistUseCase: resolveSearcingInWishlistUseCase())
+    }
+    private func resolveSignUpValidators() -> SignUpValidatorProtocol{
+        return SignUpValidator()
+    }
+    private func resolveSearcingInWishlistUseCase() -> SearchProductAtWishlistUseCaseProtocol{
+        return SearchProductAtWishlistUseCase(repository: resolveShopifyRepository())
+    }
+    
+    private func resolveCreateAccounttUseCase() -> CreateAccountUseCaseProtocol{
+        return CreateAccountUseCase(authRepository: resolveAuthenticationRepository(), userSessionService: resolveUserSessionService())
+    }
+    private func resolveSignOutUseCase() -> SignOutUseCaseProtocol{
+        return SignOutUseCase()
+    }
+  
     private func resolveLoginUseCase() -> FirebaseShopifyLoginUseCaseProtocol{
         return FirebaseShopifyLoginUseCase(authRepository: resolveAuthenticationRepository(), customerRepository: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
     }

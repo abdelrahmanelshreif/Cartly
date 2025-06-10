@@ -30,13 +30,6 @@ final class AlamofireService: NetworkServiceProtocol {
                           encoding: JSONEncoding.default,
                           headers: HTTPHeaders(request.header))
         .validate()
-        .responseData { response in
-            print("📡 STATUS: \(response.response?.statusCode ?? -1)")
-            if let data = response.data,
-               let body = String(data: data, encoding: .utf8) {
-                print("📦 Shopify Raw Response:\n\(body)")
-            }
-        }
         /// Validates response status code and return DataRequest Object coming from AF.request func.
         .publishData() /// Publishes the response ( DataRequest Object ) as DataResponsePublisher<Data>.
         .tryMap {

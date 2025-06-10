@@ -11,26 +11,26 @@ struct AllCustomerResponse: Codable {
 struct Customer: Codable {
     let id: Int64 
     let email: String
-    let createdAt: String
-    let updatedAt: String
-    let firstName: String
-    let lastName: String
+    let createdAt: String?
+    let updatedAt: String?
+    let firstName: String?
+    let lastName: String?
     let ordersCount: Int
-    let state: String /// when ordering if verified will invited if not will be disabled.
-    let totalSpent: String
+    let state: String? /// when ordering if verified will invited if not will be disabled.
+    let totalSpent: String?
     let lastOrderId: Int?
     let note: String?
-    let verifiedEmail: Bool
+    let verifiedEmail: Bool?
     let multipassIdentifier: String?
-    let taxExempt: Bool
-    let tags: String /// Password
+    let taxExempt: Bool?
+    let tags: String? /// Password
     let lastOrderName: String?
-    let currency: String
-    let phone: String
-    let addresses: [Address]
-    let emailMarketingConsent: MarketingConsent
-    let smsMarketingConsent: SMSMarketingConsent
-    let adminGraphqlApiId: String
+    let currency: String?
+    let phone: String?
+    let addresses: [Address]?
+    let emailMarketingConsent: MarketingConsent?
+    let smsMarketingConsent: SMSMarketingConsent?
+    let adminGraphqlApiId: String?
     
     enum CodingKeys: String, CodingKey {
         case id

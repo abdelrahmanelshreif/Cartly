@@ -34,7 +34,7 @@ class UserSessionService: UserSessionServiceProtocol {
     func saveUserSession(_ customer: Customer) {
         userDefaults.set(customer.id, forKey: Keys.userId)
         userDefaults.set(customer.email, forKey: Keys.userEmail)
-        userDefaults.set(customer.firstName + " " + customer.lastName, forKey: Keys.userName)
+        userDefaults.set((customer.firstName ?? "") + " " + (customer.lastName ?? ""), forKey: Keys.userName)
         userDefaults.set(true, forKey: Keys.isLoggedIn)
         userDefaults.set(customer.verifiedEmail, forKey: Keys.isUserVerified) // invited is "verified"
     }

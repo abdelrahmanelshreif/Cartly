@@ -166,17 +166,32 @@ struct EmptyWishlistView: View {
 }
 
 struct GuestModeView: View {
+    @EnvironmentObject var router: AppRouter
+
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "exclamationmark.shield.fill")
-                .font(.system(size: 80))
-                .fontWeight(.semibold)
-                .foregroundStyle(.red.opacity(0.9))
+            Image(systemName: "exclamationmark.triangle.fill")
+                .resizable()
+                .frame(width: 60, height: 60)
+                .foregroundColor(.orange)
 
             Text("You should login or register to have your own wishlist...")
                 .font(.title2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+
+            Button(action: {
+                router.setRoot(.authentication)
+            }) {
+                Text("Login")
+                    .fontWeight(.bold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
