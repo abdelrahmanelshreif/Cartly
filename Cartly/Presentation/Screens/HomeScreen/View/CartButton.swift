@@ -7,7 +7,7 @@ struct CartButton: View {
         ZStack(alignment: .topTrailing) {
             Button(action: {
                 // Handle cart tap
-                router.push(.Cart)
+                router.push(Route.Cart)
             }) {
                 Image(systemName: "cart.fill")
                     .resizable()

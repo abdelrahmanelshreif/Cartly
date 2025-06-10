@@ -36,7 +36,6 @@ struct WishlistScreen: View {
         .navigationTitle("My Wishlist")
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
-            print("khaleeeeeeeed")
             wishlistViewModel.checkAuthorization()
             if wishlistViewModel.isAuthorized {
                 wishlistViewModel.getUserWishlist()

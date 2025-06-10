@@ -36,7 +36,7 @@ struct HomeScreen: View {
 
                 case let .success(brands):
                     BrandSectionBody(brands: brands) { brandId, brandTitle in
-                        router.push(.Products(brandId, brandTitle))
+                        router.push(Route.Products(brandId, brandTitle))
                     }
                     
                 case .failure(_):

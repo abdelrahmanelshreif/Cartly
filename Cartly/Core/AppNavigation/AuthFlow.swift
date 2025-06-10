@@ -5,22 +5,20 @@
 //  Created by Khaled Mustafa on 07/06/2025.
 //
 
-import SwiftUI
 import Combine
-struct AuthFlow: View{
+import SwiftUI
+struct AuthFlow: View {
     @EnvironmentObject var router: AppRouter
-    @State private var showLogin = false
-    
+
     var body: some View {
-        NavigationStack{
-            if showLogin {
-                LoginView()
-            }else {
-                SignupView()
-            }
-        }
-        .onAppear {
-            showLogin = true
+        NavigationStack(path: $router.path) {
+            LoginView()
+                .navigationDestination(for: AuthRoute.self) { route in
+                    switch route {
+                    case .Login: LoginView()
+                    case .Signup: SignupView()
+                    }
+                }
         }
     }
 }
