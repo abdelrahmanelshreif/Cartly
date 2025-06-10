@@ -20,10 +20,13 @@ protocol FirebaseServiceProtocol {
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
     func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, Error>
     func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, Error>
+    
+    func signInWithGoogle() -> AnyPublisher<User?, Error>
 }
 
 final class FirebaseServices: FirebaseServiceProtocol {
-
+    
+    private let googleSignInHelper = GoogleSignInHelper()
     private let firestore: Firestore = Firestore.firestore()
     private let userCollection = "users"
     private let wishlist = "wishlist"
@@ -40,6 +43,26 @@ final class FirebaseServices: FirebaseServiceProtocol {
                     promise(.success(user.email))
                 } else {
                     promise(.success(nil))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func signInWithGoogle() -> AnyPublisher<FirebaseAuth.User?, any Error> {
+        return Future { [weak self] promise in
+            Task {
+                do {
+                    guard
+                        let authResult = try await self?.googleSignInHelper
+                            .signIn()
+                    else {
+                        promise(.failure(AppError.firestoreNotAvailable))
+                        return
+                    }
+                    promise(.success(authResult.user))
+                } catch {
+                    promise(.failure(error))
                 }
             }
         }

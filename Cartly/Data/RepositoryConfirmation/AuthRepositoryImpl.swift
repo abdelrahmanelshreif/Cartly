@@ -7,8 +7,10 @@
 
 import Foundation
 import Combine	
+import FirebaseAuth
 
 class AuthRepositoryImpl: AuthRepositoryProtocol {
+ 
 
     let firebaseAuthClient: FirebaseServiceProtocol
     let shopifyAuthClient: ShopifyServicesProtocol
@@ -19,6 +21,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
         firebaseAuthClient = FirebaseServices()
         shopifyAuthClient = ShopifyServices()
         userSessionServices = UserSessionService()
+    }
+    
+    func signInWithGoogle() -> AnyPublisher<User?, any Error> {
+        return firebaseAuthClient.signInWithGoogle()
     }
     
     func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {

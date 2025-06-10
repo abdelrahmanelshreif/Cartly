@@ -8,24 +8,25 @@
 import Combine
 import Foundation
 
-class LoginViewModel: ObservableObject{
+class LoginViewModel: ObservableObject {
     
     @Published var email = ""
     @Published var password = ""
-    @Published var validationError:String?
-    @Published var resultState:ResultState<String>? = nil
+    @Published var validationError: String?
+    @Published var resultState: ResultState<String>? = nil
     private var cancellables = Set<AnyCancellable>()
     
+    let loginUseCase: FirebaseShopifyLoginUseCaseProtocol
+    let loginUsingGoogleUseCase: GoogleSignInUseCaseProtocol
+    let validator: LoginValidatorProtocol
     
-    let loginUseCase:FirebaseShopifyLoginUseCaseProtocol
-    let validator:LoginValidatorProtocol
-    
-    init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator) {
+    init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator , loginUsingGoogleUseCase : GoogleSignInUseCaseProtocol) {
         self.loginUseCase = loginUseCase
         self.validator = validator
+        self.loginUsingGoogleUseCase = loginUsingGoogleUseCase
     }
    
-    func login(){	
+    func login() {
         let emailsCredentials = EmailCredentials(email: email, password: password)
         
         switch validator.validate(emailsCredentials) {
@@ -37,11 +38,17 @@ class LoginViewModel: ObservableObject{
             return
         }
     }
-
-    private func performLogin(with credentials: EmailCredentials) {
-        loginUseCase.execute(credentials: credentials)
+    
+    func loginWithGoogle() {
+        validationError = nil
+        performGoogleLogin()
+    }
+    
+    private func performGoogleLogin() {
+        loginUsingGoogleUseCase.execute()
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .receive(on: DispatchQueue.main)
-            .sink{ [weak self]  (state: ResultState<CustomerResponse?>) in
+            .sink { [weak self] (state: ResultState<CustomerResponse?>) in
                 switch state {
                 case .success(let customerResponse):
                     self?.resultState = .success(customerResponse?.customer.firstName ?? "User")
@@ -50,6 +57,24 @@ class LoginViewModel: ObservableObject{
                 case .loading:
                     self?.resultState = .loading
                 }
-            }.store(in: &cancellables)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func performLogin(with credentials: EmailCredentials) {
+        loginUseCase.execute(credentials: credentials)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (state: ResultState<CustomerResponse?>) in
+                switch state {
+                case .success(let customerResponse):
+                    self?.resultState = .success(customerResponse?.customer.firstName ?? "User")
+                case .failure(let error):
+                    self?.resultState = .failure(error)
+                case .loading:
+                    self?.resultState = .loading
+                }
+            }
+            .store(in: &cancellables)
     }
 }
+

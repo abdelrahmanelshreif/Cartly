@@ -11,6 +11,7 @@ struct AuthFlow: View {
     @EnvironmentObject var router: AppRouter
 
     var body: some View {
+
         NavigationStack(path: $router.path) {
             LoginView()
                 .navigationDestination(for: AuthRoute.self) { route in
@@ -18,7 +19,6 @@ struct AuthFlow: View {
                     case .Login: LoginView()
                     case .Signup: SignupView()
                     }
-                }
         }
     }
 }
