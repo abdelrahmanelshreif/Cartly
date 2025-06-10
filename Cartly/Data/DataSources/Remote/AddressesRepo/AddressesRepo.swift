@@ -122,3 +122,16 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
             .eraseToAnyPublisher()
     }
 }
+
+
+final class CurrencyRepository: CurrencyRepositoryProtocol {
+    private let service: CurrencyAPIServiceProtocol
+
+    init(service: CurrencyAPIServiceProtocol) {
+        self.service = service
+    }
+
+    func getExchangeRate(from: String, to: String) -> AnyPublisher<Double, Error> {
+        service.fetchRate(from: from, to: to)
+    }
+}

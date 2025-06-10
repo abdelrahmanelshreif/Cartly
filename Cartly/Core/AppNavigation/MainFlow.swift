@@ -20,7 +20,7 @@ struct MainFlow: View {
                     case .Signup: SignupView()
                     case let .Products(brandId, brandTitle): ProductScreen(brandId: brandId, brandTitle: brandTitle)
                     case let .productDetail(productId): ProductDetailsView(productId: productId)
-                    case .Cart: MyCartDemo()
+                    case .Cart: CartScreen()
                     case .Search: SearchScreen()
                     }
                 }
