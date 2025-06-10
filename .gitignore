@@ -1,0 +1,50 @@
+# Xcode
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Derived data
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcsettings
+
+# CocoaPods
+Pods/
+Podfile.lock
+!.gitignore
+
+
+
+# Carthage
+Carthage/Build/
+
+# Core Data runtime files
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Other
+.DS_Store
+*.swp
+*.lock
+*.orig
+
+# Xcode preview dependencies
+*.preview-thumbnails
+
+# Archives
+*.xcarchive
+
+# User schemes (optional)
+*.xcscheme
+
+# Ignore shared scheme management
+*.xcodeproj/xcshareddata/xcschememanagement.plist
+*.xcworkspace/xcshareddata/xcschememanagement.plist
