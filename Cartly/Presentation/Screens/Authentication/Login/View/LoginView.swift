@@ -71,21 +71,6 @@ struct LoginView: View {
                         .cornerRadius(15)
                 }
                 
-                // Add divider
-                HStack {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray.opacity(0.3))
-                    Text("OR")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray.opacity(0.3))
-                }
-                .padding(.vertical, 8)
-                
-                // Add Google Sign-In Button
                 Button(action: {
                     viewModel.loginWithGoogle()
                 }) {
@@ -102,7 +87,7 @@ struct LoginView: View {
                     .background(Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                     )
                     .cornerRadius(15)
                 }

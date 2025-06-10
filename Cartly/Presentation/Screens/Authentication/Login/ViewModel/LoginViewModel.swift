@@ -46,6 +46,7 @@ class LoginViewModel: ObservableObject {
     
     private func performGoogleLogin() {
         loginUsingGoogleUseCase.execute()
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (state: ResultState<CustomerResponse?>) in
                 switch state {

@@ -29,7 +29,7 @@ struct GoogleSignInUseCase:GoogleSignInUseCaseProtocol{
                 guard let userEmail = googleUser?.email else {
                     return Just(ResultState.failure("Google Login Failed"))
                         .eraseToAnyPublisher()
-                }c
+                }
                 return self.shopifyRepo.getCustomers()
                     .map { customersResponse in
                         guard let customers = customersResponse?.customers else {
