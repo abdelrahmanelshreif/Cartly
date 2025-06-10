@@ -15,3 +15,6 @@ protocol CustomerAddressRepositoryProtocol {
     func deleteAddress(for customerID: Int64, addressID: Int64) -> AnyPublisher<Void, Error>
     func setDefaultAddress(for customerID: Int64, addressID: Int64) -> AnyPublisher<Address, Error>
 }
+protocol CurrencyRepositoryProtocol {
+    func getExchangeRate(from: String, to: String) -> AnyPublisher<Double, Error>
+}

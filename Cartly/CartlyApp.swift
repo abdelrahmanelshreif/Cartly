@@ -27,8 +27,17 @@ struct CartlyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            SettingsScreen(
+                viewModel: SettingsViewModel(
+                    useCase: ConvertCurrencyUseCase(
+                        repository: CurrencyRepository(
+                            service: CurrencyAPIService()
+                        )
+                    )
+                )
+            )
+//            RootView()
+//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
