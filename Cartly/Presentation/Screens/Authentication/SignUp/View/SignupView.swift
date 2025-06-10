@@ -91,6 +91,6 @@ struct SignupView: View {
                 }
             }.padding()
         }
-
+        .navigationBarBackButtonHidden(true)
     }
 }

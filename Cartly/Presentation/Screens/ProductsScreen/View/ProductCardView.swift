@@ -99,7 +99,7 @@ struct ProductCardView: View {
                 .stroke(Color.gray.opacity(0.12), lineWidth: 1)
         )
         .onTapGesture {
-            router.push(.productDetail(product.product_ID!))
+            router.push(Route.productDetail(product.product_ID!))
         }
     }
 

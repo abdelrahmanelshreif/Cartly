@@ -93,7 +93,7 @@ struct LoginView: View {
                 }
 
                 Button(action: {
-                    router.push(.Signup)
+                    router.push(AuthRoute.Signup)
                 }) {
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
@@ -117,3 +117,4 @@ struct LoginView: View {
         }
     }
 }
+

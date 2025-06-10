@@ -22,25 +22,27 @@ class AppRouter: ObservableObject {
         rootState = state
         path.removeLast(path.count)
     }
-    
-    func push(_ route: Route) {
+
+    func push<T: Hashable>(_ route: T) {
         #if true
-        switch route {
-        case .Cart:
-            if !UserDefaultsManager.getLoginStatus() {
-                print("in App route in cart case and must execute showLoginRequiredAlert")
-                showLoginRequiredAlert()
-                return
+            if let route = route as? Route {
+                switch route {
+                case .Cart:
+                    if !UserDefaultsManager.getLoginStatus() {
+                        print("in App route in cart case and must execute showLoginRequiredAlert")
+                        showLoginRequiredAlert()
+                        return
+                    }
+                default:
+                    break
+                }
             }
-        default:
-            break
-        }
         #endif
         path.append(route)
     }
 
     func pop() {
-        if !path.isEmpty{
+        if !path.isEmpty {
             path.removeLast()
         }
     }
