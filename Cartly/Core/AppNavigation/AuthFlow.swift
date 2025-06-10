@@ -12,7 +12,7 @@ struct AuthFlow: View{
     @State private var showLogin = false
     
     var body: some View {
-        NavigationStack{
+        NavigationStack(path:$router.path){
             if showLogin {
                 LoginView()
             }else {

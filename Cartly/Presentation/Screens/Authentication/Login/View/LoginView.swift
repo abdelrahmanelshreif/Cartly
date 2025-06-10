@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 struct LoginView: View {
@@ -69,6 +70,42 @@ struct LoginView: View {
                         .background(Color.blue)
                         .cornerRadius(15)
                 }
+                
+                // Add divider
+                HStack {
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(.gray.opacity(0.3))
+                    Text("OR")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(.gray.opacity(0.3))
+                }
+                .padding(.vertical, 8)
+                
+                // Add Google Sign-In Button
+                Button(action: {
+                    viewModel.loginWithGoogle()
+                }) {
+                    HStack(spacing: 12) {
+                        Image("google_icon") 
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                        Text("Continue with Google")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 55)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                    .cornerRadius(15)
+                }
 
                 Button(action: {
                     router.push(.Signup)
@@ -93,11 +130,5 @@ struct LoginView: View {
                 .foregroundColor(.blue)
             }
         }
-
     }
-}
-
-#Preview {
-    LoginView()
-        .environmentObject(AppRouter())
 }
