@@ -2,11 +2,11 @@ import SwiftUI
 
 struct ProductCardView: View {
     let product: ProductMapper
-    @State private var isFavorited = false
     @EnvironmentObject var router: AppRouter
 
     #if false
-        @AppStorage("selectedCurrency") private var selectedCurrency: String = "USD"
+        @AppStorage("selectedCurrency") private var selectedCurrency: String =
+            "USD"
         @AppStorage("currencySymbol") private var currencySymbol: String = "$"
     #endif
 
@@ -42,21 +42,6 @@ struct ProductCardView: View {
                         EmptyView()
                     }
                 }
-
-                Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isFavorited.toggle()
-                    }
-                }) {
-                    Image(systemName: isFavorited ? "heart.fill" : "heart")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(isFavorited ? .red : .gray)
-                        .frame(width: 28, height: 28)
-                        .background(.ultraThinMaterial, in: Circle())
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                }
-                .padding(.top, 6)
-                .padding(.trailing, 8)
             }
             .background(Color.gray.opacity(0.05))
             .cornerRadius(10)
@@ -115,7 +100,9 @@ struct ProductCardView: View {
         }
 
         let pattern = #"\d+\.?\d*"#
-        if let range = cleanedString.range(of: pattern, options: .regularExpression) {
+        if let range = cleanedString.range(
+            of: pattern, options: .regularExpression)
+        {
             let numberString = String(cleanedString[range])
             if let price = Double(numberString) {
                 return "$\(String(format: "%.2f", price))"
