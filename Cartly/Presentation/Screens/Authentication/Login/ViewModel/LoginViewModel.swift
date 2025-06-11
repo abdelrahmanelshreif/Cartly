@@ -17,10 +17,10 @@ class LoginViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     let loginUseCase: FirebaseShopifyLoginUseCaseProtocol
-    let loginUsingGoogleUseCase: GoogleSignInUseCaseProtocol
+    let loginUsingGoogleUseCase: AuthenticatingUserWithGoogleUseCaseProtocol
     let validator: LoginValidatorProtocol
     
-    init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator , loginUsingGoogleUseCase : GoogleSignInUseCaseProtocol) {
+    init(loginUseCase: FirebaseShopifyLoginUseCase, validator: LoginValidator , loginUsingGoogleUseCase : AuthenticatingUserWithGoogleUseCaseProtocol) {
         self.loginUseCase = loginUseCase
         self.validator = validator
         self.loginUsingGoogleUseCase = loginUsingGoogleUseCase
@@ -46,7 +46,6 @@ class LoginViewModel: ObservableObject {
     
     private func performGoogleLogin() {
         loginUsingGoogleUseCase.execute()
-            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (state: ResultState<CustomerResponse?>) in
                 switch state {

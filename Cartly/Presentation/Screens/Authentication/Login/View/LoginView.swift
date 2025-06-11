@@ -16,12 +16,12 @@ struct LoginView: View {
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
-
-            Image(systemName: "lock.shield")
+            
+            Image("Cartly")
                 .resizable()
-                .frame(width: 80, height: 80)
+                .scaledToFill()
+                .frame(width: 120, height: 120)
                 .foregroundColor(Color.blue)
-                .padding(.vertical, 20)
 
             VStack(spacing: 16) {
                 CustomTextField(
@@ -74,24 +74,24 @@ struct LoginView: View {
                 Button(action: {
                     viewModel.loginWithGoogle()
                 }) {
-                    HStack(spacing: 12) {
-                        Image("google_icon") 
+                    HStack {
+                        Image("google_icon")
+                            .renderingMode(.original)
                             .resizable()
-                            .frame(width: 24, height: 24)
+                            .frame(width: 30, height: 30)
                         Text("Continue with Google")
                             .font(.headline)
                             .foregroundColor(.black)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 55)
-                    .background(Color.white)
+                    .background(Color.gray.opacity(0.2))
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                            .stroke(Color.gray.opacity(0.4    ), lineWidth: 1)
                     )
                     .cornerRadius(15)
                 }
-
                 Button(action: {
                     router.push(AuthRoute.Signup)
                 }) {
