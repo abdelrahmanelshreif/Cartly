@@ -84,4 +84,9 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
         return userSessionServices.isUserLoggedIn()
     }
     
+    func getCurrentUsrname() -> String? {
+        return userSessionServices.getCurrentUserName()
+    }
+    
+    
 }

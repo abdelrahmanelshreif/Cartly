@@ -1,3 +1,4 @@
+import Combine
 //
 //  ProfileViewModel.swift
 //  Cartly
@@ -5,7 +6,6 @@
 //  Created by Abdelrahman Elshreif on 9/6/25.
 //
 import Foundation
-import Combine
 
 class ProfileViewModel: ObservableObject {
     private let signOutUseCase: SignOutUseCaseProtocol
@@ -38,21 +38,18 @@ class ProfileViewModel: ObservableObject {
             print("User session is inactive.")
             didSignOut = true
         }
-    }
+    }		
 
     func signOut() {
         loading = true
+        DispatchQueue.main.async {
+            _ = self.signOutUseCase.execute()
+            self.currentUser = self.getUserSession.execute()
+            self.loading = false
+            self.didSignOut = true
 
-        DispatchQueue.global().async {
-            let success = self.signOutUseCase.execute()
-
-            DispatchQueue.main.async {
-                self.loading = false
-                if success {
-                    self.didSignOut = true
-                }
-            }
         }
+
     }
 
 }

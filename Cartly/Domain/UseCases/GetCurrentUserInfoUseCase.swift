@@ -18,7 +18,7 @@ struct  GetCurrentUserInfoUseCase : GetCurrentUserInfoUseCaseProtocol{
     }
     
     func execute() -> UserEntity {
-        return UserEntity(id: authenticationRepo.getCurrentLoggedInUserId() ?? "N/A", email: authenticationRepo.getCurrentUserEmail() ?? "N/A", emailVerificationStatus: authenticationRepo.getCurrentUserVerificationStatus() ?? false, sessionStatus: authenticationRepo.isUserLoggedIn() ?? false)
+        return UserEntity(id: authenticationRepo.getCurrentLoggedInUserId() ?? "N/A", email: authenticationRepo.getCurrentUserEmail() ?? "N/A", emailVerificationStatus: authenticationRepo.getCurrentUserVerificationStatus() ?? false, sessionStatus: authenticationRepo.isUserLoggedIn() ?? false, name: authenticationRepo.getCurrentUsrname() ?? "Cartly User")
     }
 
 }

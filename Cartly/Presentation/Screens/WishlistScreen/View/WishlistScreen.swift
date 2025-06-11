@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WishlistScreen: View {
+    @EnvironmentObject var router: AppRouter
     @StateObject var wishlistViewModel: WishlistViewModel
 
     init() {
@@ -30,7 +31,9 @@ struct WishlistScreen: View {
                         wishlistProducts: wishlistViewModel.userWishlist)
                 }
             } else {
-                GuestModeView()
+                LoggedOutView{
+                    router.setRoot(.authentication)
+                }
             }
         }
         .navigationTitle("My Wishlist")
@@ -197,8 +200,3 @@ struct GuestModeView: View {
     }
 }
 
-#Preview {
-    NavigationView {
-        WishlistScreen()
-    }
-}
