@@ -31,8 +31,8 @@ class DIContainer{
         return WishlistViewModel(getWishlistUseCase: resolveGetWishlistUsecase(), addProductUseCase: resolveAddProductToWishlistUseCase(), removeProductUseCase: resolveRemoveProductFromWishlistUseCase(), getProductDetailsUseCase: resolveGetProductUseCase(), getCurrentUser: resolveGettingCurrentInfo() , searchProductAtWishlistUseCase: resolveSearcingInWishlistUseCase())
     }
     
-    private func resolveGoogleSignInUseCase() -> GoogleSignInUseCaseProtocol{
-        return GoogleSignInUseCase(authRepository: resolveAuthenticationRepository(), shopifyRepo: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
+    private func resolveGoogleSignInUseCase() -> AuthenticatingUserWithGoogleUseCaseProtocol{
+        return AuthenticatingUserWithGoogleUseCase(authRepository: resolveAuthenticationRepository(), shopifyRepo: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
     }
     
     private func resolveSignUpValidators() -> SignUpValidatorProtocol{

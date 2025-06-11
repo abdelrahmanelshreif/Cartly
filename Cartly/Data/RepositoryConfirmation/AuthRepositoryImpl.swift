@@ -37,7 +37,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                   
                   return self.firebaseAuthClient.signup(
                       email: signUpData.email,
-                      password: signUpData.password
+                      password: signUpData.password!
                   )
                   .map { _ in customer }
                   .catch { error -> AnyPublisher<CustomerResponse?, Error> in
@@ -47,6 +47,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                   .eraseToAnyPublisher()
               }
               .eraseToAnyPublisher()
+    }
+    
+    func createShopifyUser(signupData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>{
+        return shopifyAuthClient.signup(userData: signupData)
     }
   
     func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error> {
