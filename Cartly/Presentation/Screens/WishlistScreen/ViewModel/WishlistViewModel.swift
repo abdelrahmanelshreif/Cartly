@@ -61,6 +61,7 @@ class WishlistViewModel: ObservableObject {
         addProductUseCase.execute(
             userId: getCurrentUser.execute().id!, product: wishlistProduct
         )
+        .subscribe(on: DispatchQueue.global(qos: .userInitiated))
         .receive(on: DispatchQueue.main)
         .sink(
             receiveCompletion: { [weak self] completion in
@@ -90,6 +91,7 @@ class WishlistViewModel: ObservableObject {
         searchProductAtWishlistUseCase.execute(
             userId: getCurrentUser.execute().id!, productId: productId
         )
+        .subscribe(on: DispatchQueue.global(qos: .userInitiated))
         .receive(on: DispatchQueue.main)
         .sink(
             receiveCompletion: { completion in
@@ -115,6 +117,7 @@ class WishlistViewModel: ObservableObject {
         removeProductUseCase.execute(
             userId: getCurrentUser.execute().id!, productId: productId
         )
+        .subscribe(on: DispatchQueue.global(qos: .userInitiated))
         .receive(on: DispatchQueue.main)
         .sink(
             receiveCompletion: { [weak self] status in
@@ -122,6 +125,7 @@ class WishlistViewModel: ObservableObject {
                 switch status {
                 case .finished:
                     print("Remove product - Completion finished")
+                    self.userWishlist.removeAll{$0.id == productId}
                 case .failure(let error):
                     self.wishlistAlertMessage =
                         "Failed to remove product: \(error.localizedDescription)"
@@ -149,6 +153,7 @@ class WishlistViewModel: ObservableObject {
         userWishlist = []
         isLoading = true
         getWishlistUseCase.execute(userId: getCurrentUser.execute().id!)
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { completion in
