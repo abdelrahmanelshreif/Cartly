@@ -58,7 +58,6 @@ class SignUpViewModel: ObservableObject {
                 case .success(let customerResponse):
                     guard let response = customerResponse else {return}
                     self?.resultState = .success(response)
-                    print(response.customer.phone)
                 case .failure(let error):
                     self?.resultState = .failure(error)
                 case .loading:

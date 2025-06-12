@@ -19,5 +19,6 @@ protocol AuthRepositoryProtocol {
     func getCurrentUserEmail() -> String?
     func getCurrentUserVerificationStatus() -> Bool?
     func isUserLoggedIn() -> Bool?
+    func getCurrentUsrname() -> String?
     
 }

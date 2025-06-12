@@ -16,6 +16,7 @@ protocol UserSessionServiceProtocol {
     func getCurrentUserEmail() -> String?
     func isUserLoggedIn() -> Bool?
     func isUserEmailVerified() -> Bool?
+    func getCurrentUserName() -> String?
 }
 
 // MARK: - User Session Implementation

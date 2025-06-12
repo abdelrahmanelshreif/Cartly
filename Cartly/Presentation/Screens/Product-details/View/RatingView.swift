@@ -12,18 +12,11 @@ struct RatingView: View {
     
     var body: some View {
         HStack(spacing: 2) {
-            ForEach(1...5, id: \.self) { star in
-                Image(systemName: star <= Int(rating) ? "star.fill" : "star")
-                    .foregroundColor(.yellow)
+            ForEach(0..<5) { index in
+                Image(systemName: index < Int(rating) ? "star.fill" : "star")
                     .font(.caption)
+                    .foregroundColor(.orange)
             }
-            Text(String(format: "%.1f", rating))
-                .font(.caption)
-                .foregroundColor(.secondary)
         }
     }
 }
-
-
-
-
