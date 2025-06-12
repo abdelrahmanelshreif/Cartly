@@ -21,10 +21,10 @@ final class ShopifyServices: ShopifyServicesProtocol {
                 "first_name": userData.firstname,
                 "last_name": userData.lastname,
                 "email": userData.email,
-                "phone": userData.phone!,
+                "phone": userData.phone ?? "",
                 "verified_email": true,
-                "password": userData.password!,
-                "password_confirmation": userData.password!,
+                "password": userData.password ?? "",
+                "password_confirmation": userData.password ?? "",
                 "send_email_welcome": false
             ]
         ]
