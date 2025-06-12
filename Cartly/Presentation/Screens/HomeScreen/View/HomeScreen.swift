@@ -24,7 +24,7 @@ struct HomeScreen: View {
 
             SectionHeader(headerText: "Brands")
                 .padding(.horizontal)
-                .padding(.bottom, 4)
+                .padding(.bottom, 4)	
 
             Spacer()
 

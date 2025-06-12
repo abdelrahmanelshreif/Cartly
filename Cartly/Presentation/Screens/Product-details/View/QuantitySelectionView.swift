@@ -8,13 +8,12 @@ import SwiftUI
 
 struct QuantitySelectionView: View {
     @Binding var quantity: Int
+    var maxQuantity: Int = 99
     
     var body: some View {
-        HStack {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Quantity")
                 .font(.headline)
-            
-            Spacer()
             
             HStack {
                 Button(action: {
@@ -22,26 +21,27 @@ struct QuantitySelectionView: View {
                         quantity -= 1
                     }
                 }) {
-                    Image(systemName: "minus")
-                        .foregroundColor(.blue)
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundColor(quantity > 1 ? .blue : .gray)
                 }
                 .disabled(quantity <= 1)
                 
                 Text("\(quantity)")
                     .font(.body)
-                    .padding(.horizontal, 16)
+                    .frame(minWidth: 40)
                 
                 Button(action: {
-                    quantity += 1
+                    if quantity < maxQuantity {
+                        quantity += 1
+                    }
                 }) {
-                    Image(systemName: "plus")
-                        .foregroundColor(.blue)
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(quantity < maxQuantity ? .blue : .gray)
                 }
+                .disabled(quantity >= maxQuantity)
+                
+                Spacer()
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
         }
     }
 }
