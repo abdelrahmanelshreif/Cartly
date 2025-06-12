@@ -13,6 +13,13 @@ protocol RemoteDataSourceProtocol {
     func getCustomers() -> AnyPublisher<AllCustomerResponse?, Error>
     
     func getSingleCustomer(for customerId:String) -> AnyPublisher<CustomerResponse?, Error>
+    
+    /// for order
+    func fetchAllDraftOrders() -> AnyPublisher<DraftOrdersResponse?, Error>
+    
+    func postNewDraftOrder(cartEntity: CartEntity) -> AnyPublisher<DraftOrder?, Error>
+    
+    func editExistingDraftOrder(draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error>
 }
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
@@ -65,5 +72,45 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
             withPath: "/customers/\(customerId).json")
         
         return networkService.request(request, responseType: CustomerResponse.self)
+    }
+    
+    /// All drafts
+    func fetchAllDraftOrders() -> AnyPublisher<DraftOrdersResponse?, Error>{
+        let request = APIRequest(
+            withPath: "/draft_orders.json"
+        )
+        
+        return networkService.request(request, responseType: DraftOrdersResponse.self)
+    }
+    
+    /// Post New
+    func postNewDraftOrder(cartEntity: CartEntity) -> AnyPublisher<DraftOrder?, Error> {
+        let request = APIRequest(
+            withMethod: .POST,
+            withPath: "/draft_orders.json",
+            withParameters: MapCartToDraftOrderRequestDic(cart: cartEntity)
+        )
+        print("\(MapCartToDraftOrderRequestDic(cart: cartEntity)) in remoooooote")
+        return networkService.request(request, responseType: DraftOrderResponse.self)
+            .map{
+                $0?.draftOrder
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    /// edit draft
+    func editExistingDraftOrder(draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error> {
+        let request = APIRequest(
+            withMethod: .PUT,
+            /// force unwrap for draft order id cuz we have it already if we make put request
+            withPath: "/draft_orders/\(draftOrder.id!).json",
+            withParameters: mapDraftOrderToDict(draftOrder)
+        )
+        print("/draft_orders/\(draftOrder.id!).json in remoooooote")
+        return networkService.request(request, responseType: DraftOrderResponse.self)
+            .map{
+                $0?.draftOrder
+            }
+            .eraseToAnyPublisher()
     }
 }
