@@ -24,12 +24,17 @@ class DIContainer{
     }
     
     func resolveLoginViewModel() -> LoginViewModel{
-        return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator)
+        return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator, loginUsingGoogleUseCase: resolveGoogleSignInUseCase())
     }
     
     func resolveWishlistViewModel() -> WishlistViewModel{
         return WishlistViewModel(getWishlistUseCase: resolveGetWishlistUsecase(), addProductUseCase: resolveAddProductToWishlistUseCase(), removeProductUseCase: resolveRemoveProductFromWishlistUseCase(), getProductDetailsUseCase: resolveGetProductUseCase(), getCurrentUser: resolveGettingCurrentInfo() , searchProductAtWishlistUseCase: resolveSearcingInWishlistUseCase())
     }
+    
+    private func resolveGoogleSignInUseCase() -> AuthenticatingUserWithGoogleUseCaseProtocol{
+        return AuthenticatingUserWithGoogleUseCase(authRepository: resolveAuthenticationRepository(), shopifyRepo: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
+    }
+    
     private func resolveSignUpValidators() -> SignUpValidatorProtocol{
         return SignUpValidator()
     }

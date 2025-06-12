@@ -10,4 +10,5 @@ struct UserEntity : Identifiable{
     let email: String?
     let emailVerificationStatus: Bool
     let sessionStatus: Bool
+    let name:String?
 }

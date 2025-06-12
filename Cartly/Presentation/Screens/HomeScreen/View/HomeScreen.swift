@@ -24,7 +24,7 @@ struct HomeScreen: View {
 
             SectionHeader(headerText: "Brands")
                 .padding(.horizontal)
-                .padding(.bottom, 4)
+                .padding(.bottom, 4)	
 
             Spacer()
 
@@ -36,7 +36,7 @@ struct HomeScreen: View {
 
                 case let .success(brands):
                     BrandSectionBody(brands: brands) { brandId, brandTitle in
-                        router.push(.Products(brandId, brandTitle))
+                        router.push(Route.Products(brandId, brandTitle))
                     }
                     
                 case .failure(_):

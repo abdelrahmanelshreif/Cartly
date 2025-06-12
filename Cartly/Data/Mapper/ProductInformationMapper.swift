@@ -31,7 +31,7 @@ class ProducInformationtMapper {
             availableColors: colors,
             variants: mappedVariants,
             rating: 4.5,
-            reviewCount: 0
+            reviewCount: 0  
         )
     }
 

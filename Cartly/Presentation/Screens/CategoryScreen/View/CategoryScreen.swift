@@ -33,11 +33,11 @@ struct CategoryScreen: View {
                         .padding(.top, 8)
 
                     VStack(spacing: 16) {
-                        PriceRangeSlider(
-                            minPrice: $viewModel.currentMinPrice,
-                            maxPrice: $viewModel.currentMaxPrice,
-                            priceRange: viewModel.minPrice ... viewModel.maxPrice
-                        )
+//                        PriceRangeSlider(
+//                            minPrice: $viewModel.currentMinPrice,
+//                            maxPrice: $viewModel.currentMaxPrice,
+//                            priceRange: viewModel.minPrice ... viewModel.maxPrice
+//                        )
 
                         ProductTypeSegmentControl(selectedType: $viewModel.selectedProductType)
 

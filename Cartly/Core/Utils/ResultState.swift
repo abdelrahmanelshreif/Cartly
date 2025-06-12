@@ -15,13 +15,16 @@ enum ResultStateViewLayer<Value> {
 enum AppError: Error {
     case failedFetchingDataFromNetwork
     case firestoreNotAvailable
+    case couldNotFindTopViewController
+    case googleIdTokenNotFound
+    
     var errorDescription: String? {
         switch self {
         case .failedFetchingDataFromNetwork:
             return "Failed to get product data, please try again later"
-       
-        case .firestoreNotAvailable:
-        return "Failed to get product data, please try again later"
+        case .firestoreNotAvailable: return "A connection to our database could not be established."
+        case .couldNotFindTopViewController: return "Could not display the sign-in screen. Please try again."
+        case .googleIdTokenNotFound: return "Could not get a valid token from Google. Please try again."
         }
         
     }

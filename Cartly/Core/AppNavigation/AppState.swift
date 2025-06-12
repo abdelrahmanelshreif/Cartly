@@ -14,6 +14,11 @@ enum Route: Hashable {
     case Search
 }
 
+enum AuthRoute: Hashable {
+    case Login
+    case Signup
+}
+
 enum RootState {
     case splash
     case authentication

@@ -7,8 +7,10 @@
 
 import Foundation
 import Combine	
+import FirebaseAuth
 
 class AuthRepositoryImpl: AuthRepositoryProtocol {
+ 
 
     let firebaseAuthClient: FirebaseServiceProtocol
     let shopifyAuthClient: ShopifyServicesProtocol
@@ -21,6 +23,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
         userSessionServices = UserSessionService()
     }
     
+    func signInWithGoogle() -> AnyPublisher<User?, any Error> {
+        return firebaseAuthClient.signInWithGoogle()
+    }
+    
     func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
           return shopifyAuthClient.signup(userData: signUpData)
               .flatMap { [weak self] customer -> AnyPublisher<CustomerResponse?, Error> in
@@ -31,7 +37,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                   
                   return self.firebaseAuthClient.signup(
                       email: signUpData.email,
-                      password: signUpData.password
+                      password: signUpData.password!
                   )
                   .map { _ in customer }
                   .catch { error -> AnyPublisher<CustomerResponse?, Error> in
@@ -41,6 +47,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
                   .eraseToAnyPublisher()
               }
               .eraseToAnyPublisher()
+    }
+    
+    func createShopifyUser(signupData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>{
+        return shopifyAuthClient.signup(userData: signupData)
     }
   
     func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error> {
@@ -73,5 +83,10 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
     func isUserLoggedIn() -> Bool? {
         return userSessionServices.isUserLoggedIn()
     }
+    
+    func getCurrentUsrname() -> String? {
+        return userSessionServices.getCurrentUserName()
+    }
+    
     
 }
