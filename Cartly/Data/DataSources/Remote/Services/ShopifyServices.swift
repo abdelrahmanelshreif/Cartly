@@ -16,18 +16,25 @@ final class ShopifyServices: ShopifyServicesProtocol {
     let networkService: NetworkServiceProtocol = AlamofireService()
     
     func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
-        let parameters: [String: Any] = [
-            "customer": [
-                "first_name": userData.firstname,
-                "last_name": userData.lastname,
-                "email": userData.email,
-                "phone": userData.phone!,
-                "verified_email": true,
-                "password": userData.password!,
-                "password_confirmation": userData.password!,
-                "send_email_welcome": false
-            ]
+        var customerData: [String: Any] = [
+            "first_name": userData.firstname,
+            "last_name": userData.lastname,
+            "email": userData.email,
+            "verified_email": true,
+            "send_email_welcome": userData.sendinEmailVerification
         ]
+   
+        if let password = userData.password {
+            customerData["password"] = password
+            customerData["password_confirmation"] = userData.passwordConfirm ?? password
+        }
+        
+        if let phone = userData.phone {
+            customerData["phone"] = phone
+        }
+        
+        let parameters: [String: Any] = ["customer": customerData]
+        
         let request = APIRequest.init(withMethod: .POST, withPath: "/customers.json", withParameters: parameters)
         let customer = networkService.request(request, responseType: CustomerResponse.self)
         return customer.eraseToAnyPublisher()
