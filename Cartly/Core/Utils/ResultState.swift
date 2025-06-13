@@ -6,9 +6,17 @@ enum ResultState<Value>{
     case failure(String)
 }
 
-enum ResultStateViewLayer<Value> {
+enum ResulteAuthenticationState<Value>{
     case loading
     case success(Value)
+    case failure(String)
+    case none
+}
+
+
+enum ResultStateViewLayer<T> {
+    case loading
+    case success(T)
     case failure(AppError)
 }
 

@@ -30,10 +30,6 @@ final class ShopifyServices: ShopifyServicesProtocol {
             customerData["password_confirmation"] = userData.passwordConfirm ?? password
         }
         
-        if let phone = userData.phone {
-            customerData["phone"] = phone
-        }
-        
         let parameters: [String: Any] = ["customer": customerData]
         
         let request = APIRequest.init(withMethod: .POST, withPath: "/customers.json", withParameters: parameters)

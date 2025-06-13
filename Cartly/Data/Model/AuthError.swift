@@ -37,4 +37,25 @@ enum AuthError: LocalizedError {
             return "No matching customer found in Shopify."
         }
     }
+
+    var debugDescription: String {
+        switch self {
+        case .signupFailed:
+            return "AuthError.signupFailed - General signup failure"
+        case .shopifySignUpFailed:
+            return "AuthError.shopifySignUpFailed - Shopify API returned error during signup"
+        case .firebaseSignUpFailed:
+            return "AuthError.firebaseSignUpFailed - Firebase authentication signup failed"
+        case .signinFalied:
+            return "AuthError.signinFalied - General signin failure"
+        case .userNotFound:
+            return "AuthError.userNotFound - User does not exist"
+        case .shopifyLoginFailed:
+            return "AuthError.shopifyLoginFailed - Failed to fetch customers from Shopify"
+        case .firebaseloginFailed:
+            return "AuthError.firebaseloginFailed - Firebase authentication login failed"
+        case .customerNotFoundAtShopify:
+            return "AuthError.customerNotFoundAtShopify - Email exists in Firebase but not in Shopify"
+        }
+    }
 }
