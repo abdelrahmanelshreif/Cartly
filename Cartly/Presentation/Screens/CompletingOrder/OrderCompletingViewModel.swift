@@ -13,33 +13,40 @@ final class OrderCompletingViewModel: ObservableObject {
     // Input
     @Published var promoCode: String = ""
     @Published var selectedPayment: PaymentMethod = .cash
-
+    
     // Output
     @Published private(set) var orderSummary: OrderSummary
     @Published private(set) var discount: Double = 0
     @Published private(set) var errorMessage: String?
     @Published var isApplyingCoupon = false
-
+    
     private let cartItems: [CartItem]
     private let codLimitForCash: Double = 100
     private let calculateSummary: CalculateOrderSummaryUseCase
     private let validatePromo: ValidatePromoCodeUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
-
+    
     init(cartItems: [CartItem],
          calculateSummary: CalculateOrderSummaryUseCase,
          validatePromo: ValidatePromoCodeUseCaseProtocol) {
         self.cartItems = cartItems
         self.calculateSummary = calculateSummary
         self.validatePromo = validatePromo
-        self.orderSummary = calculateSummary.execute(for: cartItems, discount: 0, taxRate: 0.14)
+        self.orderSummary = calculateSummary.execute(for: cartItems, discount: 0)
     }
-
+    
     func applyPromo() {
+        if discount > 0 {
+            discount = 0
+            orderSummary = calculateSummary.execute(for: cartItems, discount: 0)
+            promoCode = ""
+            errorMessage = nil
+            return
+        }
         isApplyingCoupon = true
         errorMessage = nil
         let subtotal = orderSummary.subtotal
-
+        
         validatePromo.execute(code: promoCode, subtotal: subtotal, selectedPayment: selectedPayment)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
@@ -54,17 +61,17 @@ final class OrderCompletingViewModel: ObservableObject {
                 self.orderSummary = self.calculateSummary.execute(
                     for: self.cartItems,
                     discount: validated.discountAmount,
-                    taxRate: 0.14
+
                 )
             }
             .store(in: &cancellables)
     }
-
+    
     func getCartItems() -> [CartItem] { cartItems }
-
+    
     func canCompleteOrder() -> Bool {
         print("🔎 Payment method:", selectedPayment.rawValue)
-           print("🔎 Order total:", orderSummary.total)
+        print("🔎 Order total:", orderSummary.total)
         if selectedPayment == .cash && orderSummary.total > codLimitForCash {
             errorMessage = "Cash on Delivery is not available for orders above $\(Int(codLimitForCash))."
             return false

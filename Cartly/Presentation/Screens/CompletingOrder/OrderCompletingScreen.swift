@@ -122,12 +122,12 @@ struct OrderCompletingScreen: View {
         VStack(spacing: 12) {
             Text("Order Info").font(.headline)
             summaryRow("Subtotal", vm.orderSummary.subtotal)
-            summaryRow("Tax", vm.orderSummary.tax)
+        
             
             HStack {
                 TextField("Coupon Code", text: $vm.promoCode)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                Button("Apply") {
+                Button(vm.discount > 0 ? "Remove" : "Apply") {
                     vm.applyPromo()
                 }
                 .disabled(vm.isApplyingCoupon)
