@@ -77,7 +77,19 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
         guard let addressID = address.id else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
-        let body = ["address": address]
+        let addressDict: [String: Any] = [
+            "id":addressID,
+            "address1": address.address1 ?? "",
+            "address2": address.address2 ?? "",
+            "city": address.city ?? "",
+            "first_name": address.firstName ?? "",
+            "last_name": address.lastName ?? "",
+            "phone": address.phone ?? "",
+            "province": address.province ?? "",
+            "zip": address.zip ?? "",
+            "default": address.isDefault ?? false
+        ]
+        let body = ["address": addressDict]
         let request = APIRequest(
             withMethod: .PUT,
             withPath: "/customers/\(customerID)/addresses/\(addressID).json",

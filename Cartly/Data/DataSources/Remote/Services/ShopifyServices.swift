@@ -22,6 +22,7 @@ final class ShopifyServices: ShopifyServicesProtocol {
             "email": userData.email,
             "verified_email": true,
             "send_email_welcome": userData.sendinEmailVerification
+
         ]
    
         if let password = userData.password {

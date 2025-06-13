@@ -77,26 +77,19 @@ struct LocationPickerView: View {
     }
 
     private func verifyLocation() {
-        guard let coordinate = selectedCoordinate else { return }
+        guard let coordinate = selectedCoordinate else {
+                print("No coordinate selected")
+                return
+            }
+        print("Selected Coordinate: \(coordinate)")
 
-        if isLocationInsideEgypt(coordinate: coordinate) {
-            selectedCoordinate = coordinate
-            onLocationSelected(coordinate)
-        } else {
-            alertMessage = "Selected location is outside Egypt. Please choose a location within Egypt."
-            showAlert = true
-        }
-    }
-
-    private func isLocationInsideEgypt(coordinate: CLLocationCoordinate2D) -> Bool {
-        let egyptBounds = (
-            minLat: 22.0, maxLat: 31.6,
-            minLon: 25.0, maxLon: 35.0
-        )
-        return coordinate.latitude >= egyptBounds.minLat &&
-               coordinate.latitude <= egyptBounds.maxLat &&
-               coordinate.longitude >= egyptBounds.minLon &&
-               coordinate.longitude <= egyptBounds.maxLon
+            if EgyptLocationValidator.isInsideEgypt(coordinate) {
+                print("Coordinate is inside Egypt")
+                onLocationSelected(coordinate)
+            } else {
+                alertMessage = "Selected location is outside Egypt. Please choose a location within Egypt."
+                showAlert = true
+            }
     }
 }
 

@@ -11,29 +11,23 @@ struct ProfileHeaderView: View {
     let user: UserEntity?
 
     var body: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 90, height: 90)
-
-                Image(systemName: "person.fill")
+        VStack(spacing: 0) {
+                Image("profile-avatar"/*systemName: "person.fill"*/)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50)
+                 //   .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 150)
                     .foregroundColor(.blue)
+                    .clipShape(Circle())
                     .shadow(radius: 4)
-            }
             Text(user?.name ?? "")
                 .font(.title2)
                 .fontWeight(.bold)
-                .padding(.top, 50)
+                .padding(.top,8)
 
             Text(user?.email ?? "")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-
     }
 
 }

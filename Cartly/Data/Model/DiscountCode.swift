@@ -8,7 +8,7 @@ import Foundation
 
 struct PriceRuleResponse: Codable {
     let priceRules: [PriceRule]
-
+    
     enum CodingKeys: String, CodingKey {
         case priceRules = "price_rules"
     }
@@ -17,17 +17,55 @@ struct PriceRuleResponse: Codable {
 struct PriceRule: Codable, Identifiable {
     let id: Int64
     let title: String?
+    let valueType: String
+    let value: String
+    let prerequisiteSubtotalRange: SubtotalRange?
+    let usageLimit: Int?
     var discountCodes: [DiscountCode]?
     var adImageUrl: String?
+    let prerequisiteToEntitlementQuantityRatio: QuantityRatio?
+    let prerequisiteToEntitlementPurchase: PurchaseCondition?
+    
+    struct SubtotalRange: Codable {
+        let greaterThanOrEqualTo: String
+        
+        enum CodingKeys: String, CodingKey {
+            case greaterThanOrEqualTo = "greater_than_or_equal_to"
+        }
+    }
+    
+    struct QuantityRatio: Codable {
+        let prerequisiteQuantity: Int?
+        let entitledQuantity: Int?
+        
+        enum CodingKeys: String, CodingKey {
+            case prerequisiteQuantity = "prerequisite_quantity"
+            case entitledQuantity = "entitled_quantity"
+        }
+    }
+    
+    struct PurchaseCondition: Codable {
+        let prerequisiteAmount: Double?
+        
+        enum CodingKeys: String, CodingKey {
+            case prerequisiteAmount = "prerequisite_amount"
+        }
+    }
     
     enum CodingKeys: String, CodingKey {
-        case id, title
+        case id, title, value, discountCodes, adImageUrl
+        case valueType = "value_type"
+        case usageLimit = "usage_limit"
+        case prerequisiteSubtotalRange = "prerequisite_subtotal_range"
+        case prerequisiteToEntitlementQuantityRatio = "prerequisite_to_entitlement_quantity_ratio"
+        case prerequisiteToEntitlementPurchase = "prerequisite_to_entitlement_purchase"
     }
 }
 
+
 struct DiscountCodeResponse: Codable {
     let discountCodes: [DiscountCode]
-
+    
     enum CodingKeys: String, CodingKey {
         case discountCodes = "discount_codes"
     }
@@ -37,9 +75,10 @@ struct DiscountCode: Codable, Identifiable {
     let id: Int64
     let code: String
     let priceRuleId: Int64
-
+    let usageCount: Int
+    
     enum CodingKeys: String, CodingKey {
-        case id, code
+        case id, code, usageCount = "usage_count"
         case priceRuleId = "price_rule_id"
     }
 }

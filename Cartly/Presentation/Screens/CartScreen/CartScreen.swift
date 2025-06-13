@@ -120,7 +120,7 @@ struct CartItem: Identifiable {
     var quantity: Int
     
     static let sampleData: [CartItem] = [
-        .init(imageName: "backpack", title: "Adidas Classic Backpack", size: "OS", color: "Black", price: 70, quantity: 1),
+           .init(imageName: "backpack", title: "Adidas Classic Backpack", size: "OS", color: "Black", price: 70, quantity: 1),
         .init(imageName: "stan_smith", title: "Adidas Kid's Stan Smith", size: "1", color: "White", price: 90, quantity: 4),
         .init(imageName: "boots", title: "Dr. Martens 1460Z Cherry", size: "3", color: "Red", price: 249, quantity: 1)
     ]

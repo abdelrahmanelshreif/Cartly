@@ -29,6 +29,38 @@ struct CartlyApp: App {
         WindowGroup {
             RootView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+//            OrderCompletingScreen(
+//                    vm: OrderCompletingViewModel(
+//                        cartItems: CartItem.sampleData,
+//                        calculateSummary: CalculateOrderSummaryUseCase(),
+//                        validatePromo: ValidatePromoCodeUseCase(
+//                            fetchRulesUseCase: FetchAllDiscountCodesUseCase(
+//                                repository: DiscountCodeRepository(
+//                                    networkService: AlamofireService(),
+//                                    adsNetworkService: AdsNetworkService()
+//                                )
+//                            )
+//                        )
+//                    ),
+//                    addressVM: AddressesViewModel(
+//                        fetchAddressesUseCase: FetchCustomerAddressesUseCase(
+//                            repository: CustomerAddressRepository(networkService: AlamofireService())
+//                        ),
+//                        addAddressUseCase: AddCustomerAddressUseCase(
+//                            repository: CustomerAddressRepository(networkService: AlamofireService())
+//                        ),
+//                        setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
+//                            repository: CustomerAddressRepository(networkService: AlamofireService())
+//                        ),
+//                        deleteAddressUseCase: DeleteCustomerAddressUseCase(
+//                            repository: CustomerAddressRepository(networkService: AlamofireService())
+//                        ),
+//                        editAddressUseCase: EditCustomerAddressUseCase(
+//                            repository: CustomerAddressRepository(networkService: AlamofireService())
+//                        )
+//                    ),
+//                    paymentVM: PaymentViewModel()
+//                )
         }
     }
 }
