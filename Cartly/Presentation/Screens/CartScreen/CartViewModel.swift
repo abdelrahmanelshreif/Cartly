@@ -1,0 +1,93 @@
+import Combine
+import SwiftUI
+
+class CartViewModel: ObservableObject {
+    @Published var cartItems: [CartMapper] = []
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    @Published var hasItems: Bool = false
+
+    private let getCustomerCartUseCase: GetCustomerCartUseCase
+    private var cancellables = Set<AnyCancellable>()
+
+    var isCartEmpty: Bool {
+        return cartItems.isEmpty
+    }
+
+    var totalItemsCount: Int {
+        return cartItems.reduce(0) { total, cart in
+            total + cart.itemsMapper.reduce(0) { $0 + $1.quantity }
+        }
+    }
+
+    var totalPrice: Double {
+        return cartItems.reduce(0.0) { total, cart in
+            total + cart.itemsMapper.reduce(0.0) { subtotal, item in
+                subtotal + (Double(item.price) ?? 0.0) * Double(item.quantity)
+            }
+        }
+    }
+
+    init(getCustomerCartUseCase: GetCustomerCartUseCase) {
+        self.getCustomerCartUseCase = getCustomerCartUseCase
+    }
+
+    func loadCustomerCart() {
+        isLoading = true
+        errorMessage = nil
+
+        getCustomerCartUseCase.execute()
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+
+                    switch completion {
+                    case .finished:
+                        break
+                    case let .failure(error):
+                        self?.handleError(error)
+                    }
+                },
+                receiveValue: { [weak self] cartMappers in
+                    self?.cartItems = cartMappers
+                    self?.hasItems = !cartMappers.isEmpty
+                    self?.isLoading = false
+
+                    print("Loaded \(cartMappers.count) cart items for customer")
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    func refreshCart() {
+        loadCustomerCart()
+    }
+
+    func removeItem(cartId: Int64, itemId: Int64) {
+        // TODO: Implement remove item logic
+        print("Remove item \(itemId) from cart \(cartId)")
+    }
+
+    func updateQuantity(cartId: Int64, itemId: Int64, newQuantity: Int) {
+        // TODO: Implement update quantity logic
+        print("Update item \(itemId) quantity to \(newQuantity) in cart \(cartId)")
+    }
+
+    private func handleError(_ error: Error) {
+        if let customError = error as? ErrorType {
+            switch customError {
+            case .noData:
+                errorMessage = "No cart items found"
+            case .noInternet:
+                errorMessage = "Please check your internet connection"
+            case .badServerResponse:
+                errorMessage = "Server error occurred"
+            default:
+                errorMessage = customError.localizedDescription
+            }
+        } else {
+            errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
+        }
+        print("Cart loading error: \(errorMessage ?? "Unknown error")")
+    }
+}

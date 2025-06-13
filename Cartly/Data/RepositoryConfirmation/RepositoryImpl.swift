@@ -217,4 +217,40 @@ class RepositoryImpl: RepositoryProtocol {
             }
             .eraseToAnyPublisher()
     }
+
+    func getAllDraftOrdersForCustomer() -> AnyPublisher<[CartMapper], Error> {
+        let service = UserSessionService()
+        let userEmail = service.getCurrentUserEmail() ?? ""
+
+        guard !userEmail.isEmpty else {
+            return Fail(error: ErrorType.noData)
+                .eraseToAnyPublisher()
+        }
+
+        return remoteDataSource.fetchAllDraftOrders()
+            .tryMap { DraftOrdersResponse -> [CartMapper] in
+                guard let draftOrders = DraftOrdersResponse?.draftOrders else {
+                    return []
+                }
+
+                let customerDraftOrder = draftOrders.filter { DraftOrder in
+                    guard let draftOrderEmail = DraftOrder.email else {
+                        return false
+                    }
+                    return true
+                }
+
+                let cartMappers = customerDraftOrder.compactMap { draftOrder -> CartMapper? in
+                    guard draftOrder.id != nil,
+                          draftOrder.status != nil,
+                          let lineItems = draftOrder.lineItems,
+                          !lineItems.isEmpty else {
+                        return nil
+                    }
+                    return CartMapper(draft: draftOrder)
+                }
+                return cartMappers
+            }
+            .eraseToAnyPublisher()
+    }
 }

@@ -29,4 +29,6 @@ protocol RepositoryProtocol {
     func editDraftOrder(draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error>
     
     func addToCart(cartEntity: CartEntity) -> AnyPublisher<CustomSuccess, Error>
+    
+    func getAllDraftOrdersForCustomer() -> AnyPublisher<[CartMapper], Error>
 }

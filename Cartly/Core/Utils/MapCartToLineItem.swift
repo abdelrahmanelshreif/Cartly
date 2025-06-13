@@ -30,7 +30,7 @@ func MapCartToDraftOrderRequestDic(cart: CartEntity) -> [String: Any] {
 
 func mapDraftOrderToDict(_ draftOrder: DraftOrder) -> [String: Any] {
     var dict: [String: Any] = [:]
-    var finalDic: [String: Any] = [:]
+    //var finalDic: [String: Any] = [:]
     
     dict["id"] = draftOrder.id
     dict["note"] = draftOrder.note
