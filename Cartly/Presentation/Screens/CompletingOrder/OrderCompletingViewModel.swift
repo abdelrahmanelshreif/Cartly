@@ -20,13 +20,13 @@ final class OrderCompletingViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
     @Published var isApplyingCoupon = false
     
-    private let cartItems: [CartItem]
+    private let cartItems: [ItemsMapper]
     private let codLimitForCash: Double = 100
     private let calculateSummary: CalculateOrderSummaryUseCase
     private let validatePromo: ValidatePromoCodeUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
-    init(cartItems: [CartItem],
+    init(cartItems: [ItemsMapper],
          calculateSummary: CalculateOrderSummaryUseCase,
          validatePromo: ValidatePromoCodeUseCaseProtocol) {
         self.cartItems = cartItems
@@ -67,7 +67,7 @@ final class OrderCompletingViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func getCartItems() -> [CartItem] { cartItems }
+    func getCartItems() -> [ItemsMapper] { cartItems }
     
     func canCompleteOrder() -> Bool {
         print("🔎 Payment method:", selectedPayment.rawValue)
