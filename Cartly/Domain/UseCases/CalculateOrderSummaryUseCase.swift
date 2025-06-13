@@ -8,9 +8,8 @@
 import Foundation
 
 final class CalculateOrderSummaryUseCase {
-    func execute(for cartItems: [CartItem], discount: Double, taxRate: Double) -> OrderSummary {
+    func execute(for cartItems: [CartItem], discount: Double) -> OrderSummary {
         let subtotal = cartItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
-        let tax = subtotal * taxRate
-        return OrderSummary(subtotal: subtotal, tax: tax, discount: discount)
+        return OrderSummary(subtotal: subtotal, tax: 0, discount: discount)
     }
 }

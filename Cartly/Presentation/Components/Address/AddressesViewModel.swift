@@ -22,7 +22,8 @@ class AddressesViewModel: ObservableObject {
     private let setDefaultAddressUseCase: SetDefaultCustomerAddressUseCaseProtocol
     private let deleteAddressUseCase : DeleteCustomerAddressUseCaseProtocol
     private let editAddressUseCase : EditCustomerAddressUseCaseProtocol
-    private let customerID: Int64 = 7703169302711 // Static customer ID
+    private let customerID: Int64 = 7706377257143
+    // Static customer ID
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Init
