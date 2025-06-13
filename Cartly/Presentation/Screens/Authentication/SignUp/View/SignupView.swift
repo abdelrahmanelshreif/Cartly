@@ -10,7 +10,6 @@ import SwiftUI
 struct SignupView: View {
     @EnvironmentObject var router: AppRouter
     @StateObject var viewModel = DIContainer.shared.resolveSignUpViewModel()
-    @StateObject var loginViewModel = DIContainer.shared.resolveLoginViewModel()
     @State private var isPasswordVisible = false
 
     var body: some View {
@@ -38,9 +37,6 @@ struct SignupView: View {
                 CustomTextField(
                     placeHolder: "Email", text: $viewModel.email,
                     icon: "envelope.fill", keyboardType: .emailAddress)
-                CustomTextField(
-                    placeHolder: "Phone", text: $viewModel.phone,
-                    icon: "phone.fill", keyboardType: .phonePad)
                 CustomSecureField(
                     placeHolder: "Password", text: $viewModel.password,
                     isVisible: $isPasswordVisible, icon: "lock.fill")
@@ -54,8 +50,8 @@ struct SignupView: View {
                 switch viewModel.resultState {
                 case .loading:
                     ProgressView()
-                case .success(let customer):
-                    Text("Welcome, \(customer)!")
+                case .success(let customerResponse):
+                    Text("Welcome, \(customerResponse.customer?.firstName ?? "User")!")
                         .foregroundColor(.green)
                         .onAppear {
                             router.setRoot(.main)
@@ -78,8 +74,9 @@ struct SignupView: View {
                         .background(Color.blue)
                         .cornerRadius(15)
                 }
+                
                 Button(action: {
-                    loginViewModel.loginWithGoogle()
+                    viewModel.signUpWithGoogle()
                 }) {
                     HStack {
                         Image("google_icon")
@@ -95,7 +92,7 @@ struct SignupView: View {
                     .background(Color.gray.opacity(0.2))
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray.opacity(0.4	), lineWidth: 1)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                     )
                     .cornerRadius(15)
                 }
@@ -112,3 +109,5 @@ struct SignupView: View {
         }
     }
 }
+
+
