@@ -68,7 +68,7 @@ struct AuthenticatingUserWithGoogleUseCase: AuthenticatingUserWithGoogleUseCaseP
                                 password: nil,
                                 phone: nil,
                                 passwordConfirm: nil,
-                                sendinEmailVerification: true
+                                sendinEmailVerification: false
                             )
 
                             return self.authRepository.createShopifyUser(
