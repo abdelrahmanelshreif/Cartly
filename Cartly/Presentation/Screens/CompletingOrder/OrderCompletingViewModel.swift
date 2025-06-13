@@ -60,7 +60,7 @@ final class OrderCompletingViewModel: ObservableObject {
                 self.discount = validated.discountAmount
                 self.orderSummary = self.calculateSummary.execute(
                     for: self.cartItems,
-                    discount: validated.discountAmount,
+                    discount: validated.discountAmount
 
                 )
             }

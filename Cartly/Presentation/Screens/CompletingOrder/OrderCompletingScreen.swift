@@ -53,7 +53,7 @@ struct OrderCompletingScreen: View {
             ),
             deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
             editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
-        ),)
+        ))
 
         _paymentVM = StateObject(wrappedValue: PaymentViewModel())
     }
