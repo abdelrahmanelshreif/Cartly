@@ -28,23 +28,23 @@ struct AddressesListResponse: Codable {
 
 // MARK: - Address Model
 struct Address: Codable {
-    let address1: String?
-    let address2: String?
-    let city: String?
-    let country: String?
-    let countryCode: String?
-    let countryName: String?
-    let company: String?
+    var address1: String?
+    var address2: String?
+    var city: String?
+    var country: String?
+    var countryCode: String?
+    var countryName: String?
+    var company: String?
     var customerId: Int64? = nil
-    let firstName: String?
-    let id: Int64?
-    let lastName: String?
-    let name: String?
-    let phone: String?
-    let province: String?
-    let provinceCode: String?
-    let zip: String?
-    let isDefault: Bool?
+    var firstName: String?
+    var id: Int64?
+    var lastName: String?
+    var name: String?
+    var phone: String?
+    var province: String?
+    var provinceCode: String?
+    var zip: String?
+    var isDefault: Bool?
     
     enum CodingKeys: String, CodingKey {
         case address1

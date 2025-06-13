@@ -2,7 +2,7 @@ func createLineItemFromCartEntity(cart: CartEntity) -> LineItem {
     return LineItem(
         variantId: cart.variantId,
         productId: cart.productId,
-        quantity: cart.quantity,
+        quantity: cart.quantity
     )
 }
 
@@ -30,7 +30,7 @@ func MapCartToDraftOrderRequestDic(cart: CartEntity) -> [String: Any] {
 
 func mapDraftOrderToDict(_ draftOrder: DraftOrder) -> [String: Any] {
     var dict: [String: Any] = [:]
-    //var finalDic: [String: Any] = [:]
+    var _: [String: Any] = [:]
     
     dict["id"] = draftOrder.id
     dict["note"] = draftOrder.note
