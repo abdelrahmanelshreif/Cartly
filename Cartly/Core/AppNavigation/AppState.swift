@@ -12,6 +12,7 @@ enum Route: Hashable {
     case productDetail(Int64)
     case Cart
     case Search
+    case OrderCompletingScreen(CartMapper)
 }
 
 enum AuthRoute: Hashable {

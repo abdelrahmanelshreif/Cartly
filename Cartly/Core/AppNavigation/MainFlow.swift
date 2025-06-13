@@ -22,6 +22,7 @@ struct MainFlow: View {
                     case let .productDetail(productId): ProductDetailsView(productId: productId)
                     case .Cart: CartScreen()
                     case .Search: SearchScreen()
+                    case .OrderCompletingScreen(let cart): OrderCompletingScreen(cart: cart)
                     }
                 }
         }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CartScreen: View {
     @StateObject private var viewModel: CartViewModel
-
+    @EnvironmentObject private var router: AppRouter
     init() {
         _viewModel = StateObject(wrappedValue: CartViewModel(getCustomerCartUseCase: GetCustomerCartUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))))
     }
@@ -77,6 +77,10 @@ struct CartScreen: View {
                 Button(action: {
                     /// navigate to map or payment screen
                     print(viewModel.cartItems.first?.hasAddress ?? false)
+                    
+                    if !viewModel.isCartEmpty {
+                        router.push(Route.OrderCompletingScreen(viewModel.cartItems.first!))
+                    }
                 }) {
                     Text("Checkout (\(viewModel.totalItemsCount) items)")
                         .frame(maxWidth: .infinity)

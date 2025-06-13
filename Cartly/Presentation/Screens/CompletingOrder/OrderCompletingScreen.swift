@@ -13,23 +13,63 @@ struct OrderCompletingScreen: View {
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
-    
+
     @State private var showSuccessAlert = false
     @State private var showCODLimitAlert: Bool = false
+
+    private let cart: CartMapper
     
-    
+    init(cart: CartMapper) {
+        self.cart = cart
+        print("\(cart) in OrderCompletingScreen!!!!!!!!")
+        _vm = StateObject(wrappedValue: OrderCompletingViewModel(
+            cartItems: CartItem.sampleData,
+            calculateSummary: CalculateOrderSummaryUseCase(),
+            validatePromo: ValidatePromoCodeUseCase(
+                fetchRulesUseCase: FetchAllDiscountCodesUseCase(
+                    repository: DiscountCodeRepository(
+                        networkService: AlamofireService(),
+                        adsNetworkService: AdsNetworkService()
+                    )
+                )
+            )
+        ))
+
+        _addressVM = StateObject(wrappedValue: AddressesViewModel(
+            fetchAddressesUseCase: FetchCustomerAddressesUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            ),
+            addAddressUseCase: AddCustomerAddressUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            ),
+            setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
+                repository: CustomerAddressRepository(
+                    networkService: AlamofireService()
+                )
+            ),
+            deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
+            editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
+        ),)
+
+        _paymentVM = StateObject(wrappedValue: PaymentViewModel())
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 Text("Review & Complete Order")
                     .font(.title2).bold()
                     .padding(.horizontal)
-                
+
                 AddressesView(viewModel: addressVM)
                 cartPreview
                 orderSummarySection
                 PaymentView(viewModel: paymentVM, selectedPayment: $vm.selectedPayment)
-                
+
                 Button(action: {
                     if vm.canCompleteOrder() {
                         paymentVM.handleCompleteOrder()
@@ -66,8 +106,8 @@ struct OrderCompletingScreen: View {
             )
         }
         .alert("Order Completed", isPresented: $showSuccessAlert) {
-            Button("Continue Shopping") {  }
-            Button("View Order Summary") {  }
+            Button("Continue Shopping") { }
+            Button("View Order Summary") { }
         } message: {
             Text("Your order has been placed successfully.")
         }
@@ -77,24 +117,25 @@ struct OrderCompletingScreen: View {
             }
         }
     }
+
     struct CartPreview: View {
         let item: CartItem
-        
+
         var body: some View {
             VStack {
                 Image(item.imageName)
                     .resizable()
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
-                
+
                 Text(item.title)
                     .font(.caption)
                     .lineLimit(1)
-                
+
                 Text("\(item.size) / \(item.color)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
-                
+
                 Text("x\(item.quantity)")
                     .font(.caption2)
             }
@@ -103,7 +144,7 @@ struct OrderCompletingScreen: View {
             .cornerRadius(10)
         }
     }
-    
+
     var cartPreview: some View {
         VStack(alignment: .leading) {
             Text("Your Items").font(.headline).padding(.horizontal)
@@ -117,13 +158,12 @@ struct OrderCompletingScreen: View {
             }
         }
     }
-    
+
     var orderSummarySection: some View {
         VStack(spacing: 12) {
             Text("Order Info").font(.headline)
             summaryRow("Subtotal", vm.orderSummary.subtotal)
-        
-            
+
             HStack {
                 TextField("Coupon Code", text: $vm.promoCode)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -132,11 +172,11 @@ struct OrderCompletingScreen: View {
                 }
                 .disabled(vm.isApplyingCoupon)
             }
-            
+
             if let error = vm.errorMessage {
                 Text(error).foregroundColor(.red).font(.caption)
             }
-            
+
             summaryRow("Discount", -vm.discount)
             Divider()
             summaryRow("Total", vm.orderSummary.total, isBold: true)
@@ -146,7 +186,7 @@ struct OrderCompletingScreen: View {
         .cornerRadius(12)
         .padding(.horizontal)
     }
-    
+
     func summaryRow(_ label: String, _ amount: Double, isBold: Bool = false) -> some View {
         HStack {
             Text(label)
@@ -156,43 +196,3 @@ struct OrderCompletingScreen: View {
         }
     }
 }
-
-
-
-#Preview {
-    OrderCompletingScreen(
-        vm: OrderCompletingViewModel(
-            cartItems: CartItem.sampleData,
-            calculateSummary: CalculateOrderSummaryUseCase(),
-            validatePromo:ValidatePromoCodeUseCase(
-                fetchRulesUseCase: FetchAllDiscountCodesUseCase(
-                    repository: DiscountCodeRepository(
-                        networkService: AlamofireService(),
-                        adsNetworkService: AdsNetworkService()
-                    )
-                )
-            )
-        ),
-        addressVM: AddressesViewModel(
-                fetchAddressesUseCase: FetchCustomerAddressesUseCase(
-                    repository: CustomerAddressRepository(
-                        networkService: AlamofireService()
-                    )
-                ),
-                addAddressUseCase: AddCustomerAddressUseCase(
-                    repository: CustomerAddressRepository(
-                        networkService: AlamofireService()
-                    )
-                ),
-                setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
-                    repository: CustomerAddressRepository(
-                        networkService: AlamofireService()
-                    )
-                ),
-                deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
-                editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
-            ),
-        paymentVM: PaymentViewModel()
-    )
-}
-

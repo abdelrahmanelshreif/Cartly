@@ -1,5 +1,5 @@
 
-struct CartMapper: Codable {
+struct CartMapper: Codable, Hashable {
     let orderID: Int64
     let orderStatus: String
     let hasAddress: Bool
@@ -13,7 +13,7 @@ struct CartMapper: Codable {
     }
 }
 
-struct ItemsMapper: Codable {
+struct ItemsMapper: Codable, Hashable {
     var itemId: Int64
     var variantId: Int64
     var productId: Int64
