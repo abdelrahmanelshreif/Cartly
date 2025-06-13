@@ -64,7 +64,7 @@ class LoginViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] customerResponse in
-                    print("[LoginViewModel] Google login successful for: \(customerResponse.customer.email)")
+                    print("[LoginViewModel] Google login successful for: \(customerResponse.customer?.email ?? "UNKOWN")")
                     self?.handleLoginSuccess(customerResponse)
                 }
             )
@@ -87,7 +87,7 @@ class LoginViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] customerResponse in
-                    print("[LoginViewModel] Email login successful for: \(customerResponse.customer.email)")
+                    print("[LoginViewModel] Email login successful for: \(customerResponse.customer?.email ?? "")")
                     self?.handleLoginSuccess(customerResponse)
                 }
             )
@@ -95,7 +95,7 @@ class LoginViewModel: ObservableObject {
     }
     
     private func handleLoginSuccess(_ customerResponse: CustomerResponse) {
-        let userName = customerResponse.customer.firstName ?? "User"
+        let userName = customerResponse.customer?.firstName ?? "User"
         resultState = .success(userName)
         print("[LoginViewModel] Login state updated to success with name: \(userName)")
     }

@@ -13,7 +13,7 @@ class DIContainer{
     private init() {}
     
     func resolveSignUpViewModel() -> SignUpViewModel{
-        return SignUpViewModel(createAccountUseCase: resolveCreateAccounttUseCase(), validator: resolveSignUpValidators())
+        return SignUpViewModel(createAccountUseCase: resolveCreateAccounttUseCase(), googleSignInUseCase: resolveGoogleSignInUseCase(),validator: resolveSignUpValidators())
     }
     
     func resolveProfileViewModel() -> ProfileViewModel{

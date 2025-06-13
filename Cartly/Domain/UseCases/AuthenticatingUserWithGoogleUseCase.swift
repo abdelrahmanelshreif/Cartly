@@ -136,9 +136,12 @@ class AuthenticatingUserWithGoogleUseCase: AuthenticatingUserWithGoogleUseCasePr
                     throw AuthError.shopifySignUpFailed
                 }
                 
-                print("[GoogleLoginUseCase] Successfully created new Shopify customer: ID=\(customerResponse.customer.id)")
+                print("[GoogleLoginUseCase] Successfully created new Shopify customer: ID=\(customerResponse.customer?.id ?? 0)")
                 print("[GoogleLoginUseCase] Saving user session")
-                self.userSessionService.saveUserSession(customerResponse.customer)
+                guard let customerloggedIn =  customerResponse.customer else{
+                    throw AuthError.signinFalied
+                }
+                self.userSessionService.saveUserSession(customerloggedIn)
                 
                 return customerResponse
             }
