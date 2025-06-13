@@ -27,9 +27,6 @@ class SignUpValidator : SignUpValidatorProtocol{
             return .invalid(.invalidEmail)
         }
         
-        if !GeneralValidator.isValidPhone(data.phone!) {
-            return .invalid(.invalidPhone)
-        }
         
         if data.password!.count < 6 {
             return .invalid(.weakPassword)

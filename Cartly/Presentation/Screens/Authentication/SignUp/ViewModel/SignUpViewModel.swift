@@ -36,7 +36,6 @@ class SignUpViewModel: ObservableObject {
                lastname: lastName,
                email: email,
                password: password,
-               phone: phone,
                passwordConfirm: password,
                sendinEmailVerification: BuissnessStrategies.sendEmails
            )

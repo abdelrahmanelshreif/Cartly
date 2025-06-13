@@ -38,9 +38,6 @@ struct SignupView: View {
                 CustomTextField(
                     placeHolder: "Email", text: $viewModel.email,
                     icon: "envelope.fill", keyboardType: .emailAddress)
-                CustomTextField(
-                    placeHolder: "Phone", text: $viewModel.phone,
-                    icon: "phone.fill", keyboardType: .phonePad)
                 CustomSecureField(
                     placeHolder: "Password", text: $viewModel.password,
                     isVisible: $isPasswordVisible, icon: "lock.fill")
