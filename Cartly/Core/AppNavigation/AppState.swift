@@ -10,6 +10,7 @@ enum Route: Hashable {
     case Signup
     case Products(Int64, String)
     case productDetail(Int64)
+    case productDetailFromCart(productId: Int64, isFromCart:Bool ,variantId: Int64)
     case Cart
     case Search
     case OrderCompletingScreen(CartMapper)

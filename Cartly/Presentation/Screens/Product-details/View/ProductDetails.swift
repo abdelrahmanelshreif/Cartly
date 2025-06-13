@@ -17,6 +17,8 @@ struct ProductDetailsView: View {
     @State private var quantity = 1
     @State private var showLoginAlert = false
     @State private var showLoginView = false
+    private var cartVarient:Int64?
+    private var isCartSource:Bool?
 
     init(productId: Int64) {
         self.productId = productId
@@ -24,6 +26,16 @@ struct ProductDetailsView: View {
             wrappedValue: DIContainer.shared.resolveProductDetailsViewModel())
         _wishlistViewModel = StateObject(
             wrappedValue: DIContainer.shared.resolveWishlistViewModel())
+    }
+    
+    init(productId: Int64, isFromCart:Bool , varientId:Int64) {
+        self.productId = productId
+        _viewModel = StateObject(
+            wrappedValue: DIContainer.shared.resolveProductDetailsViewModel())
+        _wishlistViewModel = StateObject(
+            wrappedValue: DIContainer.shared.resolveWishlistViewModel())
+        isCartSource = isFromCart
+        cartVarient = varientId
     }
 
     var body: some View {
@@ -72,7 +84,11 @@ struct ProductDetailsView: View {
             }
         }
         .onAppear {
-            viewModel.getProduct(for: productId)
+            if let  src = isCartSource , let vId = cartVarient {
+                viewModel.getProduct(for: productId, sourceisCart: src , cartVarientId: vId)
+            }else{
+                viewModel.getProduct(for: productId)
+            }
             wishlistViewModel.checkAuthorization()
             if wishlistViewModel.isAuthorized {
                 wishlistViewModel.searchProductAtWishlist(
