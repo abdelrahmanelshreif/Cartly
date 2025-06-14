@@ -2,7 +2,8 @@ import Combine
 import Foundation
 
 class ProductDetailsViewModel: ObservableObject {
-    @Published var resultState: ResultStateViewLayer<ProductInformationEntity>? = nil
+    @Published var resultState:
+        ResultStateViewLayer<ProductInformationEntity>? = nil
     @Published var selectedSize = "" {
         didSet {
             updateSelectedVariant()
@@ -23,6 +24,8 @@ class ProductDetailsViewModel: ObservableObject {
     @Published var showQuantitySelector = false
 
     /// new added for cart logic
+    ///
+    ///
     @Published var isAddingToCart = false
     private let addToCartUseCase: AddToCartUseCaseImpl
     private let maxCartQuantity = 5
@@ -32,12 +35,21 @@ class ProductDetailsViewModel: ObservableObject {
     private var currentProduct: ProductInformationEntity?
     private var cancellables = Set<AnyCancellable>()
 
+//    //Handling Varient Comes Form Cart
+//    private var productComesFromCartWisthSpecifiedVariation = false
+//    private var varientIdComesFromCart: Int64 = 0
+
     init(getProductUseCase: GetProductDetailsUseCaseProtocol) {
         self.getProductUseCase = getProductUseCase
-        addToCartUseCase = AddToCartUseCaseImpl(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))
+        addToCartUseCase = AddToCartUseCaseImpl(
+            repository: RepositoryImpl(
+                remoteDataSource: RemoteDataSourceImpl(
+                    networkService: AlamofireService()),
+                firebaseRemoteDataSource: FirebaseDataSource(
+                    firebaseServices: FirebaseServices())))
     }
 
-    func getProduct(for productId: Int64) {
+    func getProduct(for productId: Int64, sourceisCart isComesFromCart:Bool = false , cartVarientId varientId:Int64 = 0) {
         resultState = .loading
         getProductUseCase.execute(productId: productId)
             .receive(on: DispatchQueue.main)
@@ -45,21 +57,33 @@ class ProductDetailsViewModel: ObservableObject {
                 switch state {
                 case let .success(productResponse):
                     guard let product = productResponse else { return }
-                    let mappedProduct = ProducInformationtMapper.mapShopifyProductToProductView(product)
+                    let mappedProduct =
+                        ProducInformationtMapper.mapShopifyProductToProductView(
+                            product)
                     self?.currentProduct = mappedProduct
                     self?.resultState = .success(mappedProduct)
                     self?.resetSelection()
 
-                    // Auto-select if only one option
-                    if mappedProduct.availableSizes.count == 1 {
-                        self?.selectedSize = mappedProduct.availableSizes[0]
-                    }
-                    if mappedProduct.availableColors.count == 1 {
-                        self?.selectedColor = mappedProduct.availableColors[0]
+                    if isComesFromCart {
+                        self?.selectedVariant = self?.currentProduct?.variants.first { varient in
+                            varient.id == varientId
+                        }
+                        self?.selectedSize = self?.selectedVariant?.size ?? ""
+                        self?.selectedColor = self?.selectedVariant?.color ?? ""
+                        
+                    } else {
+                        if mappedProduct.availableSizes.count == 1 {
+                            self?.selectedSize = mappedProduct.availableSizes[0]
+                        }
+                        if mappedProduct.availableColors.count == 1 {
+                            self?.selectedColor =
+                                mappedProduct.availableColors[0]
+                        }
                     }
 
                 case .failure:
-                    self?.resultState = .failure(AppError.failedFetchingDataFromNetwork)
+                    self?.resultState = .failure(
+                        AppError.failedFetchingDataFromNetwork)
                 }
             }
             .store(in: &cancellables)
@@ -81,7 +105,8 @@ class ProductDetailsViewModel: ObservableObject {
             return
         }
 
-        print("Updating variant - Size: \(selectedSize), Color: \(selectedColor)")
+        print(
+            "Updating variant - Size: \(selectedSize), Color: \(selectedColor)")
 
         // Check if both size and color are selected
         let sizeRequired = !product.availableSizes.isEmpty
@@ -111,7 +136,8 @@ class ProductDetailsViewModel: ObservableObject {
             if quantity > variant.inventoryQuantity {
                 quantity = min(1, variant.inventoryQuantity)
             }
-            isAddToCartEnabled = variant.isAvailable && variant.inventoryQuantity > 0
+            isAddToCartEnabled =
+                variant.isAvailable && variant.inventoryQuantity > 0
         } else {
             showQuantitySelector = false
             isAddToCartEnabled = false
@@ -159,7 +185,8 @@ class ProductDetailsViewModel: ObservableObject {
 
     func addToCart() {
         guard let variant = selectedVariant else {
-            alertMessage = "Please select size and color to continue shopping..."
+            alertMessage =
+                "Please select size and color to continue shopping..."
             triggerAlert = true
             return
         }
@@ -221,7 +248,9 @@ class ProductDetailsViewModel: ObservableObject {
             )
             .store(in: &cancellables)
 
-        print("Adding to cart: Variant ID: \(variant.id), Title: \(variant.title), Quantity: \(quantity), Price: \(variant.price)")
+        print(
+            "Adding to cart: Variant ID: \(variant.id), Title: \(variant.title), Quantity: \(quantity), Price: \(variant.price)"
+        )
 
         // Show success message
         alertMessage = "Added to cart successfully!"
@@ -251,7 +280,8 @@ class ProductDetailsViewModel: ObservableObject {
                 alertMessage = "Failed to add item to cart. Please try again."
             }
         } else {
-            alertMessage = "Failed to add item to cart: \(error.localizedDescription)"
+            alertMessage =
+                "Failed to add item to cart: \(error.localizedDescription)"
         }
         triggerAlert = true
     }
@@ -261,8 +291,8 @@ class ProductDetailsViewModel: ObservableObject {
             isAddToCartEnabled = false
             return
         }
-        isAddToCartEnabled = variant.isAvailable &&
-            variant.inventoryQuantity > 0 &&
-            !isAddingToCart
+        isAddToCartEnabled =
+            variant.isAvailable && variant.inventoryQuantity > 0
+            && !isAddingToCart
     }
 }

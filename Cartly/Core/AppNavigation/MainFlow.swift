@@ -16,13 +16,22 @@ struct MainFlow: View {
             HomeTabView()
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    case .Login: LoginView()
-                    case .Signup: SignupView()
-                    case let .Products(brandId, brandTitle): ProductScreen(brandId: brandId, brandTitle: brandTitle)
-                    case let .productDetail(productId): ProductDetailsView(productId: productId)
-                    case .Cart: CartScreen()
-                    case .Search: SearchScreen()
-                    case .OrderCompletingScreen(let cart): OrderCompletingScreen(cart: cart)
+                    case .Login:
+                        LoginView()
+                    case .Signup:
+                        SignupView()
+                    case let .Products(brandId, brandTitle):
+                        ProductScreen(brandId: brandId, brandTitle: brandTitle)
+                    case let .productDetail(productId):
+                        ProductDetailsView(productId:productId)
+                    case let .productDetailFromCart(productId, isCartSource ,variantId):
+                        ProductDetailsView(productId: productId, isFromCart: isCartSource, varientId: variantId)
+                    case .Cart:
+                        CartScreen()
+                    case .Search:
+                        SearchScreen()
+                    case .OrderCompletingScreen(let cart):
+                        OrderCompletingScreen(cart: cart)
                     }
                 }
         }

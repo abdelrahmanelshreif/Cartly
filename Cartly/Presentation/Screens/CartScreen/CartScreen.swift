@@ -32,7 +32,7 @@ struct CartScreen: View {
             } else {
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(viewModel.cartItems, id: \.orderID) { cartMapper in
+                            ForEach(viewModel.cartItems, id: \.orderID) { cartMapper in
                             VStack(spacing: 12) {
                                 ForEach(cartMapper.itemsMapper, id: \.itemId) { item in
                                     CartItemView(
@@ -49,6 +49,9 @@ struct CartScreen: View {
                                                 cartId: cartMapper.orderID,
                                                 itemId: item.itemId
                                             )
+                                        },
+                                        onItemTap: {
+                                            router.push(Route.productDetailFromCart(productId: item.productId,isFromCart: true, variantId: item.variantId))
                                         }
                                     )
                                 }
@@ -113,6 +116,7 @@ struct CartItemView: View {
     let item: ItemsMapper
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
+    let onItemTap: () -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -178,7 +182,7 @@ struct CartItemView: View {
                     .foregroundColor(.red)
                     .font(.title3)
             }
-        }
+        }.onTapGesture(perform: onItemTap)
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
@@ -206,7 +210,8 @@ struct CartItemView: View {
      }
      .padding(.horizontal)
  }
- */
+ 
+
 #if false
     import SwiftUI
 
@@ -328,3 +333,4 @@ struct CartItemView: View {
         ]
     }
 #endif
+*/

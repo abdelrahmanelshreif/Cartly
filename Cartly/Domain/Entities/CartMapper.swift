@@ -21,6 +21,7 @@ struct ItemsMapper: Codable, Hashable {
     var variantTitle: String
     var quantity: Int
     var price: String
+    var itemImage: String?
 
     init?(lineItem: LineItem) {
         guard
