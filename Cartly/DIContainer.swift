@@ -16,6 +16,11 @@ class DIContainer{
         return SignUpViewModel(createAccountUseCase: resolveCreateAccounttUseCase(), googleSignInUseCase: resolveGoogleSignInUseCase(),validator: resolveSignUpValidators())
     }
     
+    func resolveSettingsViewModel() -> SettingsViewModel{
+        return SettingsViewModel(useCase: resolveConvertCurrencyUseCase())
+    }
+    
+    
     func resolveProfileViewModel() -> ProfileViewModel{
         return ProfileViewModel(signOutUseCase: resolveSignOutUseCase(), getUserSession: resolveGettingCurrentInfo())
     }
@@ -31,6 +36,17 @@ class DIContainer{
         return WishlistViewModel(getWishlistUseCase: resolveGetWishlistUsecase(), addProductUseCase: resolveAddProductToWishlistUseCase(), removeProductUseCase: resolveRemoveProductFromWishlistUseCase(), getProductDetailsUseCase: resolveGetProductUseCase(), getCurrentUser: resolveGettingCurrentInfo() , searchProductAtWishlistUseCase: resolveSearcingInWishlistUseCase())
     }
     
+    private func resolveConvertCurrencyUseCase() -> ConvertCurrencyUseCaseProtocol{
+        return ConvertCurrencyUseCase(repository: resolveCurrencyRepository())
+    }
+    
+    private func resolveCurrencyRepository() -> CurrencyRepositoryProtocol{
+        return CurrencyRepository(service: resolveCurrencyAPIService())
+    }
+    
+    private func resolveCurrencyAPIService() -> CurrencyAPIServiceProtocol{
+        return CurrencyAPIService()
+    }
     private func resolveGoogleSignInUseCase() -> AuthenticatingUserWithGoogleUseCaseProtocol{
         return AuthenticatingUserWithGoogleUseCase(authRepository: resolveAuthenticationRepository(), shopifyRepo: resolveShopifyRepository(), userSessionService: resolveUserSessionService())
     }
