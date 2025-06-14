@@ -6,7 +6,9 @@ class CartViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var hasItems: Bool = false
+    @Published var isDeletingItem: Bool = false
 
+    private let deleteCartItemUseCase: DeleteCartItemUseCase
     private let getCustomerCartUseCase: GetCustomerCartUseCase
     private var cancellables = Set<AnyCancellable>()
 
@@ -28,8 +30,12 @@ class CartViewModel: ObservableObject {
         }
     }
 
-    init(getCustomerCartUseCase: GetCustomerCartUseCase) {
+    init(
+        getCustomerCartUseCase: GetCustomerCartUseCase,
+        deleteCartItemUseCase: DeleteCartItemUseCase
+    ) {
         self.getCustomerCartUseCase = getCustomerCartUseCase
+        self.deleteCartItemUseCase = deleteCartItemUseCase
     }
 
     func loadCustomerCart() {
@@ -64,8 +70,28 @@ class CartViewModel: ObservableObject {
     }
 
     func removeItem(cartId: Int64, itemId: Int64) {
-        // TODO: Implement remove item logic
-        print("Remove item \(itemId) from cart \(cartId)")
+        isDeletingItem = true
+        errorMessage = nil
+
+        deleteCartItemUseCase.execute(draftOrderID: cartId, itemID: itemId)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isDeletingItem = false
+
+                    switch completion {
+                    case .finished:
+                        print("Item deleted successfully")
+                    case let .failure(error):
+                        self?.handleError(error)
+                    }
+                },
+                receiveValue: { [weak self] updatedCartMappers in
+                    self?.cartItems = updatedCartMappers
+                    self?.hasItems = !updatedCartMappers.isEmpty
+                    print("Cart updated after deletion. Items count: \(updatedCartMappers.count)")
+                }
+            )
+            .store(in: &cancellables)
     }
 
     func updateQuantity(cartId: Int64, itemId: Int64, newQuantity: Int) {
