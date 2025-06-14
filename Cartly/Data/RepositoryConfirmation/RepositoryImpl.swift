@@ -221,7 +221,8 @@ class RepositoryImpl: RepositoryProtocol {
     func getAllDraftOrdersForCustomer() -> AnyPublisher<[CartMapper], Error> {
         let service = UserSessionService()
         let userEmail = service.getCurrentUserEmail() ?? ""
-
+        print("\(userEmail) in kosom el repoooooooooooo")
+        
         guard !userEmail.isEmpty else {
             return Fail(error: ErrorType.noData)
                 .eraseToAnyPublisher()
@@ -234,7 +235,7 @@ class RepositoryImpl: RepositoryProtocol {
                 }
 
                 let customerDraftOrder = draftOrders.filter { DraftOrder in
-                    guard let draftOrderEmail = DraftOrder.email else {
+                    guard userEmail == DraftOrder.email else {
                         return false
                     }
                     return true

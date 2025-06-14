@@ -13,17 +13,17 @@ struct OrderCompletingScreen: View {
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
-
+    
     @State private var showSuccessAlert = false
     @State private var showCODLimitAlert: Bool = false
-
+    
     private let cart: CartMapper
     
     init(cart: CartMapper) {
         self.cart = cart
         print("\(cart) in OrderCompletingScreen!!!!!!!!")
         _vm = StateObject(wrappedValue: OrderCompletingViewModel(
-            cartItems: CartItem.sampleData,
+            cartItems: cart.itemsMapper,
             calculateSummary: CalculateOrderSummaryUseCase(),
             validatePromo: ValidatePromoCodeUseCase(
                 fetchRulesUseCase: FetchAllDiscountCodesUseCase(
@@ -34,7 +34,7 @@ struct OrderCompletingScreen: View {
                 )
             )
         ))
-
+        
         _addressVM = StateObject(wrappedValue: AddressesViewModel(
             fetchAddressesUseCase: FetchCustomerAddressesUseCase(
                 repository: CustomerAddressRepository(
@@ -57,19 +57,19 @@ struct OrderCompletingScreen: View {
 
         _paymentVM = StateObject(wrappedValue: PaymentViewModel())
     }
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 Text("Review & Complete Order")
                     .font(.title2).bold()
                     .padding(.horizontal)
-
+                
                 AddressesView(viewModel: addressVM)
                 cartPreview
                 orderSummarySection
                 PaymentView(viewModel: paymentVM, selectedPayment: $vm.selectedPayment)
-
+                
                 Button(action: {
                     if vm.canCompleteOrder() {
                         paymentVM.handleCompleteOrder()
@@ -117,25 +117,25 @@ struct OrderCompletingScreen: View {
             }
         }
     }
-
+    
     struct CartPreview: View {
-        let item: CartItem
-
+        let item: ItemsMapper
+        
         var body: some View {
             VStack {
-                Image(item.imageName)
+                Image(systemName: "photo")
                     .resizable()
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
-
-                Text(item.title)
+                
+                Text(item.productTitle)
                     .font(.caption)
                     .lineLimit(1)
-
-                Text("\(item.size) / \(item.color)")
+                
+                Text(item.variantTitle)
                     .font(.caption2)
                     .foregroundColor(.secondary)
-
+                
                 Text("x\(item.quantity)")
                     .font(.caption2)
             }
@@ -144,13 +144,13 @@ struct OrderCompletingScreen: View {
             .cornerRadius(10)
         }
     }
-
+    
     var cartPreview: some View {
         VStack(alignment: .leading) {
             Text("Your Items").font(.headline).padding(.horizontal)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(vm.getCartItems()) { item in
+                    ForEach(vm.getCartItems(), id: \.itemId) { item in
                         CartPreview(item: item)
                     }
                 }
@@ -158,12 +158,12 @@ struct OrderCompletingScreen: View {
             }
         }
     }
-
+    
     var orderSummarySection: some View {
         VStack(spacing: 12) {
             Text("Order Info").font(.headline)
             summaryRow("Subtotal", vm.orderSummary.subtotal)
-
+            
             HStack {
                 TextField("Coupon Code", text: $vm.promoCode)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -172,11 +172,11 @@ struct OrderCompletingScreen: View {
                 }
                 .disabled(vm.isApplyingCoupon)
             }
-
+            
             if let error = vm.errorMessage {
                 Text(error).foregroundColor(.red).font(.caption)
             }
-
+            
             summaryRow("Discount", -vm.discount)
             Divider()
             summaryRow("Total", vm.orderSummary.total, isBold: true)
@@ -186,7 +186,7 @@ struct OrderCompletingScreen: View {
         .cornerRadius(12)
         .padding(.horizontal)
     }
-
+    
     func summaryRow(_ label: String, _ amount: Double, isBold: Bool = false) -> some View {
         HStack {
             Text(label)

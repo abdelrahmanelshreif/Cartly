@@ -22,12 +22,14 @@ class AddressesViewModel: ObservableObject {
     private let setDefaultAddressUseCase: SetDefaultCustomerAddressUseCaseProtocol
     private let deleteAddressUseCase : DeleteCustomerAddressUseCaseProtocol
     private let editAddressUseCase : EditCustomerAddressUseCaseProtocol
-    private let customerID: Int64 = 7706377257143
+    private let userSession : UserSessionService
+    private let customerID: Int64
     // Static customer ID
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Init
     init(
+      
         fetchAddressesUseCase: FetchCustomerAddressesUseCaseProtocol,
         addAddressUseCase: AddCustomerAddressUseCaseProtocol,
         setDefaultAddressUseCase: SetDefaultCustomerAddressUseCaseProtocol,
@@ -39,6 +41,8 @@ class AddressesViewModel: ObservableObject {
         self.setDefaultAddressUseCase = setDefaultAddressUseCase
         self.deleteAddressUseCase = deleteAddressUseCase
         self.editAddressUseCase = editAddressUseCase
+        userSession = UserSessionService()
+        customerID = Int64(userSession.getCurrentUserId()!)!
     }
     
     // MARK: - Public Functions

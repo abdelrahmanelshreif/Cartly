@@ -8,8 +8,11 @@
 import Foundation
 
 final class CalculateOrderSummaryUseCase {
-    func execute(for cartItems: [CartItem], discount: Double) -> OrderSummary {
-        let subtotal = cartItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
+    func execute(for items: [ItemsMapper], discount: Double) -> OrderSummary {
+        let subtotal = items.reduce(0) {
+            guard let price = Double($1.price) else { return $0 }
+            return $0 + (price * Double($1.quantity))
+        }
         return OrderSummary(subtotal: subtotal, tax: 0, discount: discount)
     }
 }
