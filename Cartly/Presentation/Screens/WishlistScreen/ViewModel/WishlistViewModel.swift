@@ -106,7 +106,7 @@ class WishlistViewModel: ObservableObject {
         )
         .store(in: &cancellables)
     }
-
+    
     func removeProductAtWishlist(productId: String) {
         guard isUserAuthorized() else {
             wishlistAlertMessage = "Please login to manage your wishlist"

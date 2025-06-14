@@ -11,6 +11,7 @@ struct WishlistItemView: View {
     @Binding var isLoading: Bool
     let product: WishlistProduct
     let onRemove: () -> Void
+    let onItemTap: () -> Void
 
     var body: some View {
         HStack(spacing: 16) {
@@ -76,5 +77,6 @@ struct WishlistItemView: View {
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .onTapGesture(perform: onItemTap)
     }
 }

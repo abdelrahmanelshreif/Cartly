@@ -49,6 +49,7 @@ struct WishlistScreen: View {
 }
 
 struct WishlistContentView: View {
+    @EnvironmentObject var router: AppRouter
     @Binding var isLoading: Bool
     @StateObject var viewModel: WishlistViewModel
     let wishlistProducts: [WishlistProduct]
@@ -61,8 +62,10 @@ struct WishlistContentView: View {
                         isLoading: $isLoading,
                         product: product,
                         onRemove: {
-                            viewModel.removeProductAtWishlist(
-                                productId: product.productId)
+                            viewModel.removeProductAtWishlist(productId: product.productId)
+                        },
+                        onItemTap: {
+                            router.push(Route.productDetail(Int64(product.productId)!))
                         }
                     )
                     .padding(.horizontal)
