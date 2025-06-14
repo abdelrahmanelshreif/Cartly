@@ -120,30 +120,41 @@ struct OrderCompletingScreen: View {
     
     struct CartPreview: View {
         let item: ItemsMapper
-        
+
         var body: some View {
             VStack {
                 Image(systemName: "photo")
                     .resizable()
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
-                
+
                 Text(item.productTitle)
                     .font(.caption)
                     .lineLimit(1)
-                
+
                 Text(item.variantTitle)
                     .font(.caption2)
                     .foregroundColor(.secondary)
-                
+
                 Text("x\(item.quantity)")
                     .font(.caption2)
+
+                if let priceValue = Double(item.price) {
+                    Text("$\(priceValue * Double(item.quantity), specifier: "%.2f")")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                } else {
+                    Text("Invalid Price")
+                        .font(.caption2)
+                        .foregroundColor(.red)
+                }
             }
             .padding(8)
             .background(Color.gray.opacity(0.1))
             .cornerRadius(10)
         }
     }
+
     
     var cartPreview: some View {
         VStack(alignment: .leading) {
