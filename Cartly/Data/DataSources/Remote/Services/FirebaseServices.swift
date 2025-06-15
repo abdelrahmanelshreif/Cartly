@@ -11,8 +11,8 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol FirebaseServiceProtocol {
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
-    func signup(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>
+    func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
 
@@ -32,7 +32,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
     private let wishlist = "wishlist"
     private let cart = "cart"
 
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>
     {
         return Future { promise in
             Auth.auth().signIn(withEmail: email, password: password) {
@@ -40,7 +40,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    promise(.success(user.email))
+                    promise(.success(user))
                 } else {
                     promise(.success(nil))
                 }
@@ -69,7 +69,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func signup(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     {
         return Future { promise in
             Auth.auth().createUser(withEmail: email, password: password) {
@@ -77,7 +77,8 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    promise(.success(user.email))
+                    user.sendEmailVerification()
+                    promise(.success(user))
                 } else {
                     promise(.success(nil))
                 }

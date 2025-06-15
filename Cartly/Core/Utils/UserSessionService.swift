@@ -12,11 +12,11 @@ protocol UserSessionServiceProtocol {
     func saveUserSession(_ customer: Customer)
     func clearUserSession()
     func getCurrentUserId() -> String?
-    func getCurrentUserVerificationStatus() -> String?
     func getCurrentUserEmail() -> String?
     func isUserLoggedIn() -> Bool?
     func isUserEmailVerified() -> Bool?
     func getCurrentUserName() -> String?
+    func setVerificationStatus(_ status:Bool)
 }
 
 // MARK: - User Session Implementation
@@ -37,7 +37,10 @@ class UserSessionService: UserSessionServiceProtocol {
         userDefaults.set(customer.email, forKey: Keys.userEmail)
         userDefaults.set((customer.firstName ?? "") + " " + (customer.lastName ?? ""), forKey: Keys.userName)
         userDefaults.set(true, forKey: Keys.isLoggedIn)
-        userDefaults.set(customer.verifiedEmail, forKey: Keys.isUserVerified) // invited is "verified"
+    }
+    
+    func setVerificationStatus(_ status:Bool){
+        userDefaults.set(status, forKey: Keys.isUserVerified)
     }
     
     func clearUserSession() {
@@ -45,7 +48,8 @@ class UserSessionService: UserSessionServiceProtocol {
         userDefaults.removeObject(forKey: Keys.userEmail)
         userDefaults.removeObject(forKey: Keys.userName)
         userDefaults.removeObject(forKey: Keys.isUserVerified)
-        userDefaults.set(false, forKey: Keys.isLoggedIn)
+        userDefaults.removeObject(forKey: Keys.isLoggedIn)
+        userDefaults.removeObject(forKey: Keys.isUserVerified)
     }
     
     func getCurrentUserId() -> String? {
@@ -55,11 +59,7 @@ class UserSessionService: UserSessionServiceProtocol {
     func getCurrentUserEmail() -> String? {
         return userDefaults.string(forKey: Keys.userEmail)
     }
-    
-    func getCurrentUserVerificationStatus() -> String? {
-        return userDefaults.string(forKey: Keys.isUserVerified) ?? ""
-    }
-    
+        
     func getCurrentUserName() -> String? {
         return userDefaults.string(forKey: Keys.userName) ?? "Cartly User"
     }
@@ -69,8 +69,7 @@ class UserSessionService: UserSessionServiceProtocol {
     }
     
     func isUserEmailVerified() -> Bool? {
-        let veirficationStatus =  userDefaults.string(forKey: Keys.isUserVerified)
-        let status:Bool = veirficationStatus ?? "disabled" ==  "invited" ? true : false
-        return status
+        return userDefaults.bool(forKey: Keys.isUserVerified)
+
     }
 }
