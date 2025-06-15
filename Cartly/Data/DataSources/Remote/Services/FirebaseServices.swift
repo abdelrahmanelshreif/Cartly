@@ -15,6 +15,7 @@ protocol FirebaseServiceProtocol {
     func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
+    func getUserVerificationStatus() -> Bool
 
     func addProductToWishlist(userId: String, product: WishlistProduct)-> AnyPublisher<Void, Error>
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
@@ -25,7 +26,7 @@ protocol FirebaseServiceProtocol {
 }
 
 final class FirebaseServices: FirebaseServiceProtocol {
-    
+     
     private let googleSignInHelper = GoogleSignInHelper()
     private let firestore: Firestore = Firestore.firestore()
     private let userCollection = "users"
@@ -47,6 +48,13 @@ final class FirebaseServices: FirebaseServiceProtocol {
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    func getUserVerificationStatus() -> Bool {
+        guard let user = Auth.auth().currentUser else{
+            return false
+        }
+        return user.isEmailVerified
     }
     
     func signInWithGoogle() -> AnyPublisher<FirebaseAuth.User?, any Error> {
