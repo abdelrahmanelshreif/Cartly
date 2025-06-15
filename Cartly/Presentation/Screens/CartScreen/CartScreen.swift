@@ -1,104 +1,56 @@
-//
-//  CartScreen.swift
-//  Cartly
-//
-//  Created by Khalid Amr on 08/06/2025.
-//
-
 import SwiftUI
 
 struct CartScreen: View {
     @StateObject private var viewModel: CartViewModel
     @EnvironmentObject private var router: AppRouter
+    @State private var animateTotal: Bool = false
+    @State private var showCheckoutAnimation: Bool = false
+
     init() {
-        _viewModel = StateObject(wrappedValue: CartViewModel(getCustomerCartUseCase: GetCustomerCartUseCase(repository: RepositoryImpl(remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()), firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())))))
+        let repository = RepositoryImpl(
+            remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()),
+            firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
+        )
+
+        _viewModel = StateObject(wrappedValue: CartViewModel(
+            getCustomerCartUseCase: GetCustomerCartUseCase(repository: repository),
+            deleteCartItemUseCase: DeleteCartItemUseCase(repository: repository)
+        ))
     }
 
     var body: some View {
-        VStack {
-            if viewModel.isLoading {
-                ProgressView("Loading cart...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if viewModel.isCartEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "cart")
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray)
-                    Text("Your cart is empty")
-                        .font(.title2)
-                        .foregroundColor(.gray)
+        GeometryReader { geometry in
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.95, green: 0.97, blue: 1.0),
+                        Color(red: 0.98, green: 0.95, blue: 1.0)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+                
+                if viewModel.isLoading {
+                    modernLoadingView()
+                } else if viewModel.isCartEmpty {
+                    emptyCartView()
+                } else {
+                    cartContentView(geometry: geometry)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ScrollView {
-                    VStack(spacing: 16) {
-                            ForEach(viewModel.cartItems, id: \.orderID) { cartMapper in
-                            VStack(spacing: 12) {
-                                ForEach(cartMapper.itemsMapper, id: \.itemId) { item in
-                                    CartItemView(
-                                        item: item,
-                                        onQuantityChange: { newQuantity in
-                                            viewModel.updateQuantity(
-                                                cartId: cartMapper.orderID,
-                                                itemId: item.itemId,
-                                                newQuantity: newQuantity
-                                            )
-                                        },
-                                        onDelete: {
-                                            viewModel.removeItem(
-                                                cartId: cartMapper.orderID,
-                                                itemId: item.itemId
-                                            )
-                                        },
-                                        onItemTap: {
-                                            router.push(Route.productDetailFromCart(productId: item.productId,isFromCart: true, variantId: item.variantId))
-                                        }
-                                    )
-                                }
-                            }
-                            .padding(.vertical, 8)
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                        }
-                    }
-                    .padding()
+                
+                if viewModel.isDeletingItem {
+                    deletionOverlay()
                 }
-
-                Divider()
-
-                HStack {
-                    Text("Total:")
-                        .font(.headline)
-                    Spacer()
-                    Text("$\(viewModel.totalPrice, specifier: "%.2f")")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                }
-                .padding([.horizontal, .top])
-
-                Button(action: {
-                    /// navigate to map or payment screen
-                    print(viewModel.cartItems.first?.hasAddress ?? false)
-                    
-                    if !viewModel.isCartEmpty {
-                        router.push(Route.OrderCompletingScreen(viewModel.cartItems.first!))
-                    }
-                }) {
-                    Text("Checkout (\(viewModel.totalItemsCount) items)")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .padding()
             }
         }
-        .navigationTitle("CART")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("My Cart")
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             viewModel.loadCustomerCart()
+            withAnimation(.easeInOut(duration: 0.6)) {
+                animateTotal = true
+            }
         }
         .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("OK") {
@@ -110,224 +62,403 @@ struct CartScreen: View {
             }
         }
     }
+    
+    private func modernLoadingView() -> some View {
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .stroke(Color.blue.opacity(0.2), lineWidth: 4)
+                    .frame(width: 60, height: 60)
+                
+                Circle()
+                    .trim(from: 0, to: 0.7)
+                    .stroke(
+                        LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 60, height: 60)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: viewModel.isLoading)
+            }
+            
+            Text("Loading your cart...")
+                .font(.headline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private func emptyCartView() -> some View {
+        VStack(spacing: 24) {
+            ZStack {
+                Circle()
+                    .fill(Color.blue.opacity(0.1))
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "cart")
+                    .font(.system(size: 50, weight: .light))
+                    .foregroundColor(.blue)
+                    .scaleEffect(animateTotal ? 1.0 : 0.8)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: animateTotal)
+            }
+            
+            VStack(spacing: 12) {
+                Text("Your cart is empty")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text("Add some products to get started")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private func cartContentView(geometry: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 16) {
+                    ForEach(Array(viewModel.cartItems.enumerated()), id: \.element.orderID) { index, cartMapper in
+                        VStack(spacing: 12) {
+                            ForEach(Array(cartMapper.itemsMapper.enumerated()), id: \.element.itemId) { itemIndex, item in
+                                ModernCartItemView(
+                                    item: item,
+                                    isDeletingItem: viewModel.isDeletingItem,
+                                    onQuantityChange: { newQuantity in
+                                        viewModel.updateQuantity(
+                                            cartId: cartMapper.orderID,
+                                            itemId: item.itemId,
+                                            newQuantity: newQuantity
+                                        )
+                                    },
+                                    onDelete: {
+                                        viewModel.removeItem(
+                                            cartId: cartMapper.orderID,
+                                            itemId: item.itemId
+                                        )
+                                    },
+                                    onItemTap: {
+                                        router.push(Route.productDetailFromCart(
+                                            productId: item.productId,
+                                            isFromCart: true,
+                                            variantId: item.variantId
+                                        ))
+                                    }
+                                )
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                                    removal: .move(edge: .leading).combined(with: .opacity)
+                                ))
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                }
+                .padding(.vertical, 16)
+            }
+            modernCheckoutSection(geometry: geometry)
+        }
+    }
+    
+    private func modernCheckoutSection(geometry: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.gray.opacity(0.2))
+                .frame(height: 1)
+            
+            VStack(spacing: 20) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Total Items")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("\(viewModel.totalItemsCount)")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("Total Amount")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("$\(viewModel.totalPrice, specifier: "%.2f")")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                            .scaleEffect(animateTotal ? 1.0 : 0.8)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: animateTotal)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showCheckoutAnimation = true
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        showCheckoutAnimation = false
+                        
+                        if !viewModel.isCartEmpty {
+                            router.push(Route.OrderCompletingScreen(viewModel.cartItems.first!))
+                        }
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "creditcard.fill")
+                            .font(.headline)
+                        
+                        Text("Proceed to Checkout")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.title3)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 18)
+                    .background(
+                        Group {
+                            if viewModel.isCartEmpty {
+                                Color.gray.opacity(0.6)
+                            } else {
+                                LinearGradient(
+                                    colors: [.blue, .purple],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            }
+                        }
+                    )
+                    .cornerRadius(16)
+                    .shadow(
+                        color: viewModel.isCartEmpty ? .clear : .blue.opacity(0.3),
+                        radius: 10,
+                        x: 0,
+                        y: 5
+                    )
+                }
+                .disabled(viewModel.isCartEmpty || viewModel.isDeletingItem)
+                .scaleEffect(showCheckoutAnimation ? 1.02 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: showCheckoutAnimation)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white.opacity(0.7))
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white.opacity(0.1))
+                            .blur(radius: 10)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 16)
+            .padding(.bottom, geometry.safeAreaInsets.bottom + 10)
+        }
+    }
+    
+    private func deletionOverlay() -> some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                        .frame(width: 60, height: 60)
+                    
+                    Circle()
+                        .trim(from: 0, to: 0.7)
+                        .stroke(Color.white, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                        .frame(width: 60, height: 60)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: viewModel.isDeletingItem)
+                }
+                
+                Text("Removing item...")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            }
+            .padding(32)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.black.opacity(0.8))
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white.opacity(0.1))
+                            .blur(radius: 10)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+            )
+        }
+    }
 }
 
-struct CartItemView: View {
+struct ModernCartItemView: View {
     let item: ItemsMapper
+    let isDeletingItem: Bool
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
     let onItemTap: () -> Void
 
+    @State private var showDeleteConfirmation = false
+    @State private var itemScale: CGFloat = 1.0
+    @State private var quantityAnimation: Bool = false
+
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            /// هنشيل ده قدام بالصوره الاصليه اما نعمل اللوجيك بتاعها
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 80, height: 80)
-                .cornerRadius(8)
-                .overlay(
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                        .font(.title2)
-                )
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.productTitle)
-                    .font(.headline)
-                    .lineLimit(2)
-
-                if !item.variantTitle.isEmpty {
-                    Text(item.variantTitle)
-                        .font(.subheadline)
+        Button(action: onItemTap) {
+            HStack(alignment: .center, spacing: 16) {
+                // Modern product image placeholder
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 90, height: 90)
+                    
+                    Image(systemName: "photo.artframe")
+                        .font(.system(size: 24, weight: .light))
                         .foregroundColor(.gray)
                 }
-
-                Text("$\(item.price)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-
-                HStack {
-                    Button(action: {
-                        if item.quantity > 1 {
-                            onQuantityChange(item.quantity - 1)
-                        }
-                    }) {
-                        Image(systemName: "minus.circle")
-                            .foregroundColor(item.quantity <= 1 ? .gray : .blue)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(item.quantity <= 1)
-
-                    Text("\(item.quantity)")
-                        .padding(.horizontal, 8)
-                        .font(.body)
-                        .fontWeight(.medium)
-
-                    Button(action: {
-                        onQuantityChange(item.quantity + 1)
-                    }) {
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(.blue)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .font(.title3)
-                .padding(.top, 4)
-            }
-
-            Spacer()
-
-            Button(action: onDelete) {
-                Image(systemName: "trash")
-                    .foregroundColor(.red)
-                    .font(.title3)
-            }
-        }.onTapGesture(perform: onItemTap)
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
-    }
-}
-
-/*
- {
-     HStack {
-         Text("Order #\(cartMapper.orderID)")
-             .font(.headline)
-             .foregroundColor(.primary)
-         Spacer()
-         Text(cartMapper.orderStatus.capitalized)
-             .font(.caption)
-             .padding(.horizontal, 8)
-             .padding(.vertical, 4)
-             .background(Color.blue.opacity(0.1))
-             .foregroundColor(.blue)
-             .cornerRadius(8)
-     }
-     .padding(.horizontal)
- }
- 
-
-#if false
-    import SwiftUI
-
-    struct CartScreen: View {
-        @State private var cartItems: [CartItem] = CartItem.sampleData
-        @State private var total: Double = 0.0
-
-        var body: some View {
-            VStack {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach($cartItems) { $item in
-                            CartItemView(item: $item, onDelete: {
-                                withAnimation {
-                                    cartItems.removeAll { $0.id == item.id }
-                                }
-                            })
-                        }
-                    }
-                    .padding()
-                }
-
-                Divider()
-
-                HStack {
-                    Text("Total:")
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.productTitle)
                         .font(.headline)
-                    Spacer()
-                    Text("$\(cartItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }, specifier: "%.2f")")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                }
-                .padding([.horizontal, .top])
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .foregroundColor(.primary)
 
-                Button(action: {
-                    // Checkout action
-                }) {
-                    Text("Checkout")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .padding()
-            }
-            .navigationTitle("Cart")
-        }
-    }
-
-    struct CartItemView: View {
-        @Binding var item: CartItem
-        let onDelete: () -> Void
-
-        var body: some View {
-            HStack(alignment: .top, spacing: 16) {
-                Image(item.imageName)
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .cornerRadius(8)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(item.title)
-                        .font(.headline)
-                    Text("\(item.size) / \(item.color)")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text("$\(item.price, specifier: "%.2f")")
-                        .font(.subheadline)
+                    if !item.variantTitle.isEmpty {
+                        Text(item.variantTitle)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(8)
+                    }
 
                     HStack {
-                        Button(action: {
-                            if item.quantity > 1 { item.quantity -= 1 }
-                        }) {
-                            Image(systemName: "minus.circle")
-                        }
-                        .buttonStyle(.plain)
+                        Text("$\(item.price)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 12) {
+                            Button(action: {
+                                if item.quantity > 1 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        quantityAnimation.toggle()
+                                    }
+                                    onQuantityChange(item.quantity - 1)
+                                }
+                            }) {
+                                Image(systemName: "minus.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(item.quantity <= 1 ? .gray : .blue)
+                            }
+                            .disabled(item.quantity <= 1 || isDeletingItem)
+                            .scaleEffect(quantityAnimation ? 1.2 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quantityAnimation)
 
-                        Text("\(item.quantity)")
-                            .padding(.horizontal, 8)
+                            Text("\(item.quantity)")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .frame(minWidth: 30)
+                                .scaleEffect(quantityAnimation ? 1.1 : 1.0)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quantityAnimation)
 
-                        Button(action: {
-                            item.quantity += 1
-                        }) {
-                            Image(systemName: "plus.circle")
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    quantityAnimation.toggle()
+                                }
+                                onQuantityChange(item.quantity + 1)
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.blue)
+                            }
+                            .disabled(isDeletingItem)
+                            .scaleEffect(quantityAnimation ? 1.2 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: quantityAnimation)
                         }
-                        .buttonStyle(.plain)
                     }
-                    .font(.title3)
-                    .padding(.top, 4)
                 }
-                Spacer()
-
-                Button(action: onDelete) {
-                    Image(systemName: "trash")
+                
+                Button(action: {
+                    showDeleteConfirmation = true
+                }) {
+                    Image(systemName: "trash.circle.fill")
+                        .font(.title2)
                         .foregroundColor(.red)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(color: .red.opacity(0.3), radius: 4, x: 0, y: 2)
+                }
+                .disabled(isDeletingItem)
+            }
+        }
+        .buttonStyle(PlainButtonStyle()) // This prevents the button from interfering with nested buttons
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.9))
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white.opacity(0.1))
+                        .blur(radius: 10)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                )
+        )
+        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        .scaleEffect(itemScale)
+        .opacity(isDeletingItem ? 0.6 : 1.0)
+        .animation(.easeInOut(duration: 0.3), value: isDeletingItem)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                itemScale = 1.0
+            }
+        }
+        .confirmationDialog("Remove Item", isPresented: $showDeleteConfirmation) {
+            Button("Remove", role: .destructive) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    itemScale = 0.8
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    onDelete()
                 }
             }
-            .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to remove \(item.productTitle) from your cart?")
         }
     }
-
-    struct CartItem: Identifiable {
-        let id = UUID()
-        let imageName: String
-        let title: String
-        let size: String
-        let color: String
-        let price: Double
-        var quantity: Int
-
-        static let sampleData: [CartItem] = [
-            .init(imageName: "backpack", title: "Adidas Classic Backpack", size: "OS", color: "Black", price: 70, quantity: 1),
-            .init(imageName: "stan_smith", title: "Adidas Kid's Stan Smith", size: "1", color: "White", price: 90, quantity: 4),
-            .init(imageName: "boots", title: "Dr. Martens 1460Z Cherry", size: "3", color: "Red", price: 249, quantity: 1),
-        ]
-    }
-#endif
-*/
+}
