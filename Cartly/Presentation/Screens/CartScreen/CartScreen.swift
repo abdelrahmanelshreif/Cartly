@@ -14,7 +14,8 @@ struct CartScreen: View {
 
         _viewModel = StateObject(wrappedValue: CartViewModel(
             getCustomerCartUseCase: GetCustomerCartUseCase(repository: repository),
-            deleteCartItemUseCase: DeleteCartItemUseCase(repository: repository)
+            deleteCartItemUseCase: DeleteCartItemUseCase(repository: repository),
+            getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase(repository: repository)
         ))
     }
 
@@ -24,13 +25,13 @@ struct CartScreen: View {
                 LinearGradient(
                     colors: [
                         Color(red: 0.95, green: 0.97, blue: 1.0),
-                        Color(red: 0.98, green: 0.95, blue: 1.0)
+                        Color(red: 0.98, green: 0.95, blue: 1.0),
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-                
+
                 if viewModel.isLoading {
                     modernLoadingView()
                 } else if viewModel.isCartEmpty {
@@ -38,7 +39,7 @@ struct CartScreen: View {
                 } else {
                     cartContentView(geometry: geometry)
                 }
-                
+
                 if viewModel.isDeletingItem {
                     deletionOverlay()
                 }
@@ -62,14 +63,14 @@ struct CartScreen: View {
             }
         }
     }
-    
+
     private func modernLoadingView() -> some View {
         VStack(spacing: 20) {
             ZStack {
                 Circle()
                     .stroke(Color.blue.opacity(0.2), lineWidth: 4)
                     .frame(width: 60, height: 60)
-                
+
                 Circle()
                     .trim(from: 0, to: 0.7)
                     .stroke(
@@ -80,34 +81,34 @@ struct CartScreen: View {
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: viewModel.isLoading)
             }
-            
+
             Text("Loading your cart...")
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     private func emptyCartView() -> some View {
         VStack(spacing: 24) {
             ZStack {
                 Circle()
                     .fill(Color.blue.opacity(0.1))
                     .frame(width: 120, height: 120)
-                
+
                 Image(systemName: "cart")
                     .font(.system(size: 50, weight: .light))
                     .foregroundColor(.blue)
                     .scaleEffect(animateTotal ? 1.0 : 0.8)
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: animateTotal)
             }
-            
+
             VStack(spacing: 12) {
                 Text("Your cart is empty")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 Text("Add some products to get started")
                     .font(.body)
                     .foregroundColor(.secondary)
@@ -116,14 +117,14 @@ struct CartScreen: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     private func cartContentView(geometry: GeometryProxy) -> some View {
         VStack(spacing: 0) {
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(Array(viewModel.cartItems.enumerated()), id: \.element.orderID) { index, cartMapper in
+                    ForEach(Array(viewModel.cartItems.enumerated()), id: \.element.orderID) { _, cartMapper in
                         VStack(spacing: 12) {
-                            ForEach(Array(cartMapper.itemsMapper.enumerated()), id: \.element.itemId) { itemIndex, item in
+                            ForEach(Array(cartMapper.itemsMapper.enumerated()), id: \.element.itemId) { _, item in
                                 ModernCartItemView(
                                     item: item,
                                     isDeletingItem: viewModel.isDeletingItem,
@@ -162,13 +163,13 @@ struct CartScreen: View {
             modernCheckoutSection(geometry: geometry)
         }
     }
-    
+
     private func modernCheckoutSection(geometry: GeometryProxy) -> some View {
         VStack(spacing: 0) {
             Rectangle()
                 .fill(Color.gray.opacity(0.2))
                 .frame(height: 1)
-            
+
             VStack(spacing: 20) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,9 +180,9 @@ struct CartScreen: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                     }
-                    
+
                     Spacer()
-                    
+
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("Total Amount")
                             .font(.caption)
@@ -196,15 +197,15 @@ struct CartScreen: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
-                
+
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         showCheckoutAnimation = true
                     }
-                    
+
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         showCheckoutAnimation = false
-                        
+
                         if !viewModel.isCartEmpty {
                             router.push(Route.OrderCompletingScreen(viewModel.cartItems.first!))
                         }
@@ -213,13 +214,13 @@ struct CartScreen: View {
                     HStack {
                         Image(systemName: "creditcard.fill")
                             .font(.headline)
-                        
+
                         Text("Proceed to Checkout")
                             .font(.headline)
                             .fontWeight(.semibold)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.title3)
                     }
@@ -270,18 +271,18 @@ struct CartScreen: View {
             .padding(.bottom, geometry.safeAreaInsets.bottom + 10)
         }
     }
-    
+
     private func deletionOverlay() -> some View {
         ZStack {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 20) {
                 ZStack {
                     Circle()
                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
                         .frame(width: 60, height: 60)
-                    
+
                     Circle()
                         .trim(from: 0, to: 0.7)
                         .stroke(Color.white, style: StrokeStyle(lineWidth: 2, lineCap: .round))
@@ -289,7 +290,7 @@ struct CartScreen: View {
                         .rotationEffect(.degrees(-90))
                         .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: viewModel.isDeletingItem)
                 }
-                
+
                 Text("Removing item...")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -326,7 +327,24 @@ struct ModernCartItemView: View {
     var body: some View {
         Button(action: onItemTap) {
             HStack(alignment: .center, spacing: 16) {
-                // Modern product image placeholder
+                #if false
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 90, height: 90)
+
+                        Image(systemName: "photo.artframe")
+                            .font(.system(size: 24, weight: .light))
+                            .foregroundColor(.gray)
+                    }
+                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                #endif
                 ZStack {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(
@@ -337,13 +355,27 @@ struct ModernCartItemView: View {
                             )
                         )
                         .frame(width: 90, height: 90)
-                    
-                    Image(systemName: "photo.artframe")
-                        .font(.system(size: 24, weight: .light))
-                        .foregroundColor(.gray)
+
+                    if let imageURL = item.itemImage, !imageURL.isEmpty {
+                        AsyncImage(url: URL(string: imageURL)) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 90, height: 90)
+                                .clipped()
+                                .cornerRadius(16)
+                        } placeholder: {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                                .scaleEffect(0.8)
+                        }
+                    } else {
+                        Image(systemName: "photo.artframe")
+                            .font(.system(size: 24, weight: .light))
+                            .foregroundColor(.gray)
+                    }
                 }
                 .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                
                 VStack(alignment: .leading, spacing: 8) {
                     Text(item.productTitle)
                         .font(.headline)
@@ -366,9 +398,9 @@ struct ModernCartItemView: View {
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)
-                        
+
                         Spacer()
-                        
+
                         HStack(spacing: 12) {
                             Button(action: {
                                 if item.quantity > 1 {
@@ -409,7 +441,7 @@ struct ModernCartItemView: View {
                         }
                     }
                 }
-                
+
                 Button(action: {
                     showDeleteConfirmation = true
                 }) {
@@ -423,7 +455,7 @@ struct ModernCartItemView: View {
                 .disabled(isDeletingItem)
             }
         }
-        .buttonStyle(PlainButtonStyle()) // This prevents the button from interfering with nested buttons
+        .buttonStyle(PlainButtonStyle())
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 20)

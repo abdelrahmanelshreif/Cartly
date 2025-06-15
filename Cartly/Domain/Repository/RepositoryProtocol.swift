@@ -34,4 +34,6 @@ protocol RepositoryProtocol {
 
     func deleteExistingDraftOrder(draftOrderID: Int64, itemID: Int64)
         -> AnyPublisher<[CartMapper], Error>
+    
+    func getAllProductsToGetLineItemsPhoto(cartMapper: CartMapper) -> AnyPublisher<[CartMapper], Error> 
 }
