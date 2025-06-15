@@ -1,12 +1,13 @@
 //
-//  ProfileScreen.swift
-//  Cartly
+// ProfileScreen.swift
+// Cartly
 //
-//  Created by Khaled Mustafa on 04/06/2025.
+// Created by Khaled Mustafa on 04/06/2025.
 //
+import SwiftUI
 import Combine
-import SwiftUI
-import SwiftUI
+
+// MARK: - Data Models
 
 struct Order: Identifiable {
     let id: UUID
@@ -15,99 +16,29 @@ struct Order: Identifiable {
     let price: Double
 }
 
+// MARK: - Profile Screen
 struct ProfileScreen: View {
     @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel: ProfileViewModel = DIContainer.shared.resolveProfileViewModel()
-    
+
     private let dummyOrders: [Order] = [
         Order(id: UUID(), orderID: "ORD-1001", status: "Delivered", price: 299.99),
         Order(id: UUID(), orderID: "ORD-1002", status: "Shipped", price: 89.50),
         Order(id: UUID(), orderID: "ORD-1003", status: "Processing", price: 45.00)
     ]
-    
+    @State private var showOrderList: Bool = false
+    @State private var selectedOrder: Order? = nil
+    @State private var showOrderDetail: Bool = false
+
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
+            Color(.systemGray6).ignoresSafeArea()
+            
             Group {
                 if viewModel.currentUser?.sessionStatus == true {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            ProfileHeaderView(user: viewModel.currentUser)
-                                .padding(20)
-                            
-                            VStack(spacing: 16) {
-                                ProfileMenuSection(title: "My Account") {
-                                    
-                            
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        HStack {
-                                            Text("Orders")
-                                                .font(.headline)
-                                            Spacer()
-                                            Button("See More") {
-//                                                router.push(.orders)
-                                            }
-                                            .font(.subheadline)
-                                        }
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            LazyHStack(spacing: 12) {
-                                                ForEach(dummyOrders) { order in
-                                                    OrderCardView(order: order)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .padding(.vertical, 8)
-                                
-                                }
-                                
-                                Button(action: {
-                                    viewModel.signOut()
-                                }) {
-                                    HStack {
-                                        Image(systemName: "arrow.left.circle.fill")
-                                            .font(.title3)
-                                        Text(
-                                            viewModel.loading
-                                                ? "Signing Out..." : "Sign Out"
-                                        )
-                                        .fontWeight(.semibold)
-                                    }
-                                    .foregroundColor(.red)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.red.opacity(0.1))
-                                    .cornerRadius(12)
-                                }
-                                .padding(.horizontal)
-                                .padding(.top, 8)
-                                .disabled(viewModel.loading)
-                            }
-                            .padding(.bottom, 30)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                router.push(Route.settings)
-                            } label: {
-                                Image(systemName: "gearshape.fill")
-                            }
-                        }
-                    }
+                    loggedInView
                 } else if viewModel.loading {
-                    VStack(spacing: 20) {
-                        ProgressView()
-                            .scaleEffect(1.5)
-                            .progressViewStyle(
-                                CircularProgressViewStyle(tint: .blue))
-                        Text("Signing out...")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    loadingView
                 } else {
                     LoggedOutView {
                         router.setRoot(.authentication)
@@ -118,27 +49,230 @@ struct ProfileScreen: View {
         .onAppear {
             viewModel.checkUserSession()
         }
+        .sheet(isPresented: $showOrderList) {
+            OrdersListScreen(orders: dummyOrders) { order in
+                selectedOrder = order
+                showOrderDetail = true
+            }
+        }
+        .sheet(isPresented: $showOrderDetail, onDismiss: { selectedOrder = nil }) {
+            if let selectedOrder = selectedOrder {
+                OrderDetailScreen(order: selectedOrder)
+            }
+        }
     }
 }
 
-struct OrderCardView: View {
-    let order: Order
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Order ID: \(order.orderID)")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-            Text("Status: \(order.status)")
-                .font(.caption)
+// MARK: - View Components
+extension ProfileScreen {
+    
+    private var loggedInView: some View {
+        ScrollView {
+            VStack(spacing: 30) {
+                ProfileHeaderView(user: viewModel.currentUser)
+
+                VStack(spacing: 16) {
+                    HStack {
+                        Text("RECENT ORDERS")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Button("SEE ALL") { showOrderList = true }
+                            .font(.caption)
+                            .fontWeight(.bold)
+                    }
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(dummyOrders) { order in
+                                Button {
+                                    selectedOrder = order
+                                    showOrderDetail = true
+                                } label: {
+                                    ModernOrderCardView(order: order)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+
+                VStack(spacing: 0) {
+                    Button(action: { router.push(Route.settings) }) {
+                        ProfileMenuRowView(iconName: "gearshape.fill", title: "Settings")
+                    }
+                    
+                    Divider().padding(.leading)
+                    
+                    Button(action: { viewModel.signOut() }) {
+                        ProfileMenuRowView(iconName: "arrow.left.circle.fill", title: "Sign Out", tintColor: .red)
+                    }
+                    .disabled(viewModel.loading)
+                }
+                .background(Color(.secondarySystemGroupedBackground))
+                .cornerRadius(12)
+                
+            }
+            .padding()
+        }
+    }
+    
+    private var loadingView: some View {
+        VStack(spacing: 20) {
+            ProgressView()
+                .scaleEffect(1.5)
+                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+            Text("Signing out...")
+                .font(.headline)
                 .foregroundColor(.secondary)
-            Text(String(format: "Price: $%.2f", order.price))
-                .font(.caption)
-                .foregroundColor(.blue)
+        }
+    }
+}
+
+// MARK: - Reusable Child Views
+
+/// A reusable view for rows in a settings or profile list.
+struct ProfileMenuRowView: View {
+    let iconName: String
+    let title: String
+    var tintColor: Color = .primary
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: iconName)
+                .font(.headline)
+                .foregroundColor(tintColor)
+                .frame(width: 25)
+            
+            Text(title)
+                .font(.body)
+                .foregroundColor(tintColor)
+            
+            Spacer()
+            
+            if tintColor != .red {
+                Image(systemName: "chevron.right")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 2, y: 2)
-        .frame(width: 160)
+        .contentShape(Rectangle())
+    }
+}
+
+
+struct ModernOrderCardView: View {
+    let order: Order
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "shippingbox.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(statusColor(for: order.status))
+                
+                Text(order.orderID)
+                    .font(.headline)
+                    .lineLimit(1)
+            }
+            
+            Text(order.status)
+                .font(.caption.bold())
+                .foregroundColor(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(statusColor(for: order.status))
+                .clipShape(Capsule())
+
+            Spacer()
+
+            Text(String(format: "$%.2f", order.price))
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+        }
+        .padding()
+        .frame(width: 170, height: 130)
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+
+    private func statusColor(for status: String) -> Color {
+        switch status {
+        case "Delivered": return .green
+        case "Shipped": return .orange
+        case "Processing": return .purple
+        default: return .gray
+        }
+    }
+}
+
+// MARK: - Sheet Views (Orders List & Detail)
+
+struct OrdersListScreen: View {
+    let orders: [Order]
+    let onOrderTapped: (Order) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            List(orders) { order in
+                Button {
+                    onOrderTapped(order)
+                    dismiss()
+                } label: {
+                    HStack(spacing: 15) {
+                        Image(systemName: "shippingbox.fill")
+                            .font(.title)
+                            .foregroundColor(.accentColor)
+                            .frame(width: 40)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(order.orderID).font(.headline)
+                            Text("Status: \(order.status)").font(.subheadline).foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Text(String(format: "$%.2f", order.price)).font(.headline).fontWeight(.semibold).foregroundColor(.accentColor)
+                    }
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.plain)
+            }
+            .listStyle(.plain)
+            .navigationTitle("All Orders")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+struct OrderDetailScreen: View {
+    let order: Order
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Order ID: \(order.orderID)").font(.title2)
+                Text("Status: \(order.status)")
+                Text(String(format: "Price: $%.2f", order.price))
+                    .font(.title3)
+                    .foregroundColor(.blue)
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Order Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
+        }
     }
 }
