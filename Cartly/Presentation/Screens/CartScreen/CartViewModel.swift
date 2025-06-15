@@ -10,6 +10,7 @@ class CartViewModel: ObservableObject {
 
     private let deleteCartItemUseCase: DeleteCartItemUseCase
     private let getCustomerCartUseCase: GetCustomerCartUseCase
+    private let getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase
     private var cancellables = Set<AnyCancellable>()
 
     var isCartEmpty: Bool {
@@ -32,10 +33,12 @@ class CartViewModel: ObservableObject {
 
     init(
         getCustomerCartUseCase: GetCustomerCartUseCase,
-        deleteCartItemUseCase: DeleteCartItemUseCase
+        deleteCartItemUseCase: DeleteCartItemUseCase,
+        getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase
     ) {
         self.getCustomerCartUseCase = getCustomerCartUseCase
         self.deleteCartItemUseCase = deleteCartItemUseCase
+        self.getCartItemsWithImagesUseCase = getCartItemsWithImagesUseCase
     }
 
     func loadCustomerCart() {
@@ -58,10 +61,31 @@ class CartViewModel: ObservableObject {
                     self?.cartItems = cartMappers
                     self?.hasItems = !cartMappers.isEmpty
                     self?.isLoading = false
-
+                    if !cartMappers.isEmpty {
+                        self?.loadAllProductsToGetImages(cartMapper: cartMappers.first!)
+                    }
                     print("Loaded \(cartMappers.count) cart items for customer")
                 }
             )
+            .store(in: &cancellables)
+    }
+
+    func loadAllProductsToGetImages(cartMapper: CartMapper) {
+        getCartItemsWithImagesUseCase.execute(cartMapper: cartMapper)
+            .sink(receiveCompletion: { [weak self] in
+                switch $0 {
+                case .finished:
+                    break
+                case let .failure(error):
+                    self?.handleError(error)
+                }
+            }, receiveValue: { [weak self] cartMappers in
+                self?.cartItems = cartMappers
+                self?.hasItems = !cartMappers.isEmpty
+                self?.isLoading = false
+
+                print("Loaded \(cartMappers.count) cart items for customer")
+            })
             .store(in: &cancellables)
     }
 

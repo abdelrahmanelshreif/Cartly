@@ -311,5 +311,31 @@ class RepositoryImpl: RepositoryProtocol {
             }
             .eraseToAnyPublisher()
     }
-}
 
+    func getAllProductsToGetLineItemsPhoto(cartMapper: CartMapper) -> AnyPublisher<[CartMapper], Error> {
+        return remoteDataSource.fetchAllProducts()
+            .map { response -> [Product] in
+                guard let response = response
+                else {
+                    return []
+                }
+                return response.products
+            }
+            .map { productsArrayResponse -> [CartMapper] in
+                var updatedLineItems = cartMapper.itemsMapper
+
+                for i in 0 ..< updatedLineItems.count {
+                    let product = productsArrayResponse.first { product in
+                        product.id == updatedLineItems[i].productId
+                    }
+                    updatedLineItems[i].itemImage = product?.image?.src ?? "unknown-Image-src"
+                }
+
+                var udpatedCartMapper = cartMapper
+                udpatedCartMapper.itemsMapper = updatedLineItems
+
+                return [udpatedCartMapper]
+            }
+            .eraseToAnyPublisher()
+    }
+}

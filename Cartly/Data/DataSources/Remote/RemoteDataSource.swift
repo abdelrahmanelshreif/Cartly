@@ -120,8 +120,8 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
             withPath: "/draft_orders/\(draftOrderID).json"
         )
         return networkService.request(request, responseType: EmptyResponseWhenDelete.self)
-            .tryMap({ EmptyResponse in
-                return true
+            .tryMap({ _ in
+                true
             })
             .mapError({ error in
                 print("failed when deleting with error: \(error)")

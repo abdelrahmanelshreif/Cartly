@@ -1,9 +1,9 @@
 
 struct CartMapper: Codable, Hashable {
-    let orderID: Int64
-    let orderStatus: String
-    let hasAddress: Bool
-    let itemsMapper: [ItemsMapper]
+    var orderID: Int64
+    var orderStatus: String
+    var hasAddress: Bool
+    var itemsMapper: [ItemsMapper]
 
     init(draft: DraftOrder) {
         self.orderID = draft.id ?? -1
