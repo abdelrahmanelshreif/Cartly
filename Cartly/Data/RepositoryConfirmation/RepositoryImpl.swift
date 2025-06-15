@@ -111,6 +111,63 @@ class RepositoryImpl: RepositoryProtocol {
             .eraseToAnyPublisher()
     }
 
+    func deleteExistingDraftOrder(draftOrderID: Int64, itemID: Int64) -> AnyPublisher<[CartMapper], Error> {
+        print("in delete in repository!!!")
+        return fetchAllDraftOrders()
+            .flatMap { [weak self] draftOrdersResponse -> AnyPublisher<[CartMapper], Error> in
+                guard let self = self else {
+                    return Fail(error: ErrorType.failUnWrapself).eraseToAnyPublisher()
+                }
+
+                let draftOrders = draftOrdersResponse?.draftOrders ?? []
+                print("checking if draftorder when delete item in cart is empty or not in repository file\(draftOrders.isEmpty)")
+                return self.performDeletionOfDraftOrder(draftOrders: draftOrders, draftOrderID: draftOrderID, itemID: itemID)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func performDeletionOfDraftOrder(
+        draftOrders: [DraftOrder],
+        draftOrderID: Int64,
+        itemID: Int64
+    ) -> AnyPublisher<[CartMapper], Error> {
+        guard let matchingDraftOrder = draftOrders.first(where: { $0.id == draftOrderID }) else {
+            print("Draft order with ID \(draftOrderID) not found")
+            return Fail(error: ErrorType.noData).eraseToAnyPublisher()
+        }
+
+        let currentLineItems = matchingDraftOrder.lineItems ?? []
+
+        let newLineItems = currentLineItems.filter { $0.id != itemID }
+
+        if newLineItems.isEmpty {
+            print("No items left in cart, deleting entire draft order")
+            return remoteDataSource.deleteExistingDraftOrder(draftOrderID: draftOrderID)
+                .tryMap { isDeleted in
+                    if isDeleted {
+                        print("Draft order deleted successfully")
+                        return []
+                    } else {
+                        throw ErrorType.badServerResponse
+                    }
+                }
+                .eraseToAnyPublisher()
+        } else {
+            print("Items remaining (\(newLineItems.count)), updating draft order")
+            var updatedDraftOrder = matchingDraftOrder
+            updatedDraftOrder.lineItems = newLineItems
+            return remoteDataSource.editExistingDraftOrder(draftOrder: updatedDraftOrder)
+                .tryMap { updatedDraftOrder in
+                    guard let updatedOrder = updatedDraftOrder else {
+                        throw ErrorType.badServerResponse
+                    }
+                    print("Draft order updated successfully")
+                    return [CartMapper(draft: updatedOrder)]
+                }
+                .eraseToAnyPublisher()
+        }
+    }
+
     private func processCartLogic(cartEntity: CartEntity, existingDraftOrders: [DraftOrder]) -> AnyPublisher<CustomSuccess, Error> {
         print("Processing cart logic for email: \(cartEntity.email)")
         print("Found \(existingDraftOrders.count) existing draft orders")
@@ -222,7 +279,7 @@ class RepositoryImpl: RepositoryProtocol {
         let service = UserSessionService()
         let userEmail = service.getCurrentUserEmail() ?? ""
         print("\(userEmail) in kosom el repoooooooooooo")
-        
+
         guard !userEmail.isEmpty else {
             return Fail(error: ErrorType.noData)
                 .eraseToAnyPublisher()
@@ -251,6 +308,33 @@ class RepositoryImpl: RepositoryProtocol {
                     return CartMapper(draft: draftOrder)
                 }
                 return cartMappers
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func getAllProductsToGetLineItemsPhoto(cartMapper: CartMapper) -> AnyPublisher<[CartMapper], Error> {
+        return remoteDataSource.fetchAllProducts()
+            .map { response -> [Product] in
+                guard let response = response
+                else {
+                    return []
+                }
+                return response.products
+            }
+            .map { productsArrayResponse -> [CartMapper] in
+                var updatedLineItems = cartMapper.itemsMapper
+
+                for i in 0 ..< updatedLineItems.count {
+                    let product = productsArrayResponse.first { product in
+                        product.id == updatedLineItems[i].productId
+                    }
+                    updatedLineItems[i].itemImage = product?.image?.src ?? "unknown-Image-src"
+                }
+
+                var udpatedCartMapper = cartMapper
+                udpatedCartMapper.itemsMapper = updatedLineItems
+
+                return [udpatedCartMapper]
             }
             .eraseToAnyPublisher()
     }

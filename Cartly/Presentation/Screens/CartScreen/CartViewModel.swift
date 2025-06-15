@@ -6,8 +6,11 @@ class CartViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var hasItems: Bool = false
+    @Published var isDeletingItem: Bool = false
 
+    private let deleteCartItemUseCase: DeleteCartItemUseCase
     private let getCustomerCartUseCase: GetCustomerCartUseCase
+    private let getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase
     private var cancellables = Set<AnyCancellable>()
 
     var isCartEmpty: Bool {
@@ -28,8 +31,14 @@ class CartViewModel: ObservableObject {
         }
     }
 
-    init(getCustomerCartUseCase: GetCustomerCartUseCase) {
+    init(
+        getCustomerCartUseCase: GetCustomerCartUseCase,
+        deleteCartItemUseCase: DeleteCartItemUseCase,
+        getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase
+    ) {
         self.getCustomerCartUseCase = getCustomerCartUseCase
+        self.deleteCartItemUseCase = deleteCartItemUseCase
+        self.getCartItemsWithImagesUseCase = getCartItemsWithImagesUseCase
     }
 
     func loadCustomerCart() {
@@ -52,10 +61,31 @@ class CartViewModel: ObservableObject {
                     self?.cartItems = cartMappers
                     self?.hasItems = !cartMappers.isEmpty
                     self?.isLoading = false
-
+                    if !cartMappers.isEmpty {
+                        self?.loadAllProductsToGetImages(cartMapper: cartMappers.first!)
+                    }
                     print("Loaded \(cartMappers.count) cart items for customer")
                 }
             )
+            .store(in: &cancellables)
+    }
+
+    func loadAllProductsToGetImages(cartMapper: CartMapper) {
+        getCartItemsWithImagesUseCase.execute(cartMapper: cartMapper)
+            .sink(receiveCompletion: { [weak self] in
+                switch $0 {
+                case .finished:
+                    break
+                case let .failure(error):
+                    self?.handleError(error)
+                }
+            }, receiveValue: { [weak self] cartMappers in
+                self?.cartItems = cartMappers
+                self?.hasItems = !cartMappers.isEmpty
+                self?.isLoading = false
+
+                print("Loaded \(cartMappers.count) cart items for customer")
+            })
             .store(in: &cancellables)
     }
 
@@ -64,8 +94,28 @@ class CartViewModel: ObservableObject {
     }
 
     func removeItem(cartId: Int64, itemId: Int64) {
-        // TODO: Implement remove item logic
-        print("Remove item \(itemId) from cart \(cartId)")
+        isDeletingItem = true
+        errorMessage = nil
+
+        deleteCartItemUseCase.execute(draftOrderID: cartId, itemID: itemId)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isDeletingItem = false
+
+                    switch completion {
+                    case .finished:
+                        print("Item deleted successfully")
+                    case let .failure(error):
+                        self?.handleError(error)
+                    }
+                },
+                receiveValue: { [weak self] updatedCartMappers in
+                    self?.cartItems = updatedCartMappers
+                    self?.hasItems = !updatedCartMappers.isEmpty
+                    print("Cart updated after deletion. Items count: \(updatedCartMappers.count)")
+                }
+            )
+            .store(in: &cancellables)
     }
 
     func updateQuantity(cartId: Int64, itemId: Int64, newQuantity: Int) {
