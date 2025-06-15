@@ -14,6 +14,7 @@ struct OrderCompletingScreen: View {
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
     
+    @State private var waitingForAddressToPlaceOrder = false
     @State private var showSuccessAlert = false
     @State private var showCODLimitAlert: Bool = false
     
@@ -54,7 +55,7 @@ struct OrderCompletingScreen: View {
             deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
             editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
         ))
-
+        
         _paymentVM = StateObject(wrappedValue: PaymentViewModel())
     }
     
@@ -71,10 +72,16 @@ struct OrderCompletingScreen: View {
                 PaymentView(viewModel: paymentVM, selectedPayment: $vm.selectedPayment)
                 
                 Button(action: {
-                    if vm.canCompleteOrder() {
-                        paymentVM.handleCompleteOrder()
-                    } else {
-                        showCODLimitAlert = true
+                    addressVM.ensureDefaultAddressBeforePlacingOrder { success in
+                        DispatchQueue.main.async {
+                            if success {
+                                if vm.canCompleteOrder() {
+                                    paymentVM.handleCompleteOrder()
+                                } else {
+                                    showCODLimitAlert = true
+                                }
+                            }
+                        }
                     }
                 }) {
                     if paymentVM.isProcessing {
@@ -83,7 +90,7 @@ struct OrderCompletingScreen: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                     } else {
-                        Text("Complete Order")
+                        Text("Place Order")
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -95,6 +102,7 @@ struct OrderCompletingScreen: View {
                 .padding(.horizontal)
                 .padding(.bottom)
                 .disabled(paymentVM.isProcessing)
+
             }
         }
         .navigationTitle("Payment")
@@ -120,25 +128,25 @@ struct OrderCompletingScreen: View {
     
     struct CartPreview: View {
         let item: ItemsMapper
-
+        
         var body: some View {
             VStack {
                 Image(systemName: "photo")
                     .resizable()
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
-
+                
                 Text(item.productTitle)
                     .font(.caption)
                     .lineLimit(1)
-
+                
                 Text(item.variantTitle)
                     .font(.caption2)
                     .foregroundColor(.secondary)
-
+                
                 Text("x\(item.quantity)")
                     .font(.caption2)
-
+                
                 if let priceValue = Double(item.price) {
                     Text("$\(priceValue * Double(item.quantity), specifier: "%.2f")")
                         .font(.caption)
@@ -154,7 +162,7 @@ struct OrderCompletingScreen: View {
             .cornerRadius(10)
         }
     }
-
+    
     
     var cartPreview: some View {
         VStack(alignment: .leading) {

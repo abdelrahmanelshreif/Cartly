@@ -266,6 +266,24 @@ class AddressesViewModel: ObservableObject {
             })
             .store(in: &cancellables)
     }
+    func ensureDefaultAddressBeforePlacingOrder(completion: @escaping (Bool) -> Void) {
+        if let _ = defaultAddress {
+            // Already has a default address
+            completion(true)
+        } else {
+            // No default address — begin location picking flow
+            showLocationPicker = true
+            
+            // Observe the flow using Combine — wait until a new default address is set
+            $defaultAddress
+                .compactMap { $0 }
+                .first()
+                .sink { _ in
+                    completion(true)
+                }
+                .store(in: &cancellables)
+        }
+    }
 
     
     
