@@ -37,12 +37,12 @@ final class CurrencyManager: ObservableObject {
     }
 
     private func fetchRateIfNeeded() {
-        guard selectedCurrency != "USD" else {
+        guard selectedCurrency != "EGP" else {
             conversionRate = 1.0
             return
         }
 
-        useCase.execute(from: "USD", to: selectedCurrency)
+        useCase.execute(from: "EGP", to: selectedCurrency)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] rate in
                 self?.conversionRate = rate

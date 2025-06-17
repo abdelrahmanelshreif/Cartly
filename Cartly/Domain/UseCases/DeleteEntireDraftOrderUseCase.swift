@@ -8,15 +8,14 @@
 import Foundation
 import Combine
 
-final class DeleteDraftOrderUseCase: DeleteDraftOrderUseCaseProtocol {
-    private let repository: RepositoryImpl
+struct DeleteEntireDraftOrderUseCase {
+    private let repository: DeleteEntireDraftOrderUseCaseProtocol
 
-    init(repository: RepositoryImpl) {
+    init(repository: DeleteEntireDraftOrderUseCaseProtocol) {
         self.repository = repository
     }
 
     func execute(draftOrderID: Int64) -> AnyPublisher<Bool, Error> {
-        let function: (Int64) -> AnyPublisher<Bool, Error> = repository.deleteExistingDraftOrder
-        return function(draftOrderID)
+        return repository.deleteEntireDraftOrder(draftOrderID: draftOrderID)
     }
 }

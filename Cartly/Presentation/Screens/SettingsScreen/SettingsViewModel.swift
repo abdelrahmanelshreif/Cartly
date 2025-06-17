@@ -29,7 +29,6 @@ final class SettingsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // Currency binding
         $selectedCurrency
             .removeDuplicates()
             .sink { newCurrency in
@@ -38,7 +37,6 @@ final class SettingsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // Listen to updates from CurrencyManager
         CurrencyManager.shared.$selectedCurrency
             .removeDuplicates()
             .sink { [weak self] updatedCurrency in
@@ -53,7 +51,7 @@ final class SettingsViewModel: ObservableObject {
 
     func loadConversionRate(for currency: String? = nil) {
         let target = currency ?? selectedCurrency
-        let base = "USD"
+        let base = "EGP"
 
         print("🌍 Converting from \(base) to: \(target)")
 
@@ -73,7 +71,7 @@ final class SettingsViewModel: ObservableObject {
                     self?.error = err.localizedDescription
                 }
             }, receiveValue: { [weak self] rate in
-                print("✅ Received rate: \(rate)")
+                print(" Received rate: \(rate)")
                 self?.conversionRate = rate
             })
             .store(in: &cancellables)

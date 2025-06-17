@@ -40,7 +40,11 @@ final class ValidatePromoCodeUseCase: ValidatePromoCodeUseCaseProtocol {
                     code: discountCode.code,
                     discountAmount: tempDiscount,
                     priceRuleId: rule.id,
-                    discountId: discountCode.id
+                    discountId: discountCode.id,
+                    value: rule.value,
+                    value_type: rule.valueType
+                    
+                    
                 )
             }
             .mapError { $0 as? PromoError ?? .unknown }

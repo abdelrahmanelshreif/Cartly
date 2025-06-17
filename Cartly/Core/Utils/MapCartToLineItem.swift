@@ -5,7 +5,19 @@ func createLineItemFromCartEntity(cart: CartEntity) -> LineItem {
         quantity: cart.quantity
     )
 }
-
+func mapCustomerAddressToShopifyAddress(_ address: Address) -> ShopifyAddress {
+    return ShopifyAddress(
+        firstName: address.firstName,
+        lastName: address.lastName,
+        address1: address.address1,
+        address2: address.address2,
+        phone: address.phone,
+        city: address.city,
+        province: address.province,
+        country: address.country,
+        zip: address.zip
+    )
+}
 /// when post request require for add new draft order for customer
 func MapCartToDraftOrderRequestDic(cart: CartEntity) -> [String: Any] {
     return [
@@ -68,6 +80,9 @@ func mapDraftOrderToDict(_ draftOrder: DraftOrder) -> [String: Any] {
     if let appliedDiscount = draftOrder.appliedDiscount {
         dict["applied_discount"] = mapAppliedDiscountToDict(appliedDiscount)
     }
+    if let shippingAddress = draftOrder.shippingAddress {
+        dict["shipping_address"] = mapShopifyAddressToDict(shippingAddress)
+    }
     
     if let lineItems = draftOrder.lineItems {
         dict["line_items"] = lineItems.map { mapLineItemToDict($0) }
@@ -105,14 +120,34 @@ func mapLineItemToDict(_ item: LineItem) -> [String: Any] {
 }
 
 func mapAppliedDiscountToDict(_ discount: AppliedDiscount) -> [String: Any] {
+    
+    let value = Double(discount.value ?? "") ?? 0.0
+        let amount = Double(discount.amount ?? "") ?? 0.0
+
+        return [
+            "description": discount.description ?? "",
+            "value": String(format: "%.2f", abs(value)),
+            "value_type": discount.valueType ?? "percentage",
+            "amount": String(format: "%.2f", abs(amount))
+        ]
+}
+func mapShopifyAddressToDict(_ address: ShopifyAddress) -> [String: Any] {
+    dump(address)
+    
     return [
-        "description": discount.description as Any,
-        "value": discount.value as Any,
-        "title": discount.title as Any,
-        "amount": discount.amount as Any,
-        "value_type": discount.valueType as Any
+        "first_name": address.firstName ?? "",
+        "last_name": address.lastName ?? "",
+        "address1": address.address1 ?? "",
+        "address2": address.address2 ?? "",
+        "phone": address.phone ?? "",
+        "city": address.city ?? "",
+        "province": address.province ?? "",
+        "country": address.country ?? "",
+        "zip": address.zip ?? ""
     ]
 }
+
+
 
 func mapTaxLineToDict(_ taxLine: TaxLine) -> [String: Any] {
     return [:]
@@ -120,4 +155,12 @@ func mapTaxLineToDict(_ taxLine: TaxLine) -> [String: Any] {
 
 func mapCustomerToDict(_ customer: Customer) -> [String: Any] {
     return [:]
+}
+func mapValidatedCoupounToAppliedCoupoun (validateed : ValidatedDiscount) -> AppliedDiscount {
+    var appliedDiscount = AppliedDiscount()
+    appliedDiscount.description = validateed.code
+    appliedDiscount.amount=String(validateed.discountAmount)
+    appliedDiscount.value=validateed.value
+    appliedDiscount.valueType=validateed.value_type
+    return appliedDiscount
 }

@@ -12,4 +12,6 @@ struct ValidatedDiscount {
     let discountAmount: Double
     let priceRuleId: Int64
     let discountId: Int64
+    let value : String
+    let value_type : String
 }

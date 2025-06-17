@@ -41,7 +41,7 @@ struct DraftOrder: Codable {
     /// Array of line items in the draft order
     var lineItems: [LineItem]?
     var apiClientId: Int64?
-    var shippingAddress: String?
+    var shippingAddress: ShopifyAddress?
     var billingAddress: String?
     var invoiceUrl: String?
     var createdOnApiVersionHandle: String?
@@ -162,4 +162,25 @@ struct TaxLine: Codable {
         case rate, title, price
     }
 }
+struct ShopifyAddress: Codable {
+    var firstName: String?
+    var lastName: String?
+    var address1: String?
+    var address2: String?
+    var phone: String?
+    var city: String?
+    var province: String?
+    var country: String?
+    var zip: String?
+    var latitude: Double?
+    var longitude: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case address1, address2, phone, city, province, country, zip, latitude, longitude
+    }
+}
+
+
 

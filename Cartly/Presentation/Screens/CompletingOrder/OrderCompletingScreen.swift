@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-
-import SwiftUI
+import PassKit
 
 struct OrderCompletingScreen: View {
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
     
-    @State private var waitingForAddressToPlaceOrder = false
+    @State private var isProcessingOrder = false
     @State private var showSuccessAlert = false
     @State private var showCODLimitAlert: Bool = false
     
@@ -22,7 +21,6 @@ struct OrderCompletingScreen: View {
     
     init(cart: CartMapper) {
         self.cart = cart
-        print("\(cart) in OrderCompletingScreen!!!!!!!!")
         _vm = StateObject(wrappedValue: OrderCompletingViewModel(
             cartItems: cart.itemsMapper,
             calculateSummary: CalculateOrderSummaryUseCase(),
@@ -32,6 +30,24 @@ struct OrderCompletingScreen: View {
                         networkService: AlamofireService(),
                         adsNetworkService: AdsNetworkService()
                     )
+                )
+            ),
+            editDraftOrderUseCase: EditDraftOrderAtPlacingOrderUseCase(
+                repository: RepositoryImpl(
+                    remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()),
+                    firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
+                )
+            ),
+            completeDraftOrderUseCase: CompleteDraftOrderUseCase(
+                repository: RepositoryImpl(
+                    remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()),
+                    firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
+                )
+            ),
+            deleteDraftOrderUseCase: DeleteEntireDraftOrderUseCase(
+                repository: RepositoryImpl(
+                    remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()),
+                    firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
                 )
             )
         ))
@@ -60,49 +76,29 @@ struct OrderCompletingScreen: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Text("Review & Complete Order")
-                    .font(.title2).bold()
-                    .padding(.horizontal)
-                
-                AddressesView(viewModel: addressVM)
-                cartPreview
-                orderSummarySection
-                PaymentView(viewModel: paymentVM, selectedPayment: $vm.selectedPayment)
-                
-                Button(action: {
-                    addressVM.ensureDefaultAddressBeforePlacingOrder { success in
-                        DispatchQueue.main.async {
-                            if success {
-                                if vm.canCompleteOrder() {
-                                    paymentVM.handleCompleteOrder()
-                                } else {
-                                    showCODLimitAlert = true
-                                }
-                            }
-                        }
-                    }
-                }) {
-                    if paymentVM.isProcessing {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    } else {
-                        Text("Place Order")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
+        ZStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    Text("Review & Complete Order")
+                        .font(.title2).bold()
+                        .padding(.horizontal)
+                    
+                    AddressesView(viewModel: addressVM)
+                    cartPreview
+                    orderSummarySection
+                    PaymentView(viewModel: paymentVM, selectedPayment: $vm.selectedPayment)
+                    placeOrderButton()
                 }
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.bottom)
-                .disabled(paymentVM.isProcessing)
-
+            }
+            
+            if isProcessingOrder {
+                Color.black.opacity(0.4)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {}
+                
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2)
             }
         }
         .navigationTitle("Payment")
@@ -110,7 +106,9 @@ struct OrderCompletingScreen: View {
             Alert(
                 title: Text("Order Error"),
                 message: Text(vm.errorMessage ?? "Unknown error."),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK")) {
+                    isProcessingOrder = false
+                }
             )
         }
         .alert("Order Completed", isPresented: $showSuccessAlert) {
@@ -121,7 +119,25 @@ struct OrderCompletingScreen: View {
         }
         .onAppear {
             paymentVM.onPaymentCompleted = {
-                showSuccessAlert = true
+                vm.completeDraftOrder(withId: Int(cart.orderID)) { completeSuccess in
+                    if completeSuccess {
+                        vm.deleteEntireDraftOrder(withId: cart.orderID) { deleted in
+                            if deleted {
+                                showSuccessAlert = true
+                            } else {
+                                showCODLimitAlert = true
+                            }
+                            isProcessingOrder = false
+                        }
+                    } else {
+                        showCODLimitAlert = true
+                        isProcessingOrder = false
+                    }
+                }
+            }
+
+            paymentVM.onPaymentCancelled = {
+                isProcessingOrder = false
             }
         }
     }
@@ -162,7 +178,6 @@ struct OrderCompletingScreen: View {
             .cornerRadius(10)
         }
     }
-    
     
     var cartPreview: some View {
         VStack(alignment: .leading) {
@@ -213,5 +228,71 @@ struct OrderCompletingScreen: View {
             Text("$\(amount, specifier: "%.2f")")
                 .fontWeight(isBold ? .bold : .regular)
         }
+    }
+    
+    @ViewBuilder
+    private func placeOrderButton() -> some View {
+        Button(action: {
+            isProcessingOrder = true
+            addressVM.ensureDefaultAddressBeforePlacingOrder { success in
+                DispatchQueue.main.async {
+                    if success, let selectedAddress = addressVM.defaultAddress {
+                        if vm.canCompleteOrder() {
+                            vm.updateDraftOrderBeforePlacing(draftOrderID: cart.orderID, address: selectedAddress) { updateSuccess in
+                                if updateSuccess {
+                                    if vm.selectedPayment == .cash {
+                                        vm.completeDraftOrder(withId: Int(cart.orderID)) { completeSuccess in
+                                            if completeSuccess {
+                                                vm.deleteEntireDraftOrder(withId: cart.orderID) { deleted in
+                                                    if deleted {
+                                                        showSuccessAlert = true
+                                                    } else {
+                                                        showCODLimitAlert = true
+                                                    }
+                                                    isProcessingOrder = false
+                                                }
+                                            } else {
+                                                showCODLimitAlert = true
+                                                isProcessingOrder = false
+                                            }
+                                        }
+                                    } else if vm.selectedPayment == .applePay {
+                                        paymentVM.handleCompleteOrder()
+                                    }
+                                } else {
+                                    showCODLimitAlert = true
+                                    isProcessingOrder = false
+                                }
+                            }
+                        }
+                        else {
+                            showCODLimitAlert = true
+                            isProcessingOrder = false
+                        }
+                    } else {
+                        showCODLimitAlert = true
+                        isProcessingOrder = false
+                    }
+                }
+            }
+        }) {
+            if paymentVM.isProcessing {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            } else {
+                Text("Place Order")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+        }
+        .background(Color.blue)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.bottom)
+        .disabled(isProcessingOrder || paymentVM.isProcessing)
     }
 }
