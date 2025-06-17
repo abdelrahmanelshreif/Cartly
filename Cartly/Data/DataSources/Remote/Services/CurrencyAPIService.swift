@@ -14,7 +14,7 @@ protocol CurrencyAPIServiceProtocol {
 }
 
 final class CurrencyAPIService: CurrencyAPIServiceProtocol {
-    private let apiKey = "cur_live_ngJ4WVweVttrEHfeVbIUrvOHsUMPqhW6oGjVLj7o"
+    private let apiKey = "cur_live_SkHfxPirwzn5vMGwzSyndbitjuCYjcNYOHiPKp7N"
     private let baseURL = "https://api.currencyapi.com/v3/latest"
 
     func fetchRate(from: String, to: String) -> AnyPublisher<Double, Error> {

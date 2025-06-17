@@ -30,6 +30,7 @@ struct CartlyApp: App {
             #if true
             RootView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(CurrencyManager.shared)
             #endif
             #if false
             OrderCompletingScreen(

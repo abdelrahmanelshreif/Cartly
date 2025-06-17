@@ -13,7 +13,7 @@ protocol PaymentViewModelProtocol: ObservableObject {
     var selectedMethod: PaymentMethod? { get set }
     var isProcessing: Bool { get }
     
-    func handleCompleteOrder()
+    func handleCompleteOrder(total: Double)
 }
 
 final class PaymentViewModel: NSObject, ObservableObject, PKPaymentAuthorizationControllerDelegate {
@@ -26,12 +26,12 @@ final class PaymentViewModel: NSObject, ObservableObject, PKPaymentAuthorization
     private var paymentController: PKPaymentAuthorizationController?
     private var paymentCompletion: ((Bool) -> Void)?
     
-    func handleCompleteOrder() {
+    func handleCompleteOrder(total: Double) {
         guard let method = selectedMethod else { return }
         isProcessing = true
         
         if method == .applePay {
-            presentApplePaySheet()
+            presentApplePaySheet(total: total)  
         } else {
             simulateCashPayment()
         }
@@ -45,16 +45,17 @@ final class PaymentViewModel: NSObject, ObservableObject, PKPaymentAuthorization
         }
     }
     
-    private func presentApplePaySheet() {
+    private func presentApplePaySheet(total: Double) {
         let request = PKPaymentRequest()
         request.merchantIdentifier = "merchant.com.fake.cartly"
         request.supportedNetworks = [.visa, .masterCard, .amex]
         request.merchantCapabilities = .threeDSecure
-        request.countryCode = "US"
-        request.currencyCode = "USD"
+        request.countryCode = "EG"
+        request.currencyCode = "EGP"
+        
         request.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: "Cartly Order", amount: NSDecimalNumber(string: "49.99")),
-            PKPaymentSummaryItem(label: "Cartly Inc.", amount: NSDecimalNumber(string: "49.99"))
+            PKPaymentSummaryItem(label: "Cartly Order", amount: NSDecimalNumber(value: total)),
+            PKPaymentSummaryItem(label: "Cartly Inc.", amount: NSDecimalNumber(value: total))
         ]
         
         let controller = PKPaymentAuthorizationController(paymentRequest: request)
@@ -79,7 +80,6 @@ final class PaymentViewModel: NSObject, ObservableObject, PKPaymentAuthorization
             }
         }
     }
-    
     
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController,
                                         didAuthorizePayment payment: PKPayment,

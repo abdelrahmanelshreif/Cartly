@@ -4,11 +4,11 @@
 //
 //  Created by Khalid Amr on 10/06/2025.
 //
-
 import SwiftUI
 import PassKit
 
 struct OrderCompletingScreen: View {
+    @EnvironmentObject private var currencyManager: CurrencyManager
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
@@ -18,6 +18,7 @@ struct OrderCompletingScreen: View {
     @State private var showCODLimitAlert: Bool = false
     
     private let cart: CartMapper
+    
     
     init(cart: CartMapper) {
         self.cart = cart
@@ -49,7 +50,9 @@ struct OrderCompletingScreen: View {
                     remoteDataSource: RemoteDataSourceImpl(networkService: AlamofireService()),
                     firebaseRemoteDataSource: FirebaseDataSource(firebaseServices: FirebaseServices())
                 )
-            )
+            ),currencyManager: CurrencyManager.shared
+            
+            
         ))
         
         _addressVM = StateObject(wrappedValue: AddressesViewModel(
@@ -135,7 +138,7 @@ struct OrderCompletingScreen: View {
                     }
                 }
             }
-
+            
             paymentVM.onPaymentCancelled = {
                 isProcessingOrder = false
             }
@@ -144,13 +147,38 @@ struct OrderCompletingScreen: View {
     
     struct CartPreview: View {
         let item: ItemsMapper
+        @EnvironmentObject private var currencyManager: CurrencyManager
         
         var body: some View {
             VStack {
-                Image(systemName: "photo")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .cornerRadius(8)
+                if let urlString = item.itemImage, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 80, height: 80)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 80, height: 80)
+                                .clipped()
+                                .cornerRadius(8)
+                        case .failure:
+                            Image(systemName: "photo")
+                                .resizable()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.gray)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .foregroundColor(.gray)
+                }
                 
                 Text(item.productTitle)
                     .font(.caption)
@@ -164,7 +192,7 @@ struct OrderCompletingScreen: View {
                     .font(.caption2)
                 
                 if let priceValue = Double(item.price) {
-                    Text("$\(priceValue * Double(item.quantity), specifier: "%.2f")")
+                    Text(currencyManager.format(priceValue * Double(item.quantity)))
                         .font(.caption)
                         .fontWeight(.semibold)
                 } else {
@@ -225,7 +253,7 @@ struct OrderCompletingScreen: View {
         HStack {
             Text(label)
             Spacer()
-            Text("$\(amount, specifier: "%.2f")")
+            Text(currencyManager.format(amount))
                 .fontWeight(isBold ? .bold : .regular)
         }
     }
@@ -257,7 +285,7 @@ struct OrderCompletingScreen: View {
                                             }
                                         }
                                     } else if vm.selectedPayment == .applePay {
-                                        paymentVM.handleCompleteOrder()
+                                        paymentVM.handleCompleteOrder(total: vm.orderSummary.total)
                                     }
                                 } else {
                                     showCODLimitAlert = true

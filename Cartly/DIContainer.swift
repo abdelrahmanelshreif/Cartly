@@ -17,7 +17,7 @@ class DIContainer{
     }
     
     func resolveSettingsViewModel() -> SettingsViewModel{
-        return SettingsViewModel(useCase: resolveConvertCurrencyUseCase())
+        return SettingsViewModel()
     }
     
     

@@ -29,17 +29,17 @@ final class OrderCompletingViewModel: ObservableObject {
     private let editDraftOrderUseCase: EditDraftOrderAtPlacingOrderUseCaseProtocol
     private let completeDraftOrderUseCase: CompleteDraftOrderUseCase
     private let deleteDraftOrderUseCase: DeleteEntireDraftOrderUseCase
-
-
+    private let currencyManager: CurrencyManager
     
     init(cartItems: [ItemsMapper],
          calculateSummary: CalculateOrderSummaryUseCase,
          validatePromo: ValidatePromoCodeUseCaseProtocol,
          editDraftOrderUseCase:EditDraftOrderAtPlacingOrderUseCaseProtocol,
          completeDraftOrderUseCase: CompleteDraftOrderUseCase,
-         deleteDraftOrderUseCase: DeleteEntireDraftOrderUseCase
-
-) {
+         deleteDraftOrderUseCase: DeleteEntireDraftOrderUseCase,
+         currencyManager: CurrencyManager
+         
+    ) {
         self.cartItems = cartItems
         self.calculateSummary = calculateSummary
         self.validatePromo = validatePromo
@@ -47,8 +47,8 @@ final class OrderCompletingViewModel: ObservableObject {
         self.editDraftOrderUseCase = editDraftOrderUseCase
         self.completeDraftOrderUseCase = completeDraftOrderUseCase
         self.deleteDraftOrderUseCase = deleteDraftOrderUseCase
-
-
+        self.currencyManager = currencyManager
+        
     }
     
     func applyPromo() {
@@ -70,7 +70,7 @@ final class OrderCompletingViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.isApplyingCoupon = false
                 if case .failure(let error) = completion {
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = error.errorDescription(currencyManager: self.currencyManager)
                 }
             } receiveValue: { [weak self] validated in
                 guard let self = self else { return }
@@ -79,7 +79,7 @@ final class OrderCompletingViewModel: ObservableObject {
                 self.orderSummary = self.calculateSummary.execute(
                     for: self.cartItems,
                     discount: validated.discountAmount
-
+                    
                 )
             }
             .store(in: &cancellables)
@@ -91,7 +91,8 @@ final class OrderCompletingViewModel: ObservableObject {
         print("🔎 Payment method:", selectedPayment.rawValue)
         print("🔎 Order total:", orderSummary.total)
         if selectedPayment == .cash && orderSummary.total > codLimitForCash {
-            errorMessage = "Cash on Delivery is not available for orders above $\(Int(codLimitForCash))."
+            let error = PromoError.totalExceedsCashOnDeliveryLimit(limit: codLimitForCash)
+            self.errorMessage = error.errorDescription(currencyManager: currencyManager)
             return false
         }
         errorMessage = nil
@@ -151,9 +152,9 @@ final class OrderCompletingViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
     
-
+    
+    
     
 }
 
