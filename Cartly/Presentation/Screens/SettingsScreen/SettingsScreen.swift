@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-    @StateObject var viewModel: SettingsViewModel
+    @StateObject var viewModel: SettingsViewModel = DIContainer.shared.resolveSettingsViewModel()
     @State private var isTransitioning = false
 
     var body: some View {

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 
 protocol FirebaseShopifyLoginUseCaseProtocol {
     func execute(credentials: EmailCredentials) -> AnyPublisher<CustomerResponse, Error>
@@ -32,20 +33,20 @@ class FirebaseShopifyLoginUseCase: FirebaseShopifyLoginUseCaseProtocol {
         print("[LoginUseCase] Starting login process for email: \(credentials.email)")
         
         return authRepository.signIn(credentials: credentials)
-            .flatMap { [weak self] userEmail -> AnyPublisher<CustomerResponse, Error> in
+            .flatMap { [weak self] firebaseUser -> AnyPublisher<CustomerResponse, Error> in
                 guard let self = self else {
                     print("[LoginUseCase] Self deallocated during Firebase sign-in")
                     return Fail(error: AuthError.firebaseloginFailed)
                         .eraseToAnyPublisher()
                 }
                 
-                guard let firebaseEmail = userEmail else {
+                guard let user = firebaseUser else {
                     print("[LoginUseCase] Firebase sign-in returned nil email")
                     return Fail(error: AuthError.firebaseloginFailed)
                         .eraseToAnyPublisher()
                 }
-                
-                print("[LoginUseCase] Firebase authentication successful for: \(firebaseEmail)")
+                userSessionService.setVerificationStatus(user.isEmailVerified)
+                print("[LoginUseCase] Firebase authentication successful for: \(user.email ?? "Unkown")")
                 return self.fetchAndMatchCustomer(for: credentials.email)
             }
             .mapError { error -> Error in

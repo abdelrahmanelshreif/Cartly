@@ -11,10 +11,11 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol FirebaseServiceProtocol {
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
-    func signup(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>
+    func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
+    func getUserVerificationStatus() -> Bool
 
     func addProductToWishlist(userId: String, product: WishlistProduct)-> AnyPublisher<Void, Error>
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
@@ -25,14 +26,14 @@ protocol FirebaseServiceProtocol {
 }
 
 final class FirebaseServices: FirebaseServiceProtocol {
-    
+     
     private let googleSignInHelper = GoogleSignInHelper()
     private let firestore: Firestore = Firestore.firestore()
     private let userCollection = "users"
     private let wishlist = "wishlist"
     private let cart = "cart"
 
-    func signIn(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signIn(email: String, password: String) -> AnyPublisher<User?, Error>
     {
         return Future { promise in
             Auth.auth().signIn(withEmail: email, password: password) {
@@ -40,13 +41,20 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    promise(.success(user.email))
+                    promise(.success(user))
                 } else {
                     promise(.success(nil))
                 }
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    func getUserVerificationStatus() -> Bool {
+        guard let user = Auth.auth().currentUser else{
+            return false
+        }
+        return user.isEmailVerified
     }
     
     func signInWithGoogle() -> AnyPublisher<FirebaseAuth.User?, any Error> {
@@ -69,7 +77,7 @@ final class FirebaseServices: FirebaseServiceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func signup(email: String, password: String) -> AnyPublisher<String?, Error>
+    func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     {
         return Future { promise in
             Auth.auth().createUser(withEmail: email, password: password) {
@@ -77,7 +85,8 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    promise(.success(user.email))
+                    user.sendEmailVerification()
+                    promise(.success(user))
                 } else {
                     promise(.success(nil))
                 }

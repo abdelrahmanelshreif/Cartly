@@ -11,23 +11,26 @@ struct ProfileHeaderView: View {
     let user: UserEntity?
 
     var body: some View {
-        VStack(spacing: 0) {
-                Image("profile-avatar"/*systemName: "person.fill"*/)
-                    .resizable()
-                 //   .aspectRatio(contentMode: .fill)
-                    .frame(width: 150, height: 150)
-                    .foregroundColor(.blue)
-                    .clipShape(Circle())
-                    .shadow(radius: 4)
-            Text(user?.name ?? "")
-                .font(.title2)
-                .fontWeight(.bold)
-                .padding(.top,8)
+        VStack(spacing: 12) { 
+            Image("profile-avatar")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 100, height: 100)
+                .clipShape(Circle())
+                .shadow(color: .black.opacity(0.1), radius: 5, y: 5)
+            VStack(spacing: 4) {
+                Text(user?.name ?? "")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
 
-            Text(user?.email ?? "")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                Text(user?.email ?? "")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
         }
+     
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.bottom, 10)
     }
-
 }

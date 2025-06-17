@@ -9,7 +9,7 @@ import Combine
 import FirebaseAuth
 
 protocol AuthRepositoryProtocol {
-    func signIn(credentials: EmailCredentials) -> AnyPublisher<String?, Error>
+    func signIn(credentials: EmailCredentials) -> AnyPublisher<User?, Error>
     func signInWithGoogle() -> AnyPublisher<User?, Error>
     func signup(signUpData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>
     func createShopifyUser(signupData: SignUpData) -> AnyPublisher<CustomerResponse?, Error>

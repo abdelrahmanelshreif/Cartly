@@ -30,6 +30,10 @@ struct MainFlow: View {
                         CartScreen()
                     case .Search:
                         SearchScreen()
+                    case .settings:
+                        SettingsScreen()
+                    case .orders:
+                        OrdersScreen()
                     case .OrderCompletingScreen(let cart):
                         OrderCompletingScreen(cart: cart)
                     }
