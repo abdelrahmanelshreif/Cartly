@@ -1,3 +1,4 @@
+import Foundation
 import Combine
 
 protocol RemoteDataSourceProtocol {
@@ -23,6 +24,9 @@ protocol RemoteDataSourceProtocol {
     func deleteExistingDraftOrder(draftOrderID: Int64) -> AnyPublisher<Bool, Error>
     
     func completeDraftOrder(id: Int) -> AnyPublisher<Void, Error>
+    
+    func getOrderForCustomer(customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?,Error>
+    
 }
 
 final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
@@ -143,6 +147,10 @@ final class RemoteDataSourceImpl: RemoteDataSourceProtocol {
             .eraseToAnyPublisher()
     }
     
-    
+    func getOrderForCustomer(customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?,Error>{
+        let request = APIRequest(withMethod: .GET, withPath: "/customers/\(customerId)/orders.json")
+        return networkService.request(request, responseType: CustomerOrdersResponse.self)
+        
+    }
     
 }

@@ -1,6 +1,7 @@
 import Combine
 
 class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEntireDraftOrderUseCaseProtocol{
+
     private let remoteDataSource: RemoteDataSourceProtocol
     private let firebaseRemoteDataSource: FirebaseDataSourceProtocol
     
@@ -350,6 +351,10 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
     
     func deleteEntireDraftOrder(draftOrderID: Int64) -> AnyPublisher<Bool, Error> {
         return remoteDataSource.deleteExistingDraftOrder(draftOrderID: draftOrderID)
+    }
+    
+    func getCustomerOrders(_ customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?, any Error> {
+        return remoteDataSource.getOrderForCustomer(customerId: customerId)
     }
     
 }

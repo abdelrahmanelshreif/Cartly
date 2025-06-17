@@ -39,6 +39,8 @@ protocol RepositoryProtocol {
     
     func editDraftOrderAtPlacingOrder(_ draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error>
     
+    func getCustomerOrders(_ customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?, Error>
+    
 }
 protocol DraftOrderRepositoryProtocol {
     func completeDraftOrder(withId id: Int) -> AnyPublisher<Void, Error>

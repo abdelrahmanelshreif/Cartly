@@ -15,6 +15,7 @@ enum Route: Hashable {
     case Search
     case settings
     case orders
+    case adresses
     case OrderCompletingScreen(CartMapper)
 }
 

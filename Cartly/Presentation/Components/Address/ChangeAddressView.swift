@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 struct ChangeAddressView: View {
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: AddressesViewModel
+    @ObservedObject var viewModel: AddressesViewModel = DIContainer.shared.resolveAddressViewModel()
     
     var body: some View {
         NavigationView {
