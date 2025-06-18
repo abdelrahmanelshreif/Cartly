@@ -37,7 +37,10 @@ final class AlamofireService: NetworkServiceProtocol {
             guard let data = $0.data else {
                 throw URLError(.badServerResponse)
             }
+            
+            
             return try JSONDecoder().decode(T.self, from: data)
+            
         }
         .eraseToAnyPublisher() /// wrapping this publisher to AnyPublisher<Output,Failure>
     }

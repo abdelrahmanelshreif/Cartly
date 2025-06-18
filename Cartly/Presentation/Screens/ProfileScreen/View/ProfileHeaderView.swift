@@ -9,28 +9,43 @@ import SwiftUI
 
 struct ProfileHeaderView: View {
     let user: UserEntity?
-
+    
     var body: some View {
-        VStack(spacing: 12) { 
-            Image("profile-avatar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 100, height: 100)
-                .clipShape(Circle())
-                .shadow(color: .black.opacity(0.1), radius: 5, y: 5)
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(
+                        gradient: Gradient(colors: [Color.blue, Color.purple]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 100, height: 100)
+                
+                Text(initials)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+            }
+            
+            // User Info
             VStack(spacing: 4) {
-                Text(user?.name ?? "")
+                Text(user?.name ?? "Guest User")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.primary)
-
+                
                 Text(user?.email ?? "")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
         }
-     
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.bottom, 10)
+        .padding()
+    }
+    
+    private var initials: String {
+        guard let name = user?.name else { return "G" }
+        let components = name.components(separatedBy: " ")
+        let initials = components.compactMap { $0.first }.prefix(2)
+        return String(initials).uppercased()
     }
 }
+
