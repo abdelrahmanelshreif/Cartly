@@ -120,7 +120,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                 }
                 
                 let draftOrders = draftOrdersResponse?.draftOrders ?? []
-                print("checking if draftorder when delete item in cart is empty or not in repository file\(draftOrders.isEmpty)")
+                print("checking if draftorder when delete item in cart is empty or not in repository file: \(draftOrders.isEmpty)")
                 return self.performDeletionOfDraftOrder(draftOrders: draftOrders, draftOrderID: draftOrderID, itemID: itemID)
             }
             .eraseToAnyPublisher()
@@ -163,6 +163,10 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                     }
                     print("Draft order updated successfully")
                     return [CartMapper(draft: updatedOrder)]
+                }
+                .catch { error -> AnyPublisher<[CartMapper], Error> in
+                    print("Failed to update draft order, refreshing cart: \(error)")
+                    return self.getAllDraftOrdersForCustomer()
                 }
                 .eraseToAnyPublisher()
         }
@@ -328,7 +332,12 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                     let product = productsArrayResponse.first { product in
                         product.id == updatedLineItems[i].productId
                     }
+                    let variant = product?.variants?.first { Variant in
+                        Variant.id == updatedLineItems[i].variantId
+                    }
                     updatedLineItems[i].itemImage = product?.image?.src ?? "unknown-Image-src"
+                    updatedLineItems[i].currentInStock =
+                    ((variant?.inventoryQuantity ?? 0) - updatedLineItems[i].quantity) > 0 ? (variant?.inventoryQuantity ?? 0) - updatedLineItems[i].quantity : 0
                 }
                 
                 var udpatedCartMapper = cartMapper
@@ -343,7 +352,6 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
         return remoteDataSource.editExistingDraftOrder(draftOrder: draftOrder)
     }
     
-    
     func completeDraftOrder(withId id: Int) -> AnyPublisher<Void, Error> {
         return remoteDataSource.completeDraftOrder(id: id)
     }
@@ -352,4 +360,36 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
         return remoteDataSource.deleteExistingDraftOrder(draftOrderID: draftOrderID)
     }
     
+    func getCustomerOrders(_ customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?, any Error> {
+        return remoteDataSource.getOrderForCustomer(customerId: customerId)
+        
+        func getAllDraftOrdersForCustomerByOrderID(orderID: Int64) -> AnyPublisher<[CartMapper], Error> {
+            return remoteDataSource.fetchAllDraftOrders()
+                .tryMap { DraftOrdersResponse -> [CartMapper] in
+                    guard let draftOrders = DraftOrdersResponse?.draftOrders else {
+                        return []
+                    }
+                    
+                    let customerDraftOrder = draftOrders.filter { DraftOrder in
+                        guard orderID == DraftOrder.id else {
+                            return false
+                        }
+                        return true
+                    }
+                    
+                    let cartMappers = customerDraftOrder.compactMap { draftOrder -> CartMapper? in
+                        guard draftOrder.id != nil,
+                              draftOrder.status != nil,
+                              let lineItems = draftOrder.lineItems,
+                              !lineItems.isEmpty else {
+                            return nil
+                        }
+                        return CartMapper(draft: draftOrder)
+                    }
+                    return cartMappers
+                }
+                .eraseToAnyPublisher()
+        }
+        
+    }
 }

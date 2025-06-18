@@ -6,10 +6,10 @@ struct CartMapper: Codable, Hashable {
     var itemsMapper: [ItemsMapper]
 
     init(draft: DraftOrder) {
-        self.orderID = draft.id ?? -1
-        self.orderStatus = draft.status ?? "unknown"
-        self.hasAddress = (draft.customer?.addresses?.isEmpty == false)
-        self.itemsMapper = draft.lineItems?.compactMap { ItemsMapper(lineItem: $0) } ?? []
+        orderID = draft.id ?? -1
+        orderStatus = draft.status ?? "unknown"
+        hasAddress = (draft.customer?.addresses?.isEmpty == false)
+        itemsMapper = draft.lineItems?.compactMap { ItemsMapper(lineItem: $0) } ?? []
     }
 }
 
@@ -22,6 +22,7 @@ struct ItemsMapper: Codable, Hashable {
     var quantity: Int
     var price: String
     var itemImage: String?
+    var currentInStock: Int?
 
     init?(lineItem: LineItem) {
         guard
@@ -35,7 +36,6 @@ struct ItemsMapper: Codable, Hashable {
         else {
             return nil
         }
-
         self.itemId = itemId
         self.variantId = variantId
         self.productId = productId
@@ -46,40 +46,44 @@ struct ItemsMapper: Codable, Hashable {
     }
 }
 
-
-
 #if false
-struct CartMapper : Codable {
-    let orderID: Int64
-    let orderStatus: String
-    let hasAddress: Bool
-    let itemsMapper: [ItemsMapper]
-    
-    init(draft: DraftOrder){
-        self.orderID = draft.id!
-        self.orderStatus = draft.status!
-        self.hasAddress = draft.customer?.addresses?.count ?? 0 > 0
-        self.itemsMapper = draft.lineItems!.map(ItemsMapper.init)
-    }
-}
+    struct CartMapper: Codable {
+        let orderID: Int64
+        let orderStatus: String
+        let hasAddress: Bool
+        let itemsMapper: [ItemsMapper]
 
-struct ItemsMapper : Codable {
-    var itemId: Int64
-    var variantId: Int64
-    var productId: Int64
-    var productTitle: String
-    var variantTitle: String
-    var quantity: Int
-    var price: String
-    
-    init(lineItem: LineItem){
-        self.itemId = lineItem.id!
-        self.variantId = lineItem.variantId!
-        self.productId = lineItem.productId!
-        self.productTitle = lineItem.title!
-        self.variantTitle = lineItem.variantTitle!
-        self.quantity = lineItem.quantity!
-        self.price = lineItem.price!
+        init(draft: DraftOrder) {
+            orderID = draft.id!
+            orderStatus = draft.status!
+            hasAddress = draft.customer?.addresses?.count ?? 0 > 0
+            itemsMapper = draft.lineItems!.map(ItemsMapper.init)
+        }
     }
-}
+
+    struct ItemsMapper: Codable {
+        var itemId: Int64
+        var variantId: Int64
+        var productId: Int64
+        var productTitle: String
+        var variantTitle: String
+        var quantity: Int
+        var price: String
+
+        init(lineItem: LineItem) {
+            itemId = lineItem.id!
+            variantId = lineItem.variantId!
+            productId = lineItem.productId!
+            productTitle = lineItem.title!
+            variantTitle = lineItem.variantTitle!
+            quantity = lineItem.quantity!
+            price = lineItem.price!
+        }
+    }
 #endif
+struct UpdateQuantityEntity: Codable {
+    let orderID: Int64
+    let itemID: Int64
+    let Quantity: Int
+    let variantID: Int64
+}

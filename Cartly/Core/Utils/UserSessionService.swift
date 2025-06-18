@@ -70,6 +70,5 @@ class UserSessionService: UserSessionServiceProtocol {
     
     func isUserEmailVerified() -> Bool? {
         return userDefaults.bool(forKey: Keys.isUserVerified)
-
     }
 }
