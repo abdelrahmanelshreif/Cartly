@@ -33,7 +33,7 @@ struct SettingsScreen: View {
                         Text("USD").tag("USD")
                     }
                     .pickerStyle(.menu)
-                    .onChange(of: viewModel.selectedCurrency) { _ in
+                    .onChange(of: viewModel.selectedCurrency) { _,_ in
                         currencyManager.fetchConversionRate()
                     }
 
