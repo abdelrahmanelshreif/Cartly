@@ -1,65 +1,49 @@
-//
-//  AboutUsScreen.swift
-//  Cartly
-//
-//  Created by Khalid Amr on 18/06/2025.
-//
-
 import SwiftUI
 
-struct AboutUsView: View {
-    
-    var backgroundLayer: some View {
-        LinearGradient(colors: [.blue.opacity(0.6), .purple.opacity(0.4)], startPoint: .topLeading, endPoint: .bottomTrailing)
-            .ignoresSafeArea()
-            .overlay(
-                Image(systemName: "cart.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 300)
-                    .opacity(0.03)
-                    .rotationEffect(.degrees(-25))
-                    .offset(x: 100, y: 200)
-            )
-    }
+struct AboutUsScreen: View {
     var body: some View {
-        ZStack {
-            backgroundLayer
-            
-            ScrollView {
-                VStack(spacing: 20) {
-                    Text("About Us")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top)
-                    
-                    GlassCard {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Who We Are")
-                                .font(.title2).bold()
-                            Text("Cartly is a modern e-commerce app offering seamless shopping experiences with a focus on speed, security, and user satisfaction.")
-                        }
-                    }
-                    
-                    GlassCard {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Our Mission")
-                                .font(.title2).bold()
-                            Text("To simplify online shopping while providing an intuitive, fast, and elegant experience.")
-                        }
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("About Us")
+                    .font(.title2).bold()
+                    .padding(.horizontal)
 
-                    Spacer()
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Welcome to Cartly")
+                        .font(.headline)
+
+                    Text("""
+Cartly is your go-to destination for convenient shopping. We aim to provide a seamless and personalized experience from the moment you browse to the final checkout.
+
+Whether you're ordering essentials or discovering new products, our goal is to make every transaction smooth, secure, and satisfying.
+""")
+                        .font(.body)
+                        .foregroundColor(.secondary)
                 }
-                .padding(.bottom)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Our Mission")
+                        .font(.headline)
+
+                    Text("""
+To bring simplicity, speed, and security to online shopping for everyone. We're passionate about creating an app that empowers users and enhances everyday life.
+""")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
+
+                Spacer(minLength: 40)
             }
         }
-        .ignoresSafeArea()
+        .navigationTitle("About Us")
     }
 }
 
-
-
-#Preview {
-    AboutUsScreen()
-}

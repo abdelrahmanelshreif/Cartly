@@ -6,9 +6,9 @@ struct SettingsScreen: View {
     @StateObject var viewModel = SettingsViewModel()
     @State private var isTransitioning = false
     @ObservedObject var currencyManager = CurrencyManager.shared
+    @EnvironmentObject private var router : AppRouter
 
     var body: some View {
-        NavigationView {
             Form {
                 Section(header: Text("Appearance")) {
                     Toggle(isOn: Binding(
@@ -45,41 +45,36 @@ struct SettingsScreen: View {
                     }
                 }
 
-                Section {
-                    NavigationLink(destination: ContactUsScreen()) {
-                        Label("Contact Us", systemImage: "envelope.fill")
-                    }
+                HStack {
+                              Label("Contact Us", systemImage: "envelope.fill")
+                              Spacer()
+                          }
+                          .contentShape(Rectangle())
+                          .onTapGesture {
+                              router.push(Route.ContactUsScreen)
+                          }
 
-                    NavigationLink(destination: AboutUsScreen()) {
-                        Label("About Us", systemImage: "info.circle.fill")
-                    }
-                }
+                          HStack {
+                              Label("About Us", systemImage: "info.circle.fill")
+                              Spacer()
+                          }
+                          .contentShape(Rectangle())
+                          .onTapGesture {
+                              router.push(Route.AboutUsScreen)
+                          }
             }
-            .navigationTitle("Settings")
-        }
-        .preferredColorScheme(viewModel.isDarkMode ? .dark : .light)
-        .overlay(
-            Color(viewModel.isDarkMode ? .white : .black)
-                .opacity(isTransitioning ? 1 : 0)
-                .animation(.easeInOut(duration: 0.4), value: isTransitioning)
-                .ignoresSafeArea()
-        )
+            
+
+//        .preferredColorScheme(viewModel.isDarkMode ? .dark : .light)
+//        .overlay(
+//            Color(viewModel.isDarkMode ? .white : .black)
+//                .opacity(isTransitioning ? 1 : 0)
+//                .animation(.easeInOut(duration: 0.4), value: isTransitioning)
+//                .ignoresSafeArea()
+//        )
         .onAppear {
             currencyManager.fetchConversionRate()
         }
-    }
-}
-struct ContactUsScreen: View {
-    var body: some View {
-        Text("Contact Us")
-            .navigationTitle("Contact Us")
-    }
-}
-
-struct AboutUsScreen: View {
-    var body: some View {
-        Text("About Us")
-            .navigationTitle("About Us")
     }
 }
 

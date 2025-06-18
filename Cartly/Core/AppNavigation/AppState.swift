@@ -16,6 +16,8 @@ enum Route: Hashable {
     case settings
     case orders
     case OrderCompletingScreen(CartMapper)
+    case AboutUsScreen
+    case ContactUsScreen
 }
 
 enum AuthRoute: Hashable {

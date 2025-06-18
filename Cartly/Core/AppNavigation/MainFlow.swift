@@ -36,6 +36,10 @@ struct MainFlow: View {
                         OrdersScreen()
                     case .OrderCompletingScreen(let cart):
                         OrderCompletingScreen(cart: cart)
+                    case .AboutUsScreen:
+                        AboutUsScreen()
+                    case .ContactUsScreen:
+                        ContactUsScreen()
                     }
                 }
         }
