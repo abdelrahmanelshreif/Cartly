@@ -182,5 +182,32 @@ struct ShopifyAddress: Codable {
     }
 }
 
+struct NormalDraftResponseToNormalPutRequest: Codable {
+    let draftOrder: DraftOrder
 
+    enum CodingKeys: String, CodingKey {
+        case draftOrder = "draft_order"
+    }
+}
 
+struct NormalDraftOrder: Codable {
+    let id: Int64
+    let lineItems: [NormalLineItem]
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case lineItems = "line_items"
+    }
+}
+
+struct NormalLineItem: Codable {
+    let id: Int64
+    let variantID: Int64
+    let quantity: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case variantID = "variant_id"
+        case quantity
+    }
+}

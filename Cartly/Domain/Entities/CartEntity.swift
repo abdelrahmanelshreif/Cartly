@@ -10,3 +10,9 @@ struct CartEntity: Codable {
     
     var quantity: Int
 }
+
+struct NormalCartEntity: Codable {
+    var orderID: Int64
+    var line: [NormalLineItem]
+    
+}

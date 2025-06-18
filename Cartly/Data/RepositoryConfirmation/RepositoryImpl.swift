@@ -4,12 +4,12 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
 
     private let remoteDataSource: RemoteDataSourceProtocol
     private let firebaseRemoteDataSource: FirebaseDataSourceProtocol
-    
+
     init(remoteDataSource: RemoteDataSourceProtocol, firebaseRemoteDataSource: FirebaseDataSourceProtocol) {
         self.remoteDataSource = RemoteDataSourceImpl(networkService: AlamofireService())
         self.firebaseRemoteDataSource = firebaseRemoteDataSource
     }
-    
+
     func fetchBrands() -> AnyPublisher<[BrandMapper], Error> {
         return remoteDataSource.fetchBrands()
             .tryMap {
@@ -20,7 +20,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     func fetchProducts(for collectionID: Int64) -> AnyPublisher<[ProductMapper], any Error> {
         return remoteDataSource.fetchProducts(from: collectionID)
             .tryMap {
@@ -31,7 +31,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     func fetchAllProducts() -> AnyPublisher<[ProductMapper], any Error> {
         return remoteDataSource.fetchAllProducts()
             .tryMap {
@@ -42,53 +42,53 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     func getSingleProduct(for productId: Int64) -> AnyPublisher<SingleProductResponse?, any Error> {
         return remoteDataSource.getSingleProduct(for: productId)
     }
-    
+
     func getCustomers() -> AnyPublisher<AllCustomerResponse?, any Error> {
         return remoteDataSource.getCustomers()
     }
-    
+
     func getSingleCustomer(for customerId: String) -> AnyPublisher<CustomerResponse?, any Error> {
         return remoteDataSource.getSingleCustomer(for: customerId)
     }
-    
+
     func getWishlistProductsForUser(whoseId id: String) -> AnyPublisher<[WishlistProduct]?, any Error> {
         return firebaseRemoteDataSource.getWishlistProductsForUser(whoseId: id)
     }
-    
+
     func addWishlistProductForUser(whoseId id: String, withProduct product: WishlistProduct) -> AnyPublisher<Void, any Error> {
         firebaseRemoteDataSource.addWishlistProductForUser(whoseId: id, withProduct: product)
     }
-    
+
     func removeWishlistProductForUser(whoseId id: String, withProduct productId: String) -> AnyPublisher<Void, any Error> {
         firebaseRemoteDataSource.removeWishlistProductForUser(whoseId: id, withProduct: productId)
     }
-    
+
     func isProductInWishlist(withProduct productId: String, forUser id: String) -> AnyPublisher<Bool, any Error> {
         firebaseRemoteDataSource.isProductInWishlist(withProduct: productId, forUser: id)
     }
-    
+
     /// normal function for normal restAPI requests for order
     func fetchAllDraftOrders() -> AnyPublisher<DraftOrdersResponse?, Error> {
         remoteDataSource.fetchAllDraftOrders()
             .eraseToAnyPublisher()
     }
-    
+
     /// normal function for normal restAPI requests for order
     func postNewDraftOrder(cartEntity: CartEntity) -> AnyPublisher<DraftOrder?, Error> {
         remoteDataSource.postNewDraftOrder(cartEntity: cartEntity)
             .eraseToAnyPublisher()
     }
-    
+
     /// normal function for normal restAPI requests for order
     func editDraftOrder(draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error> {
         remoteDataSource.editExistingDraftOrder(draftOrder: draftOrder)
             .eraseToAnyPublisher()
     }
-    
+
     /// contains some logic and work around work for post or edit new order for customer
     ///  هنا عشان تعمل ادد محتاج في الاول تجيب كل ال درافت اوردرز وهتعمل فيلتر فال ايميل الي معاك عشان تشوف
     ///  هو عنده اوردر ولا لا لو عنده، فمحتاج تعرف الفارينت الي معاك موجود ضمن المنتجات الموجوده في الاوردر ولا لا
@@ -102,16 +102,16 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                 guard let self = self else {
                     return Fail(error: ErrorType.failUnWrapself).eraseToAnyPublisher()
                 }
-                
+
                 /// من الريسبونس الي راجع بجيب الاراي بتاعت الدرافت اوردرز
                 let draftOrders = draftOrdersResponse?.draftOrders ?? []
-                
+
                 /// هنا بفصل اللوجيك بتاع ال edge cases
                 return self.processCartLogic(cartEntity: cartEntity, existingDraftOrders: draftOrders)
             }
             .eraseToAnyPublisher()
     }
-    
+
     func deleteExistingDraftOrder(draftOrderID: Int64, itemID: Int64) -> AnyPublisher<[CartMapper], Error> {
         print("in delete in repository!!!")
         return fetchAllDraftOrders()
@@ -119,14 +119,14 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                 guard let self = self else {
                     return Fail(error: ErrorType.failUnWrapself).eraseToAnyPublisher()
                 }
-                
+
                 let draftOrders = draftOrdersResponse?.draftOrders ?? []
-                print("checking if draftorder when delete item in cart is empty or not in repository file\(draftOrders.isEmpty)")
+                print("checking if draftorder when delete item in cart is empty or not in repository file: \(draftOrders.isEmpty)")
                 return self.performDeletionOfDraftOrder(draftOrders: draftOrders, draftOrderID: draftOrderID, itemID: itemID)
             }
             .eraseToAnyPublisher()
     }
-    
+
     func performDeletionOfDraftOrder(
         draftOrders: [DraftOrder],
         draftOrderID: Int64,
@@ -136,11 +136,11 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             print("Draft order with ID \(draftOrderID) not found")
             return Fail(error: ErrorType.noData).eraseToAnyPublisher()
         }
-        
+
         let currentLineItems = matchingDraftOrder.lineItems ?? []
-        
+
         let newLineItems = currentLineItems.filter { $0.id != itemID }
-        
+
         if newLineItems.isEmpty {
             print("No items left in cart, deleting entire draft order")
             return remoteDataSource.deleteExistingDraftOrder(draftOrderID: draftOrderID)
@@ -165,10 +165,14 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                     print("Draft order updated successfully")
                     return [CartMapper(draft: updatedOrder)]
                 }
+                .catch { error -> AnyPublisher<[CartMapper], Error> in
+                    print("Failed to update draft order, refreshing cart: \(error)")
+                    return self.getAllDraftOrdersForCustomer()
+                }
                 .eraseToAnyPublisher()
         }
     }
-    
+
     private func processCartLogic(cartEntity: CartEntity, existingDraftOrders: [DraftOrder]) -> AnyPublisher<CustomSuccess, Error> {
         print("Processing cart logic for email: \(cartEntity.email)")
         print("Found \(existingDraftOrders.count) existing draft orders")
@@ -216,7 +220,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             return createNewDraftOrder(cartEntity: cartEntity)
         }
     }
-    
+
     /// Update Existing Variant Quantity
     private func updateExistingVariantQuantity(
         draftOrder: DraftOrder,
@@ -225,7 +229,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
     ) -> AnyPublisher<CustomSuccess, Error> {
         var updatedDraftOrder = draftOrder
         var updatedLineItems = draftOrder.lineItems ?? []
-        
+
         for i in 0 ..< updatedLineItems.count {
             if updatedLineItems[i].variantId == existingLineItem.variantId {
                 updatedLineItems[i].quantity = newQuantity
@@ -233,9 +237,9 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
                 break
             }
         }
-        
+
         updatedDraftOrder.lineItems = updatedLineItems
-        
+
         return editDraftOrder(draftOrder: updatedDraftOrder)
             .map { _ in
                 print("Successfully updated existing variant")
@@ -243,7 +247,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     /// Add New Line Item to Existing Draft Order
     private func addNewLineItemToExistingDraftOrder(
         draftOrder: DraftOrder,
@@ -251,7 +255,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
     ) -> AnyPublisher<CustomSuccess, Error> {
         var updatedDraftOrder = draftOrder
         var updatedLineItems = draftOrder.lineItems ?? []
-        
+
         /// Create new line item from cart entity
         let newLineItem = createLineItemFromCartEntity(cart: cartEntity)
         updatedLineItems.append(newLineItem)
@@ -264,7 +268,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     /// Create New Draft Order
     private func createNewDraftOrder(cartEntity: CartEntity) -> AnyPublisher<CustomSuccess, Error> {
         print("Creating new draft order for email: \(cartEntity.email)")
@@ -275,30 +279,30 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     func getAllDraftOrdersForCustomer() -> AnyPublisher<[CartMapper], Error> {
         let service = UserSessionService()
         let userEmail = service.getCurrentUserEmail() ?? ""
         print("\(userEmail) in kosom el repoooooooooooo")
-        
+
         guard !userEmail.isEmpty else {
             return Fail(error: ErrorType.noData)
                 .eraseToAnyPublisher()
         }
-        
+
         return remoteDataSource.fetchAllDraftOrders()
             .tryMap { DraftOrdersResponse -> [CartMapper] in
                 guard let draftOrders = DraftOrdersResponse?.draftOrders else {
                     return []
                 }
-                
+
                 let customerDraftOrder = draftOrders.filter { DraftOrder in
                     guard userEmail == DraftOrder.email else {
                         return false
                     }
                     return true
                 }
-                
+
                 let cartMappers = customerDraftOrder.compactMap { draftOrder -> CartMapper? in
                     guard draftOrder.id != nil,
                           draftOrder.status != nil,
@@ -312,7 +316,7 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .eraseToAnyPublisher()
     }
-    
+
     func getAllProductsToGetLineItemsPhoto(cartMapper: CartMapper) -> AnyPublisher<[CartMapper], Error> {
         return remoteDataSource.fetchAllProducts()
             .map { response -> [Product] in
@@ -324,37 +328,85 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
             }
             .map { productsArrayResponse -> [CartMapper] in
                 var updatedLineItems = cartMapper.itemsMapper
-                
+
                 for i in 0 ..< updatedLineItems.count {
                     let product = productsArrayResponse.first { product in
                         product.id == updatedLineItems[i].productId
                     }
+                    let variant = product?.variants?.first { Variant in
+                        Variant.id == updatedLineItems[i].variantId
+                    }
                     updatedLineItems[i].itemImage = product?.image?.src ?? "unknown-Image-src"
+                    updatedLineItems[i].currentInStock =
+                        ((variant?.inventoryQuantity ?? 0) - updatedLineItems[i].quantity) > 0 ? (variant?.inventoryQuantity ?? 0) - updatedLineItems[i].quantity : 0
                 }
-                
+
                 var udpatedCartMapper = cartMapper
                 udpatedCartMapper.itemsMapper = updatedLineItems
-                
+
                 return [udpatedCartMapper]
             }
             .eraseToAnyPublisher()
     }
-    
+
+    // MARK: - ncwkebcwicbwiecnwocnoew
+    func updateItemQuantity(updateQuantityEntity: UpdateQuantityEntity) -> AnyPublisher<[CartMapper], Error> {
+        return remoteDataSource.editInventoryQuantityExistingItemDraftOrder(updateQuantityEntity: updateQuantityEntity)
+            .flatMap { [weak self] updatedDraftOrder -> AnyPublisher<[CartMapper], Error> in
+                guard let self = self else {
+                    return Fail(error: ErrorType.failUnWrapself).eraseToAnyPublisher()
+                }
+
+                guard updatedDraftOrder != nil else {
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+                }
+
+                return self.getAllDraftOrdersForCustomerByOrderID(orderID: updateQuantityEntity.orderID)
+            }
+            .eraseToAnyPublisher()
+    }
+
     func editDraftOrderAtPlacingOrder(_ draftOrder: DraftOrder) -> AnyPublisher<DraftOrder?, Error> {
         return remoteDataSource.editExistingDraftOrder(draftOrder: draftOrder)
     }
-    
-    
+
     func completeDraftOrder(withId id: Int) -> AnyPublisher<Void, Error> {
         return remoteDataSource.completeDraftOrder(id: id)
     }
-    
+
     func deleteEntireDraftOrder(draftOrderID: Int64) -> AnyPublisher<Bool, Error> {
         return remoteDataSource.deleteExistingDraftOrder(draftOrderID: draftOrderID)
     }
     
     func getCustomerOrders(_ customerId: Int64) -> AnyPublisher<CustomerOrdersResponse?, any Error> {
         return remoteDataSource.getOrderForCustomer(customerId: customerId)
+
+    func getAllDraftOrdersForCustomerByOrderID(orderID: Int64) -> AnyPublisher<[CartMapper], Error> {
+        return remoteDataSource.fetchAllDraftOrders()
+            .tryMap { DraftOrdersResponse -> [CartMapper] in
+                guard let draftOrders = DraftOrdersResponse?.draftOrders else {
+                    return []
+                }
+
+                let customerDraftOrder = draftOrders.filter { DraftOrder in
+                    guard orderID == DraftOrder.id else {
+                        return false
+                    }
+                    return true
+                }
+
+                let cartMappers = customerDraftOrder.compactMap { draftOrder -> CartMapper? in
+                    guard draftOrder.id != nil,
+                          draftOrder.status != nil,
+                          let lineItems = draftOrder.lineItems,
+                          !lineItems.isEmpty else {
+                        return nil
+                    }
+                    return CartMapper(draft: draftOrder)
+                }
+                return cartMappers
+            }
+            .eraseToAnyPublisher()
     }
     
 }

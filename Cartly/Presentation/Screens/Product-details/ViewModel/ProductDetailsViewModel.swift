@@ -183,6 +183,7 @@ class ProductDetailsViewModel: ObservableObject {
         return selectedVariant?.price
     }
 
+    
     func addToCart() {
         guard let variant = selectedVariant else {
             alertMessage =
