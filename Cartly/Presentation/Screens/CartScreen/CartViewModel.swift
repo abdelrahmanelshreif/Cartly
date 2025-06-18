@@ -120,7 +120,7 @@ class CartViewModel: ObservableObject {
                 },
                 receiveValue: { [weak self] updatedCartMappers in
                     self?.cartItems = updatedCartMappers
-                    print("\(updatedCartMappers[0].itemsMapper)")
+                   // print("\(updatedCartMappers[0].itemsMapper)")
                     self?.hasItems = !updatedCartMappers.isEmpty
                     print("Cart updated after deletion. Items count: \(updatedCartMappers.count)")
                 }

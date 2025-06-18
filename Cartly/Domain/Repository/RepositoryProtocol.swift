@@ -1,6 +1,7 @@
 import Combine
 
 protocol RepositoryProtocol {
+    
     func fetchBrands() -> AnyPublisher<[BrandMapper], Error>
 
     func fetchProducts(for collectionID: Int64) -> AnyPublisher<[ProductMapper], Error>
