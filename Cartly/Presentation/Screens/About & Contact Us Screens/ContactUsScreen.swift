@@ -13,9 +13,6 @@ struct ContactUsScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Contact Us")
-                    .font(.title2).bold()
-                    .padding(.horizontal)
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("We’d love to hear from you.")

@@ -4,9 +4,6 @@ struct AboutUsScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("About Us")
-                    .font(.title2).bold()
-                    .padding(.horizontal)
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Welcome to Cartly")

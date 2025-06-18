@@ -10,22 +10,22 @@ struct SettingsScreen: View {
 
     var body: some View {
             Form {
-                Section(header: Text("Appearance")) {
-                    Toggle(isOn: Binding(
-                        get: { viewModel.isDarkMode },
-                        set: { newValue in
-                            withAnimation(.easeInOut(duration: 0.4)) {
-                                isTransitioning = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                viewModel.toggleDarkMode(newValue)
-                                isTransitioning = false
-                            }
-                        }
-                    )) {
-                        Label("Dark Mode", systemImage: "moon.fill")
-                    }
-                }
+//                Section(header: Text("Appearance")) {
+////                    Toggle(isOn: Binding(
+////                        get: { viewModel.isDarkMode },
+////                        set: { newValue in
+////                            withAnimation(.easeInOut(duration: 0.4)) {
+////                                isTransitioning = true
+////                            }
+////                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+////                                viewModel.toggleDarkMode(newValue)
+////                                isTransitioning = false
+////                            }
+////                        }
+////                    )) {
+////                        Label("Dark Mode", systemImage: "moon.fill")
+////                    }
+//                }
 
                 Section(header: Text("Currency")) {
                     Picker(selection: $viewModel.selectedCurrency, label: Label("Currency", systemImage: "dollarsign.circle.fill")) {
