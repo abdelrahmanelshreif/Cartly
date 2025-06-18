@@ -15,12 +15,11 @@ struct SplashScreen: View {
     var body: some View {
         Group {
             VideoPlayerView(player: player)
-                .edgesIgnoringSafeArea(.all)
         }
         .onAppear {
             print("on splash onAppear")
             player.play()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 viewModel.navigate(router: router)
             }
         }

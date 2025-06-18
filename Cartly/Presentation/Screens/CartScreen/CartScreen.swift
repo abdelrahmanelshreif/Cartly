@@ -17,8 +17,7 @@ struct CartScreen: View {
             getCustomerCartUseCase: GetCustomerCartUseCase(repository: repository),
             deleteCartItemUseCase: DeleteCartItemUseCase(repository: repository),
             getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase(repository: repository),
-            addToCartUseCase: AddToCartUseCaseImpl(repository: repository),
-            updateQuantityUseCase: UpdateQuantityUseCase(repo: repository)
+            addToCartUseCase: AddToCartUseCaseImpl(repository: repository)
         ))
     }
 

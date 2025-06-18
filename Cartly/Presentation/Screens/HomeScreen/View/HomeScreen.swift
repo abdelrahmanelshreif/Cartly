@@ -17,7 +17,6 @@ struct HomeScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HomeToolbar(cartState: viewModel.cartState)
-
             Ads()
 
             Spacer()
@@ -48,7 +47,7 @@ struct HomeScreen: View {
         }
         .onAppear {
             viewModel.loadBrands()
-            viewModel.loadCartItemCount()
+            //viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

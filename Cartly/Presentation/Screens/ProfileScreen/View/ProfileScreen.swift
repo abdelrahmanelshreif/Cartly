@@ -3,6 +3,7 @@ import Combine
 import SwiftUI
 
 // MARK: - Profile Screen
+
 struct ProfileScreen: View {
     @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel: ProfileViewModel = DIContainer.shared
@@ -41,13 +42,11 @@ struct ProfileScreen: View {
             }
         }
         .sheet(
-            isPresented: $showOrderDetail, onDismiss: { selectedOrder = nil }
-        ) {
-            if let selectedOrder = selectedOrder {
-                OrderDetailScreen(order: selectedOrder)
-            }
-        }
-        .alert("Sign Out", isPresented: $showSignOutAlert) {
+            item: $selectedOrder,
+            onDismiss: { selectedOrder = nil }
+        ) { order in
+            OrderDetailScreen(order: order)
+        }.alert("Sign Out", isPresented: $showSignOutAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Sign Out", role: .destructive) {
                 viewModel.signOut()
@@ -61,8 +60,8 @@ struct ProfileScreen: View {
 }
 
 // MARK: - View Components
-extension ProfileScreen {
 
+extension ProfileScreen {
     private var loggedInView: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -111,7 +110,7 @@ extension ProfileScreen {
 
                 VStack(spacing: 0) {
                     Button(action: { router.push(Route.settings) }) {
-                        ProfileMenuRowView( 
+                        ProfileMenuRowView(
                             iconName: "gearshape.fill", title: "Settings")
                     }
 
@@ -138,7 +137,6 @@ extension ProfileScreen {
             }
             .padding()
         }
-        
     }
 
     private var loadingView: some View {
@@ -155,6 +153,7 @@ extension ProfileScreen {
 }
 
 // MARK: - Empty Orders View
+
 struct EmptyOrdersView: View {
     var body: some View {
         VStack(spacing: 16) {
@@ -179,6 +178,7 @@ struct EmptyOrdersView: View {
 }
 
 // MARK: - Updated Order Card View
+
 struct ModernOrderCardView: View {
     let order: OrderEntity
 
@@ -255,6 +255,7 @@ struct ModernOrderCardView: View {
 }
 
 // MARK: - Orders List Screen
+
 struct OrdersListScreen: View {
     let orders: [OrderEntity]
     let onOrderTapped: (OrderEntity) -> Void
@@ -298,6 +299,7 @@ struct OrdersListScreen: View {
 }
 
 // MARK: - Order Row View
+
 struct OrderRowView: View {
     let order: OrderEntity
 
@@ -363,6 +365,7 @@ struct OrderRowView: View {
 }
 
 // MARK: - Order Detail Screen
+
 struct OrderDetailScreen: View {
     let order: OrderEntity
     @Environment(\.dismiss) private var dismiss
@@ -389,6 +392,7 @@ struct OrderDetailScreen: View {
 }
 
 // MARK: - Order Detail Components
+
 extension OrderDetailScreen {
     fileprivate var orderHeaderSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -415,7 +419,6 @@ extension OrderDetailScreen {
         .cornerRadius(12)
     }
 
-
     fileprivate var statusBadge: some View {
         Text(order.status.capitalized)
             .font(.subheadline)
@@ -427,7 +430,6 @@ extension OrderDetailScreen {
             .cornerRadius(8)
     }
 
-  
     fileprivate var orderItemsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("ITEMS")
@@ -458,7 +460,7 @@ extension OrderDetailScreen {
                 pricingRow(
                     title: "Subtotal",
                     value: "\(order.totalPrice)")
-               
+
                 Divider()
 
                 HStack {
@@ -502,8 +504,9 @@ extension OrderDetailScreen {
 }
 
 // MARK: - Order Item Row
+
 struct OrderItemRow: View {
-    let item: OrderItemEntity 
+    let item: OrderItemEntity
     let isLast: Bool
 
     var body: some View {

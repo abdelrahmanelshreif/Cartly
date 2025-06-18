@@ -14,7 +14,6 @@ class CartViewModel: ObservableObject {
     private let getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase
     private let addToCartUseCase: AddToCartUseCaseImpl
 
-    private let updateQuantityUseCase: UpdateQuantityUseCase
     private let userSession: UserSessionService = UserSessionService()
     private var cancellables = Set<AnyCancellable>()
 
@@ -41,13 +40,11 @@ class CartViewModel: ObservableObject {
         deleteCartItemUseCase: DeleteCartItemUseCase,
         getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase,
         addToCartUseCase: AddToCartUseCaseImpl,
-        updateQuantityUseCase: UpdateQuantityUseCase
     ) {
         self.getCustomerCartUseCase = getCustomerCartUseCase
         self.deleteCartItemUseCase = deleteCartItemUseCase
         self.getCartItemsWithImagesUseCase = getCartItemsWithImagesUseCase
         self.addToCartUseCase = addToCartUseCase
-        self.updateQuantityUseCase = updateQuantityUseCase
     }
 
     func loadCustomerCart() {

@@ -166,7 +166,7 @@ struct CategoryScreen: View {
         .onAppear {
             viewModel.selectedCategory = .all
             viewModel.loadsProducts()
-            viewModel.loadCartItemCount()
+         //   viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

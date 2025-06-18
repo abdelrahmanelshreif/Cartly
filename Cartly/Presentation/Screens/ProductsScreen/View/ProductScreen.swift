@@ -47,7 +47,7 @@ struct ProductScreen: View {
         }
         .onAppear {
             viewModel.loadProducts(brandId: brandId)
-            viewModel.loadCartItemCount()
+           // viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }
