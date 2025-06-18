@@ -62,7 +62,7 @@ class ProfileViewModel: ObservableObject {
         isLoadingOrders = true
         errorMessage = nil
 
-        getOrdersUseCase.execute(customerId: Int64(userId)!)
+        getOrdersUseCase.execute(customerId: Int64(userId) ?? 0)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -79,7 +79,7 @@ class ProfileViewModel: ObservableObject {
                 receiveValue: { [weak self] orders in
                     print("DEBUG: loadOrders: Received \(orders.count) orders.")
                     self?.orders = orders
-                }
+                }	
             )
             .store(in: &cancellables)
     }
