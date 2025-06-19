@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProductDetailsContentView: View {
+    @EnvironmentObject var currencyConverter: CurrencyManager
     @ObservedObject var viewModel: ProductDetailsViewModel
     @ObservedObject var wishlistViewModel: WishlistViewModel
     let product: ProductInformationEntity
@@ -54,19 +55,19 @@ struct ProductDetailsContentView: View {
 
                     HStack {
                         if let variantPrice = viewModel.variantPrice {
-                            Text("$\(variantPrice, specifier: "%.2f")")
+                            Text("\(currencyConverter.format(variantPrice))")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
                         } else {
-                            Text("$\(product.price, specifier: "%.2f")")
+                            Text("\(currencyConverter.format(product.price))")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
                         }
 
                         if product.originalPrice > (viewModel.variantPrice ?? product.price) {
-                            Text("$\(product.originalPrice, specifier: "%.2f")")
+                            Text("\(currencyConverter.format(product.originalPrice))")
                                 .font(.body)
                                 .strikethrough()
                                 .foregroundColor(.secondary)

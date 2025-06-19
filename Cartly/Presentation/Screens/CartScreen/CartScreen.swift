@@ -223,6 +223,7 @@ struct CartScreen: View {
 }
 
 struct OptimizedCartItemView: View {
+    @EnvironmentObject private var currencyConverter:CurrencyManager
     let item: ItemsMapper
     let isLoading: Bool
     let onQuantityChange: (Int) -> Void
@@ -269,7 +270,7 @@ struct OptimizedCartItemView: View {
                     }
 
                     HStack {
-                        Text("$\(item.price)")
+                        Text("\(currencyConverter(Double(item.price)))")
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WishlistItemView: View {
+    @EnvironmentObject var currencyConverter:CurrencyManager
     @Binding var isLoading: Bool
     let product: WishlistProduct
     let onRemove: () -> Void
@@ -52,7 +53,7 @@ struct WishlistItemView: View {
                     .lineLimit(2)
                     .foregroundStyle(.primary)
 
-                Text("$\(product.price ?? 0.0, specifier: "%.2f")")
+                Text("\(currencyConverter.format(product.price ?? 0))")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue)

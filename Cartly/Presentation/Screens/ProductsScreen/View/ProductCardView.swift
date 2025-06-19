@@ -3,12 +3,7 @@ import SwiftUI
 struct ProductCardView: View {
     let product: ProductMapper
     @EnvironmentObject var router: AppRouter
-
-    #if false
-        @AppStorage("selectedCurrency") private var selectedCurrency: String =
-            "USD"
-        @AppStorage("currencySymbol") private var currencySymbol: String = "$"
-    #endif
+    @EnvironmentObject var currencyConverter:CurrencyManager
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -66,7 +61,7 @@ struct ProductCardView: View {
                 Spacer(minLength: 4)
 
                 HStack {
-                    Text(formatPrice(product.product_Price))
+                    Text(currencyConverter.format(Double(product.product_Price) ?? 0))
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.primary)
 
