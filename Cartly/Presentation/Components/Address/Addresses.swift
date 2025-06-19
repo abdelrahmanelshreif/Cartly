@@ -2,11 +2,7 @@ import SwiftUI
 import MapKit
 
 struct AddressesView: View {
-    @StateObject var viewModel: AddressesViewModel
-    
-    init(viewModel: AddressesViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @StateObject var viewModel: AddressesViewModel = DIContainer.shared.resolveAddressViewModel()
     
     var body: some View {
         ZStack {

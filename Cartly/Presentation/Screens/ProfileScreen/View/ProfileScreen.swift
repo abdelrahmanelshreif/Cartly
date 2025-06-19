@@ -122,6 +122,8 @@ extension ProfileScreen {
                         ProfileMenuRowView(
                             iconName: "location.fill", title: "Addresses")
                     }
+                    
+//                    AddressesView(viewModel: DIContainer.shared.resolveAddressViewModel())
 
                     Divider().padding(.leading)
 

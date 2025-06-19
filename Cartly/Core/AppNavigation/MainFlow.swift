@@ -35,7 +35,7 @@ struct MainFlow: View {
                     case .orders:
                         OrdersScreen()
                     case .adresses:
-                        ChangeAddressView()
+                        AddressesView()
                     case .OrderCompletingScreen(let cart):
                         OrderCompletingScreen(cart: cart)
                     case .AboutUsScreen:

@@ -55,25 +55,7 @@ struct OrderCompletingScreen: View {
             
         ))
         
-        _addressVM = StateObject(wrappedValue: AddressesViewModel(
-            fetchAddressesUseCase: FetchCustomerAddressesUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            addAddressUseCase: AddCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
-            editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
-        ))
+        _addressVM = StateObject(wrappedValue: DIContainer.shared.resolveAddressViewModel())
         
         _paymentVM = StateObject(wrappedValue: PaymentViewModel())
     }
