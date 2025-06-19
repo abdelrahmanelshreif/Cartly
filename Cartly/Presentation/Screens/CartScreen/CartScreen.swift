@@ -270,7 +270,7 @@ struct OptimizedCartItemView: View {
                     }
 
                     HStack {
-                        Text("\(currencyConverter(Double(item.price)))")
+                        Text("\(currencyConverter.format(Double(item.price) ?? 0))")
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)
