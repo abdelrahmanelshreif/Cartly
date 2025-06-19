@@ -14,7 +14,7 @@ enum Route: Hashable {
     case Cart
     case Search
     case settings
-    case orders
+    case order
     case adresses
     case OrderCompletingScreen(CartMapper)
     case AboutUsScreen

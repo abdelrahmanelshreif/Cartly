@@ -88,8 +88,8 @@ final class OrderCompletingViewModel: ObservableObject {
     func getCartItems() -> [ItemsMapper] { cartItems }
     
     func canCompleteOrder() -> Bool {
-        print("🔎 Payment method:", selectedPayment.rawValue)
-        print("🔎 Order total:", orderSummary.total)
+        print("Payment method:", selectedPayment.rawValue)
+        print("Order total:", orderSummary.total)
         if selectedPayment == .cash && orderSummary.total > codLimitForCash {
             let error = PromoError.totalExceedsCashOnDeliveryLimit(limit: codLimitForCash)
             self.errorMessage = error.errorDescription(currencyManager: currencyManager)

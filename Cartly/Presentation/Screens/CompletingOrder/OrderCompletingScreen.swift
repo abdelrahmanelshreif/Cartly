@@ -9,6 +9,7 @@ import PassKit
 
 struct OrderCompletingScreen: View {
     @EnvironmentObject private var currencyManager: CurrencyManager
+    @EnvironmentObject private var router: AppRouter
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
@@ -97,8 +98,12 @@ struct OrderCompletingScreen: View {
             )
         }
         .alert("Order Completed", isPresented: $showSuccessAlert) {
-            Button("Continue Shopping") { }
-            Button("View Order Summary") { }
+            Button("Continue Shopping") {
+                router.setRoot(.main)
+            }
+            Button("View Order Summary") {
+                router.push(Route.order)
+            }
         } message: {
             Text("Your order has been placed successfully.")
         }
@@ -109,6 +114,7 @@ struct OrderCompletingScreen: View {
                         vm.deleteEntireDraftOrder(withId: cart.orderID) { deleted in
                             if deleted {
                                 showSuccessAlert = true
+                                
                             } else {
                                 showCODLimitAlert = true
                             }
