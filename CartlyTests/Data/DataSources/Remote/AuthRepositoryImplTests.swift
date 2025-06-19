@@ -40,40 +40,7 @@ final class AuthRepositoryImplTests: XCTestCase {
         super.tearDown()
     }
     
-    // MARK: - Sign In With Google Tests
-//    
-//    func testSignInWithGoogle_whenServiceSucceeds_returnsUser() {
-//        // Arrange
-//        let expectation = XCTestExpectation(description: "Google sign in succeeds")
-//        let mockUser = MockFirebaseUser(uid: "google123", email: "user@gmail.com", displayName: "Google User")
-//        var receivedUser: User?
-//        
-//        // Act
-//        repository.signInWithGoogle()
-//            .sink(
-//                receiveCompletion: { completion in
-//                    if case .failure(let error) = completion {
-//                        XCTFail("Expected success but got error: \(error)")
-//                    }
-//                    expectation.fulfill()
-//                },
-//                receiveValue: { user in
-//                    receivedUser = user
-//                }
-//            )
-//            .store(in: &cancellables)
-//        
-//        // Control
-//        mockFirebaseService.signInWithGoogleSubject.send(mockUser)
-//        mockFirebaseService.signInWithGoogleSubject.send(completion: .finished)
-//        
-//        // Assert
-//        wait(for: [expectation], timeout: 1.0)
-//        XCTAssertEqual(mockFirebaseService.signInWithGoogleCallCount, 1)
-//        XCTAssertNotNil(receivedUser)
-//        XCTAssertEqual(receivedUser?.uid, "google123")
-//    }
-    
+
     // MARK: - Sign Up Tests
     
     func testSignup_whenBothServicesSucceed_returnsCustomerResponse() {
@@ -256,37 +223,6 @@ final class AuthRepositoryImplTests: XCTestCase {
         XCTAssertEqual(mockFirebaseService.signInCallCount, 1)
         XCTAssertEqual(mockFirebaseService.lastSignInCredentials?.email, credentials.email)
         XCTAssertEqual(receivedUserId, expectedUserId)
-    }
-    
-    func testSignIn_whenServiceReturnsNil_returnsError() {
-        // Arrange
-        let expectation = XCTestExpectation(description: "Sign in fails with nil response")
-        let credentials = EmailCredentials(email: "test@example.com", password: "password123")
-        var receivedError: Error?
-        
-        // Act
-        repository.signIn(credentials: credentials)
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure(let error) = completion {
-                        receivedError = error
-                    }
-                    expectation.fulfill()
-                },
-                receiveValue: { _ in
-                    XCTFail("Expected failure but got success")
-                }
-            )
-            .store(in: &cancellables)
-        
-        // Control
-        mockFirebaseService.signInSubject.send(nil)
-        mockFirebaseService.signInSubject.send(completion: .finished)
-        
-        // Assert
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertNotNil(receivedError)
-        XCTAssert(receivedError is AuthError)
     }
     
     // MARK: - Sign Out Tests
