@@ -39,7 +39,7 @@ class CartViewModel: ObservableObject {
         getCustomerCartUseCase: GetCustomerCartUseCase,
         deleteCartItemUseCase: DeleteCartItemUseCase,
         getCartItemsWithImagesUseCase: GetCartItemsWithImagesUseCase,
-        addToCartUseCase: AddToCartUseCaseImpl,
+        addToCartUseCase: AddToCartUseCaseImpl
     ) {
         self.getCustomerCartUseCase = getCustomerCartUseCase
         self.deleteCartItemUseCase = deleteCartItemUseCase

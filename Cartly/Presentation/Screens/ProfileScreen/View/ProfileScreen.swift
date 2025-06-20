@@ -1,4 +1,3 @@
-
 import Combine
 import SwiftUI
 
@@ -122,6 +121,8 @@ extension ProfileScreen {
                         ProfileMenuRowView(
                             iconName: "location.fill", title: "Addresses")
                     }
+
+                    //                    AddressesView(viewModel: DIContainer.shared.resolveAddressViewModel())
 
                     Divider().padding(.leading)
 
@@ -367,18 +368,62 @@ struct OrderRowView: View {
 // MARK: - Order Detail Screen
 
 struct OrderDetailScreen: View {
-    let order: OrderEntity
+    let order: OrderEntity?
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel: ProfileViewModel = DIContainer.shared
+        .resolveProfileViewModel()
+    @State private var displayOrder: OrderEntity?
+
+    init(order: OrderEntity) {
+        self.order = order
+    }
+
+    // Empty initializer that will fetch orders and show the first one
+    init() {
+        self.order = nil
+    }
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    orderHeaderSection
-                    orderItemsSection
-                    pricingSection
+            Group {
+                if let currentOrder = displayOrder ?? order {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            orderHeaderSection(for: currentOrder)
+                            orderItemsSection(for: currentOrder)
+                            pricingSection(for: currentOrder)
+                        }
+                        .padding()
+                    }
+                } else if viewModel.isLoadingOrders {
+                    VStack {
+                        ProgressView("Loading orders...")
+                            .progressViewStyle(CircularProgressViewStyle())
+                        Text("Please wait...")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    VStack(spacing: 16) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 50))
+                            .foregroundColor(.orange)
+
+                        Text("No Orders Found")
+                            .font(.headline)
+
+                        Text("Unable to load order details")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Button("Try Again") {
+                            viewModel.loadOrders()
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding()
             }
             .navigationTitle("Order Details")
             .navigationBarTitleDisplayMode(.inline)
@@ -388,13 +433,25 @@ struct OrderDetailScreen: View {
                 }
             }
         }
+        .onAppear {
+            if order == nil && displayOrder == nil {
+                // Only load orders if we don't have an order passed in
+                viewModel.loadOrders()
+            }
+        }
+        .onChange(of: viewModel.orders) { newOrders in
+            // When orders are loaded and we don't have a specific order, show the first one
+            if order == nil && displayOrder == nil && !newOrders.isEmpty {
+                displayOrder = newOrders.first
+            }
+        }
     }
 }
 
 // MARK: - Order Detail Components
 
 extension OrderDetailScreen {
-    fileprivate var orderHeaderSection: some View {
+    fileprivate func orderHeaderSection(for order: OrderEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(order.orderName)
@@ -403,7 +460,7 @@ extension OrderDetailScreen {
 
                 Spacer()
 
-                statusBadge
+                statusBadge(for: order)
             }
 
             Text("Order #\(order.orderNumber)")
@@ -419,18 +476,18 @@ extension OrderDetailScreen {
         .cornerRadius(12)
     }
 
-    fileprivate var statusBadge: some View {
+    fileprivate func statusBadge(for order: OrderEntity) -> some View {
         Text(order.status.capitalized)
             .font(.subheadline)
             .fontWeight(.medium)
             .foregroundColor(.white)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(statusColor)
+            .background(statusColor(for: order))
             .cornerRadius(8)
     }
 
-    fileprivate var orderItemsSection: some View {
+    fileprivate func orderItemsSection(for order: OrderEntity) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("ITEMS")
                 .font(.caption)
@@ -448,7 +505,7 @@ extension OrderDetailScreen {
         }
     }
 
-    fileprivate var pricingSection: some View {
+    fileprivate func pricingSection(for order: OrderEntity) -> some View {
         VStack(spacing: 12) {
             Text("PRICING")
                 .font(.caption)
@@ -487,7 +544,7 @@ extension OrderDetailScreen {
         .font(.body)
     }
 
-    fileprivate var statusColor: Color {
+    fileprivate func statusColor(for order: OrderEntity) -> Color {
         switch order.status.lowercased() {
         case "paid", "delivered", "completed":
             return .green
@@ -502,7 +559,6 @@ extension OrderDetailScreen {
         }
     }
 }
-
 // MARK: - Order Item Row
 
 struct OrderItemRow: View {

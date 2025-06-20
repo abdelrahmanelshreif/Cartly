@@ -9,6 +9,7 @@ import PassKit
 
 struct OrderCompletingScreen: View {
     @EnvironmentObject private var currencyManager: CurrencyManager
+    @EnvironmentObject private var router: AppRouter
     @StateObject var vm: OrderCompletingViewModel
     @StateObject var addressVM: AddressesViewModel
     @StateObject var paymentVM: PaymentViewModel
@@ -55,25 +56,7 @@ struct OrderCompletingScreen: View {
             
         ))
         
-        _addressVM = StateObject(wrappedValue: AddressesViewModel(
-            fetchAddressesUseCase: FetchCustomerAddressesUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            addAddressUseCase: AddCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
-            editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
-        ))
+        _addressVM = StateObject(wrappedValue: DIContainer.shared.resolveAddressViewModel())
         
         _paymentVM = StateObject(wrappedValue: PaymentViewModel())
     }
@@ -81,10 +64,11 @@ struct OrderCompletingScreen: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    Text("Review & Complete Order")
-                        .font(.title2).bold()
-                        .padding(.horizontal)
+                VStack(spacing: 8) {
+//                    Text("Review & Complete Order")
+//                        .font(.title2).bold()
+//                        .padding(.horizontal)
+//                        .padding(.top, 10)
                     
                     AddressesView(viewModel: addressVM)
                     cartPreview
@@ -115,8 +99,12 @@ struct OrderCompletingScreen: View {
             )
         }
         .alert("Order Completed", isPresented: $showSuccessAlert) {
-            Button("Continue Shopping") { }
-            Button("View Order Summary") { }
+            Button("Continue Shopping") {
+                router.setRoot(.main)
+            }
+            Button("View Order Summary") {
+                router.push(Route.order)
+            }
         } message: {
             Text("Your order has been placed successfully.")
         }
@@ -127,6 +115,7 @@ struct OrderCompletingScreen: View {
                         vm.deleteEntireDraftOrder(withId: cart.orderID) { deleted in
                             if deleted {
                                 showSuccessAlert = true
+                                
                             } else {
                                 showCODLimitAlert = true
                             }

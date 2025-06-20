@@ -8,7 +8,11 @@
 import Foundation
 
 // MARK: - UI Entity Models
-struct OrderEntity: Identifiable {
+struct OrderEntity: Identifiable , Equatable {
+    static func == (lhs: OrderEntity, rhs: OrderEntity) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: String
     let orderName: String
     let totalPrice: String

@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct WishlistItemView: View {
+    @EnvironmentObject var currencyConverter: CurrencyManager
     @Binding var isLoading: Bool
     let product: WishlistProduct
     let onRemove: () -> Void
     let onItemTap: () -> Void
+    @State private var showConfirmation = false
 
     var body: some View {
         HStack(spacing: 16) {
@@ -52,7 +54,7 @@ struct WishlistItemView: View {
                     .lineLimit(2)
                     .foregroundStyle(.primary)
 
-                Text("$\(product.price ?? 0.0, specifier: "%.2f")")
+                Text("\(currencyConverter.format(product.price ?? 0))")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue)
@@ -64,7 +66,9 @@ struct WishlistItemView: View {
 
             Spacer()
 
-            Button(action: onRemove) {
+            Button(action: {
+                showConfirmation = true
+            }) {
                 Image(systemName: "trash")
                     .foregroundStyle(.red)
                     .padding(8)
@@ -72,6 +76,14 @@ struct WishlistItemView: View {
                     .clipShape(Circle())
             }
             .disabled(isLoading)
+            .alert("Remove this item?", isPresented: $showConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Remove", role: .destructive, action: onRemove)
+            } message: {
+                Text(
+                    "Are you sure you want to remove this item from your wishlist?"
+                )
+            }
         }
         .padding()
         .background(Color(.systemBackground))

@@ -2,11 +2,7 @@ import SwiftUI
 import MapKit
 
 struct AddressesView: View {
-    @StateObject var viewModel: AddressesViewModel
-    
-    init(viewModel: AddressesViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @StateObject var viewModel: AddressesViewModel = DIContainer.shared.resolveAddressViewModel()
     
     var body: some View {
         ZStack {
@@ -57,7 +53,6 @@ struct AddressesView: View {
                 }
                 
             }
-            .padding(.top)
         }
     }
     
@@ -170,28 +165,4 @@ extension View {
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
-}
-
-#Preview {
-    AddressesView(
-        viewModel: AddressesViewModel(
-            fetchAddressesUseCase: FetchCustomerAddressesUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            addAddressUseCase: AddCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            setDefaultAddressUseCase: SetDefaultCustomerAddressUseCase(
-                repository: CustomerAddressRepository(
-                    networkService: AlamofireService()
-                )
-            ),
-            deleteAddressUseCase: DeleteCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService())),
-            editAddressUseCase: EditCustomerAddressUseCase(repository: CustomerAddressRepository(networkService: AlamofireService()))
-        )
-    )
 }
