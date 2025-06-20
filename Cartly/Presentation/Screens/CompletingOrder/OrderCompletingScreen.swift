@@ -64,10 +64,11 @@ struct OrderCompletingScreen: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    Text("Review & Complete Order")
-                        .font(.title2).bold()
-                        .padding(.horizontal)
+                VStack(spacing: 8) {
+//                    Text("Review & Complete Order")
+//                        .font(.title2).bold()
+//                        .padding(.horizontal)
+//                        .padding(.top, 10)
                     
                     AddressesView(viewModel: addressVM)
                     cartPreview
