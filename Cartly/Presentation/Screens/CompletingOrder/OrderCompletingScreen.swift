@@ -103,7 +103,7 @@ struct OrderCompletingScreen: View {
                 router.setRoot(.main)
             }
             Button("View Order Summary") {
-                router.push(Route.order)
+                router.push(Route.order(true))
             }
         } message: {
             Text("Your order has been placed successfully.")

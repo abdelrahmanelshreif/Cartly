@@ -368,19 +368,25 @@ struct OrderRowView: View {
 // MARK: - Order Detail Screen
 
 struct OrderDetailScreen: View {
-    let order: OrderEntity?
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: ProfileViewModel = DIContainer.shared
         .resolveProfileViewModel()
+    @EnvironmentObject var router: AppRouter
     @State private var displayOrder: OrderEntity?
 
-    init(order: OrderEntity) {
+    let order: OrderEntity?
+    let fromPayment: Bool
+
+    // Primary initializer with order and fromPayment flag
+    init(order: OrderEntity, fromPayment: Bool = false) {
         self.order = order
+        self.fromPayment = fromPayment
     }
 
-    // Empty initializer that will fetch orders and show the first one
-    init() {
-        self.order = nil
+    // Secondary initializer for when no order is provided (will load from viewModel)
+    init(fromPayment: Bool = false) {
+        order = nil
+        self.fromPayment = fromPayment
     }
 
     var body: some View {
@@ -429,18 +435,22 @@ struct OrderDetailScreen: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button("Close") {
+                        if fromPayment {
+                            router.setRoot(RootState.main)
+                        } else {
+                            dismiss()
+                        }
+                    }
                 }
             }
         }
         .onAppear {
             if order == nil && displayOrder == nil {
-                // Only load orders if we don't have an order passed in
                 viewModel.loadOrders()
             }
         }
-        .onChange(of: viewModel.orders) { newOrders in
-            // When orders are loaded and we don't have a specific order, show the first one
+        .onChange(of: viewModel.orders) { _, newOrders in
             if order == nil && displayOrder == nil && !newOrders.isEmpty {
                 displayOrder = newOrders.first
             }
@@ -559,6 +569,7 @@ extension OrderDetailScreen {
         }
     }
 }
+
 // MARK: - Order Item Row
 
 struct OrderItemRow: View {

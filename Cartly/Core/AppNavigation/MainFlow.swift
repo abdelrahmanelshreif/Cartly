@@ -32,8 +32,8 @@ struct MainFlow: View {
                         SearchScreen()
                     case .settings:
                         SettingsScreen()
-                    case .order:
-                        OrderDetailScreen()
+                    case .order(let flag):
+                        OrderDetailScreen(fromPayment: flag).navigationBarBackButtonHidden(true)
                     case .adresses:
                         AddressesView()
                     case .OrderCompletingScreen(let cart):

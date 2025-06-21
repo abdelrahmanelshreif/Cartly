@@ -1,17 +1,17 @@
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 final class SettingsViewModel: ObservableObject {
-    //@Published var isDarkMode: Bool
+    // @Published var isDarkMode: Bool
     @Published var selectedCurrency: String
 
     private let currencyManager = CurrencyManager.shared
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-      //  self.isDarkMode = DarkModeManager.shared.isDarkMode
-        self.selectedCurrency = currencyManager.selectedCurrency
+        //  self.isDarkMode = DarkModeManager.shared.isDarkMode
+        selectedCurrency = currencyManager.selectedCurrency
 
         setupBindings()
     }

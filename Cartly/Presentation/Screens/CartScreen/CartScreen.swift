@@ -6,6 +6,7 @@ struct CartScreen: View {
     @EnvironmentObject private var router: AppRouter
     @State private var animateTotal: Bool = false
     @State private var showCheckoutAnimation: Bool = false
+    @EnvironmentObject private var currencyConverter:CurrencyManager
 
     init() {
         let repository = RepositoryImpl(
@@ -157,7 +158,8 @@ struct CartScreen: View {
                     Text("Total Amount")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("$\(viewModel.totalPrice, specifier: "%.2f")")
+                    //Text("$\(viewModel.totalPrice, specifier: "%.2f")")
+                    Text("\(currencyConverter.format(viewModel.totalPrice))")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
