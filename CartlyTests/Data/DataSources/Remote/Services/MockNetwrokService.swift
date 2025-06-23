@@ -13,25 +13,16 @@ import Combine
 class MockNetworkService: NetworkServiceProtocol {
     var requestCalled = false
     var requestParameters: APIRequest?
-    var mockResponse: Any?
-    var mockError: Error?
+    let responseSubject = PassthroughSubject<Any, Error>()
     
     func request<T>(_ request: APIRequest, responseType: T.Type) -> AnyPublisher<T?, Error> where T : Decodable {
         requestCalled = true
         requestParameters = request
         
-        if let error = mockError {
-            return Fail(error: error).eraseToAnyPublisher()
-        }
-        
-        if let response = mockResponse as? T {
-            return Just(response)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
-        }
-        
-        return Just(nil)
-            .setFailureType(to: Error.self)
+        return responseSubject
+            .tryMap { response in
+                return response as? T
+            }
             .eraseToAnyPublisher()
     }
 }
