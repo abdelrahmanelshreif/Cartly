@@ -177,7 +177,7 @@ class CartViewModel: ObservableObject {
                         return
                     }
                     self?.cartItems[0].itemsMapper[itemIndex].quantity = newQuantity
-                    print("\(self?.cartItems[0].itemsMapper)")
+                    print("\(String(describing: self?.cartItems[0].itemsMapper))")
                     switch success {
                     case .Added:
                         print("Item quantity updated successfully")

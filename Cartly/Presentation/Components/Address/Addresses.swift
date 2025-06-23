@@ -102,7 +102,7 @@ struct AddressesView: View {
                 Button(action: {
                     viewModel.showLocationPicker = true
                 }) {
-                    Text("Add")
+                    Text("Add a new address")
                         .font(.caption)
                         .frame(maxWidth: .infinity, minHeight: 30)
                         .background(Color.blue)
@@ -114,7 +114,7 @@ struct AddressesView: View {
                     print("Change address tapped")
                     viewModel.showChangeAddressSheet = true
                 }) {
-                    Text("Change")
+                    Text("View available addresses")
                         .font(.caption)
                         .frame(maxWidth: .infinity, minHeight: 30)
                         .background(Color.gray)

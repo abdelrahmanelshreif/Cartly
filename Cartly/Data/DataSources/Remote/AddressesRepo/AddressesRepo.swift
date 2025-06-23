@@ -56,15 +56,15 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
         
         if let encoded = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted),
            let jsonString = String(data: encoded, encoding: .utf8) {
-            print("🟢 JSON to send:\n\(jsonString)")
+            print(" JSON to send:\n\(jsonString)")
         }
 
         return networkService.request(request, responseType: CustomerAddressResponse.self)
             .handleEvents(receiveOutput: { response in
-                print("✅ Shopify responded: \(String(describing: response))")
+                print(" Shopify responded: \(String(describing: response))")
             }, receiveCompletion: { completion in
                 if case let .failure(error) = completion {
-                    print("❌ Shopify request failed: \(error.localizedDescription)")
+                    print(" Shopify request failed: \(error.localizedDescription)")
                 }
             })
             .tryMap { $0?.customerAddress ?? address }

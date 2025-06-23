@@ -33,7 +33,7 @@ final class CurrencyAPIService: CurrencyAPIServiceProtocol {
                 }
 
                 if let jsonString = String(data: data, encoding: .utf8) {
-                    print("🔵 Raw JSON:\n\(jsonString)")
+                    print(" Raw JSON:\n\(jsonString)")
                 }
 
                 let decoded = try JSONDecoder().decode(CurrencyRateResponse.self, from: data)

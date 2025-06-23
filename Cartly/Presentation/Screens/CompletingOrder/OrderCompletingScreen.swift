@@ -88,7 +88,7 @@ struct OrderCompletingScreen: View {
                     .scaleEffect(2)
             }
         }
-        .navigationTitle("Payment")
+        .navigationTitle("Place Order")
         .alert(isPresented: $showCODLimitAlert) {
             Alert(
                 title: Text("Order Error"),
