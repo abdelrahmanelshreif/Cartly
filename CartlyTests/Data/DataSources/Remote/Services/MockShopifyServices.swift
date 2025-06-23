@@ -7,21 +7,20 @@
 
 import Foundation
 import Combine
+import XCTest
 @testable import Cartly
 
-final class MockShopifyServices: ShopifyServicesProtocol {
-    
-    // MARK: - Control Subjects
-    let signupSubject = PassthroughSubject<CustomerResponse?, Error>()
-    
-    // MARK: - Spy Properties
+// MARK: - Mock ShopifyServices
+class MockShopifyServices: ShopifyServicesProtocol {
     var signupCallCount = 0
     var lastSignUpData: SignUpData?
     
-    // MARK: - Protocol Conformance
+    let signupSubject = PassthroughSubject<CustomerResponse?, Error>()
+    
     func signup(userData: SignUpData) -> AnyPublisher<CustomerResponse?, Error> {
         signupCallCount += 1
         lastSignUpData = userData
+        
         return signupSubject.eraseToAnyPublisher()
     }
 }
