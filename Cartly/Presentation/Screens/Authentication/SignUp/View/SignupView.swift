@@ -21,11 +21,11 @@ struct SignupView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
 
-            Image(systemName: "person.crop.circle.badge.plus")
+            Image("Cartly")
                 .resizable()
-                .frame(width: 80, height: 80)
+                .scaledToFill()
+                .frame(width: 120, height: 120)
                 .foregroundColor(Color.blue)
-                .padding(.vertical, 20)
 
             VStack(spacing: 16) {
                 CustomTextField(
@@ -37,9 +37,6 @@ struct SignupView: View {
                 CustomTextField(
                     placeHolder: "Email", text: $viewModel.email,
                     icon: "envelope.fill", keyboardType: .emailAddress)
-                CustomTextField(
-                    placeHolder: "Phone", text: $viewModel.phone,
-                    icon: "phone.fill", keyboardType: .phonePad)
                 CustomSecureField(
                     placeHolder: "Password", text: $viewModel.password,
                     isVisible: $isPasswordVisible, icon: "lock.fill")
@@ -53,8 +50,8 @@ struct SignupView: View {
                 switch viewModel.resultState {
                 case .loading:
                     ProgressView()
-                case .success(let customer):
-                    Text("Welcome, \(customer)!")
+                case .success(let customerResponse):
+                    Text("Welcome, \(customerResponse.customer?.firstName ?? "User")!")
                         .foregroundColor(.green)
                         .onAppear {
                             router.setRoot(.main)
@@ -77,20 +74,40 @@ struct SignupView: View {
                         .background(Color.blue)
                         .cornerRadius(15)
                 }
-
+                
                 Button(action: {
-                    router.setRoot(.main)
+                    viewModel.signUpWithGoogle()
                 }) {
-                    Text("Guest Mode")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 55)
-                        .background(Color.gray)
-                        .cornerRadius(15)
+                    HStack {
+                        Image("google_icon")
+                            .renderingMode(.original)
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                        Text("Continue with Google")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 55)
+                    .background(Color.gray.opacity(0.2))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+                    .cornerRadius(15)
                 }
             }.padding()
         }
-
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Skip") {
+                    router.setRoot(.main)
+                }
+                .foregroundColor(.blue)
+            }
+        }
     }
 }
+
+

@@ -2,7 +2,6 @@ import AVFoundation
 import SwiftUI
 
 struct SplashScreen: View {
-    
     @StateObject private var viewModel: SplashViewModel
     @EnvironmentObject var router: AppRouter
     private let player: AVPlayer
@@ -13,14 +12,26 @@ struct SplashScreen: View {
     }
 
     var body: some View {
-        Group {
-            VideoPlayerView(player: player)
-                .edgesIgnoringSafeArea(.all)
+        ZStack {
+            Color.white
+                .ignoresSafeArea()
+            GeometryReader { geometry in
+                VideoPlayerView(player: player)
+                    .frame(
+                        width: geometry.size.width * 0.8,
+                        height: geometry.size.height * 0.4
+                    )
+                    .position(
+                        x: geometry.size.width / 2,
+                        y: geometry.size.height / 2
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
         }
         .onAppear {
             print("on splash onAppear")
             player.play()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 viewModel.navigate(router: router)
             }
         }

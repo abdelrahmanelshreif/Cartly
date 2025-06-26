@@ -16,14 +16,14 @@ struct ProductDescriptionView: View {
                 .font(.headline)
             
             Text(description)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
                 .lineLimit(isExpanded ? nil : 3)
-                .font(.body)
+                .animation(.easeInOut, value: isExpanded)
             
-            if description.count > 150 {
+            if description.count > 100 {
                 Button(action: {
-                    withAnimation {
-                        isExpanded.toggle()
-                    }
+                    isExpanded.toggle()
                 }) {
                     Text(isExpanded ? "Show Less" : "Show More")
                         .font(.caption)

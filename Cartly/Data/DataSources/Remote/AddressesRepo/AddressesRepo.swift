@@ -56,15 +56,15 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
         
         if let encoded = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted),
            let jsonString = String(data: encoded, encoding: .utf8) {
-            print("🟢 JSON to send:\n\(jsonString)")
+            print(" JSON to send:\n\(jsonString)")
         }
 
         return networkService.request(request, responseType: CustomerAddressResponse.self)
             .handleEvents(receiveOutput: { response in
-                print("✅ Shopify responded: \(String(describing: response))")
+                print(" Shopify responded: \(String(describing: response))")
             }, receiveCompletion: { completion in
                 if case let .failure(error) = completion {
-                    print("❌ Shopify request failed: \(error.localizedDescription)")
+                    print(" Shopify request failed: \(error.localizedDescription)")
                 }
             })
             .tryMap { $0?.customerAddress ?? address }
@@ -77,7 +77,19 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
         guard let addressID = address.id else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
-        let body = ["address": address]
+        let addressDict: [String: Any] = [
+            "id":addressID,
+            "address1": address.address1 ?? "",
+            "address2": address.address2 ?? "",
+            "city": address.city ?? "",
+            "first_name": address.firstName ?? "",
+            "last_name": address.lastName ?? "",
+            "phone": address.phone ?? "",
+            "province": address.province ?? "",
+            "zip": address.zip ?? "",
+            "default": address.isDefault ?? false
+        ]
+        let body = ["address": addressDict]
         let request = APIRequest(
             withMethod: .PUT,
             withPath: "/customers/\(customerID)/addresses/\(addressID).json",
@@ -120,5 +132,18 @@ final class CustomerAddressRepository: CustomerAddressRepositoryProtocol {
                 return $0?.customerAddress ?? fallback
             }
             .eraseToAnyPublisher()
+    }
+}
+
+
+final class CurrencyRepository: CurrencyRepositoryProtocol {
+    private let service: CurrencyAPIServiceProtocol
+
+    init(service: CurrencyAPIServiceProtocol) {
+        self.service = service
+    }
+
+    func getExchangeRate(from: String, to: String) -> AnyPublisher<Double, Error> {
+        service.fetchRate(from: from, to: to)
     }
 }

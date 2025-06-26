@@ -14,19 +14,27 @@ struct SizeSelectionView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Size")
                 .font(.headline)
-            	
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
-                ForEach(sizes, id: \.self) { size in
-                    Button(action: {
-                        selectedSize = size
-                    }) {
-                        Text(size)
-                            .font(.body)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(selectedSize == size ? Color.blue : Color.gray.opacity(0.2))
-                            .foregroundColor(selectedSize == size ? .white : .primary)
-                            .cornerRadius(8)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(sizes, id: \.self) { size in
+                        Button(action: {
+                            selectedSize = size
+                        }) {
+                            Text(size)
+                                .font(.subheadline)
+                                .foregroundColor(selectedSize == size ? .white : .primary)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(selectedSize == size ? Color.blue : Color.gray.opacity(0.2))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(selectedSize == size ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+                        }
                     }
                 }
             }

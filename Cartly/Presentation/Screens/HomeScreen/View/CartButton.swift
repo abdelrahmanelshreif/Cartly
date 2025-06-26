@@ -6,8 +6,7 @@ struct CartButton: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Button(action: {
-                // Handle cart tap
-                router.push(.Cart)
+                router.push(Route.Cart)
             }) {
                 Image(systemName: "cart.fill")
                     .resizable()
@@ -17,10 +16,7 @@ struct CartButton: View {
 
             switch cartState {
             case .loading:
-                ProgressView()
-                    .scaleEffect(0.4)
-                    .offset(x: 10, y: -10)
-
+                Text("")
             case .success(let count) where count > 0:
                 Text("\(count)")
                     .font(.caption2)

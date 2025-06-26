@@ -10,8 +10,20 @@ enum Route: Hashable {
     case Signup
     case Products(Int64, String)
     case productDetail(Int64)
+    case productDetailFromCart(productId: Int64, isFromCart:Bool ,variantId: Int64)
     case Cart
     case Search
+    case settings
+    case order(Bool)
+    case adresses
+    case OrderCompletingScreen(CartMapper)
+    case AboutUsScreen
+    case ContactUsScreen
+}
+
+enum AuthRoute: Hashable {
+    case Login
+    case Signup
 }
 
 enum RootState {

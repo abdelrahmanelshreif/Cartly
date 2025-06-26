@@ -1,7 +1,7 @@
 import Foundation
 
 struct CustomerResponse: Codable {
-    let customer: Customer
+    let customer: Customer?
 }
 
 struct AllCustomerResponse: Codable {

@@ -17,14 +17,13 @@ struct HomeScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HomeToolbar(cartState: viewModel.cartState)
-
             Ads()
 
             Spacer()
 
             SectionHeader(headerText: "Brands")
                 .padding(.horizontal)
-                .padding(.bottom, 4)
+                .padding(.bottom, 4)	
 
             Spacer()
 
@@ -36,7 +35,7 @@ struct HomeScreen: View {
 
                 case let .success(brands):
                     BrandSectionBody(brands: brands) { brandId, brandTitle in
-                        router.push(.Products(brandId, brandTitle))
+                        router.push(Route.Products(brandId, brandTitle))
                     }
                     
                 case .failure(_):
@@ -48,7 +47,6 @@ struct HomeScreen: View {
         }
         .onAppear {
             viewModel.loadBrands()
-            viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

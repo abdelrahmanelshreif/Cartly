@@ -47,7 +47,6 @@ struct ProductScreen: View {
         }
         .onAppear {
             viewModel.loadProducts(brandId: brandId)
-            viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }
@@ -105,51 +104,3 @@ struct ProductsErrorView: View {
         .padding()
     }
 }
-
-#if false
-var body: some View {
-    NavigationStack {
-        ScrollView {
-            ProductsToolbar(cartState: viewModel.cartState)
-            Spacer()
-            
-            switch viewModel.productState {
-            case .loading:
-                ProgressView()
-                
-            case let .success(products):
-                ProductSectionBody(products: products) { productId in
-                    selectedProductId = productId
-                }
-                
-            case let .failure(message):
-                Text(message)
-            }
-        }
-        .onAppear {
-            viewModel.loadCartItemCount()
-            viewModel.loadProducts(for: brandId)
-        }
-        
-        .navigationDestination(
-            isPresented: Binding<Bool>(
-                get: { selectedProductId != nil },
-                set: { if !$0 { selectedProductId = nil } }
-            )
-        ) {
-            if let productId = selectedProductId {
-                ProductDetailsView(
-                    productId: Int(productId),
-                    getProductUseCase: GetProductDetailsUseCase(
-                        repository: RepositoryImpl(
-                            remoteDataSource: RemoteDataSourceImpl(
-                                networkService: AlamofireService()
-                            )
-                        )
-                    )
-                )
-            }
-        }
-    }
-}
-#endif

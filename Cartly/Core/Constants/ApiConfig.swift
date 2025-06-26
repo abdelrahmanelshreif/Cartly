@@ -17,7 +17,6 @@ struct APIConfig {
 
     static let AccessToken = "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"
     
-    
 
     /// https://{{store_name}}.myshopify.com/admin/api/{{api_version}}/smart_collections.json
     static var baseURL: String {

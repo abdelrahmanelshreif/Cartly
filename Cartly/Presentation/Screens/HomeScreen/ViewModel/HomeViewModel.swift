@@ -1,17 +1,22 @@
 import Combine
 import Foundation
 
-protocol HomeViewModelProtocol {
+protocol HomeViewModelProtocol: ObservableObject {
+    var brandState: ResultState<[BrandMapper]> { get }
+    var cartState: ResultState<Int> { get }
+    var userSessionServices: UserSessionService { get }
+
     func loadBrands()
 }
 
 class HomeViewModel: ObservableObject, HomeViewModelProtocol {
     @Published private(set) var brandState: ResultState<[BrandMapper]> = .loading
     @Published private(set) var cartState: ResultState<Int> = .loading
-    
+
     private let getBrandUseCase: GetBrandsUseCase
     private var cancellables: Set<AnyCancellable> = []
 
+    var userSessionServices: UserSessionService = UserSessionService()
     init(
         getBrandUseCase: GetBrandsUseCase
     ) {
@@ -19,6 +24,7 @@ class HomeViewModel: ObservableObject, HomeViewModelProtocol {
     }
 
     func loadBrands() {
+        print("isUserEmailVerified: \(FirebaseServices.getUserVerificationStatus())")
         brandState = .loading
         getBrandUseCase.execute()
             .sink(receiveCompletion: { [weak self] in
@@ -33,19 +39,4 @@ class HomeViewModel: ObservableObject, HomeViewModelProtocol {
             })
             .store(in: &cancellables)
     }
-    
-    func loadCartItemCount() {
-            cartState = .loading
-            Just(5) 
-                .delay(for: .seconds(2), scheduler: RunLoop.main)
-                .setFailureType(to: Error.self)
-                .sink(receiveCompletion: { [weak self] completion in
-                    if case .failure(let error) = completion {
-                        self?.cartState = .failure(error.localizedDescription)
-                    }
-                }, receiveValue: { [weak self] count in
-                    self?.cartState = .success(count)
-                })
-                .store(in: &cancellables)
-        }
 }

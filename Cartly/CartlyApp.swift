@@ -27,8 +27,12 @@ struct CartlyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
+            #if true
             RootView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(CurrencyManager.shared)
+            #endif
+          
         }
     }
 }
