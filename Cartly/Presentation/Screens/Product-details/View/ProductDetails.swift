@@ -95,7 +95,6 @@ struct ProductDetailsView: View {
                     productId: String(productId))
             }
         }
-        // Wishlist login alert
         .alert("Login Required", isPresented: $showLoginAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Login") {
@@ -104,13 +103,11 @@ struct ProductDetailsView: View {
         } message: {
             Text(wishlistViewModel.wishlistAlertMessage)
         }
-        // Wishlist success/error alert
         .alert("Wishlist", isPresented: $wishlistViewModel.showWishlistAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(wishlistViewModel.wishlistAlertMessage)
         }
-        // Cart alert from viewModel
         .alert("Cart", isPresented: $viewModel.triggerAlert) {
 
             Button("OK", role: .cancel) {}

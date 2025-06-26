@@ -12,8 +12,4 @@ class NormalEditDraftOrderUseCase {
     init(repository: RepositoryProtocol) {
         self.repository = repository
     }
-    
-//    func execute(normalCartEntity : NormalCartEntity) -> AnyPublisher<[CartMapper], Error> {
-//        
-//    }
 }

@@ -122,8 +122,6 @@ extension ProfileScreen {
                             iconName: "location.fill", title: "Addresses")
                     }
 
-                    //                    AddressesView(viewModel: DIContainer.shared.resolveAddressViewModel())
-
                     Divider().padding(.leading)
 
                     Button(action: { showSignOutAlert = true }) {
@@ -377,13 +375,11 @@ struct OrderDetailScreen: View {
     let order: OrderEntity?
     let fromPayment: Bool
 
-    // Primary initializer with order and fromPayment flag
     init(order: OrderEntity, fromPayment: Bool = false) {
         self.order = order
         self.fromPayment = fromPayment
     }
 
-    // Secondary initializer for when no order is provided (will load from viewModel)
     init(fromPayment: Bool = false) {
         order = nil
         self.fromPayment = fromPayment

@@ -23,6 +23,4 @@ class IsProductAtFavouriteUseCase : IsProductAtFavouriteUseCaseProtocol {
     func execute(userId: String, productId: String) -> AnyPublisher<Bool, any Error> {
         repository.isProductInWishlist(withProduct: productId, forUser: userId)
     }
-    
-   
 }

@@ -51,24 +51,18 @@ class OrderMapper: OrderMapperProtocol {
     }
     
     private func mapOrder(from order: Order) -> OrderEntity? {
-        // Required fields check
         guard let id = order.id else { return nil }
         
-        // Extract order name
         let orderName = order.name ?? "Order #\(order.orderNumber ?? 0)"
         
-        // Extract total price and currency
         let totalPrice = order.totalPrice ?? order.currentTotalPrice ?? "0.00"
         let currency = order.currency ?? order.presentmentCurrency ?? "USD"
         
-        // Extract date
         let dateString = order.createdAt ?? order.updatedAt ?? ""
         let date = dateFormatter.date(from: dateString) ?? Date()
         
-        // Map line items
         let items = mapLineItems(from: order.lineItems)
         
-        // Extract status
         let status = order.financialStatus ?? "pending"
         
         return OrderEntity(
@@ -90,24 +84,18 @@ class OrderMapper: OrderMapperProtocol {
     }
     
     private func mapDraftOrder(from draftOrder: DraftOrder) -> OrderEntity? {
-        // Required fields check
         guard let id = draftOrder.id else { return nil }
         
-        // Extract order name
         let orderName = draftOrder.name ?? "Draft Order #\(id)"
         
-        // Extract total price and currency
         let totalPrice = draftOrder.totalPrice ?? "0.00"
         let currency = draftOrder.currency ?? "USD"
         
-        // Extract date
         let dateString = draftOrder.createdAt ?? draftOrder.updatedAt ?? ""
         let date = dateFormatter.date(from: dateString) ?? Date()
         
-        // Map line items
         let items = mapLineItems(from: draftOrder.lineItems)
         
-        // Extract status
         let status = draftOrder.status ?? "open"
         
         return OrderEntity(
@@ -167,7 +155,6 @@ extension OrderEntity {
     }
     
     var orderNumber: Int {
-        // Extract order number from orderName if needed
         if let number = orderName.components(separatedBy: "#").last,
            let orderNum = Int(number.trimmingCharacters(in: .whitespaces)) {
             return orderNum

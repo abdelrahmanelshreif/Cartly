@@ -15,13 +15,10 @@ protocol FirebaseServiceProtocol {
     func signup(email: String, password: String) -> AnyPublisher<User?, Error>
     func signOut() -> AnyPublisher<Void, Error>
     func getCurrentUser() -> String?
-   // func getUserVerificationStatus() -> Bool
-
     func addProductToWishlist(userId: String, product: WishlistProduct)-> AnyPublisher<Void, Error>
     func removeProductFromWishlist(userId: String, productId: String)-> AnyPublisher<Void, Error>
     func getUserWishlist(userId: String) -> AnyPublisher<[WishlistProduct]?, Error>
     func isProductInWishlist(userId: String, productId: String) -> AnyPublisher<Bool, Error>
-    
     func signInWithGoogle() -> AnyPublisher<User?, Error>
 }
 

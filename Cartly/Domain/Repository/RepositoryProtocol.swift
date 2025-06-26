@@ -8,8 +8,6 @@ protocol RepositoryProtocol {
 
     func fetchAllProducts() -> AnyPublisher<[ProductMapper], Error>
 
-    //  func getProducts(for collectionID: Int) -> AnyPublisher<[Product]?, Error>
-
     func getSingleProduct(for productId: Int64) -> AnyPublisher<SingleProductResponse?, Error>
     func getCustomers() -> AnyPublisher<AllCustomerResponse?, Error>
 

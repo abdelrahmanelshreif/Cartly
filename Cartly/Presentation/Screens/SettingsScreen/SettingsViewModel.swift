@@ -3,27 +3,17 @@ import Foundation
 import SwiftUI
 
 final class SettingsViewModel: ObservableObject {
-    // @Published var isDarkMode: Bool
     @Published var selectedCurrency: String
 
     private let currencyManager = CurrencyManager.shared
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        //  self.isDarkMode = DarkModeManager.shared.isDarkMode
         selectedCurrency = currencyManager.selectedCurrency
-
         setupBindings()
     }
 
     private func setupBindings() {
-//        $isDarkMode
-//            .removeDuplicates()
-//            .sink { newValue in
-//                DarkModeManager.shared.isDarkMode = newValue
-//            }
-//            .store(in: &cancellables)
-
         $selectedCurrency
             .removeDuplicates()
             .sink { [weak self] newCurrency in
@@ -31,8 +21,4 @@ final class SettingsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
-//    func toggleDarkMode(_ enabled: Bool) {
-//        isDarkMode = enabled
-//    }
 }

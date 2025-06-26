@@ -18,14 +18,12 @@ class DiscountCodeRepository: DiscountCodeRepositoryProtocol {
     }
 
     func fetchAllDiscountCodes() -> AnyPublisher<[PriceRule], Error> {
-        // First fetch ad images
         return adsNetworkService.fetchAdsImages()
             .flatMap { [weak self] adImages -> AnyPublisher<[PriceRule], Error> in
                 guard let self = self else {
                     return Fail(error: URLError(.unknown)).eraseToAnyPublisher()
                 }
                 
-                // Then fetch price rules and discount codes
                 let priceRuleRequest = APIRequest(withPath: "/price_rules.json")
                 return self.networkService.request(priceRuleRequest, responseType: PriceRuleResponse.self)
                     .tryMap { response -> [PriceRule] in
@@ -42,7 +40,6 @@ class DiscountCodeRepository: DiscountCodeRepositoryProtocol {
                                     var mutableRule = rule
                                     mutableRule.discountCodes = discountResponse?.discountCodes ?? []
                                     
-                                    // Assign ad image based on index
                                     if let index = priceRules.firstIndex(where: { $0.id == rule.id }),
                                        index < adImages.count {
                                         mutableRule.adImageUrl = adImages[index].image_url

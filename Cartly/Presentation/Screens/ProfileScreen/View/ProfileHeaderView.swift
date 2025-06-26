@@ -27,7 +27,6 @@ struct ProfileHeaderView: View {
                     .foregroundColor(.white)
             }
             
-            // User Info
             VStack(spacing: 4) {
                 Text(user?.name ?? "Guest User")
                     .font(.title2)
