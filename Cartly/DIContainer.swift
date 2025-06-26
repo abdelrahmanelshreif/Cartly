@@ -25,9 +25,12 @@ class DIContainer{
         return ProfileViewModel(signOutUseCase: resolveSignOutUseCase(), getUserSession: resolveGettingCurrentInfo())
     }
     func resolveProductDetailsViewModel() -> ProductDetailsViewModel{
-        return ProductDetailsViewModel(getProductUseCase: resolveGetProductUseCase())
+        return ProductDetailsViewModel(getProductUseCase: resolveGetProductUseCase(), addToCartUseCase: resolveAddToCartUseCase(), userSession: resolveUserSessionService())
     }
     
+    private func resolveAddToCartUseCase() -> AddToCartUseCaseProtocol{
+        return AddToCartUseCaseImpl(repository: resolveShopifyRepository())
+    }
     func resolveLoginViewModel() -> LoginViewModel{
         return LoginViewModel(loginUseCase: resolveLoginUseCase() as! FirebaseShopifyLoginUseCase, validator: resolveValidators() as! LoginValidator, loginUsingGoogleUseCase: resolveGoogleSignInUseCase())
     }

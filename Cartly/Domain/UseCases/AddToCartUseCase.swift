@@ -1,6 +1,12 @@
 import Combine
 
-class AddToCartUseCaseImpl {
+protocol AddToCartUseCaseProtocol {
+    func execute(cartEntity: CartEntity) -> AnyPublisher<CustomSuccess, Error>
+}
+
+
+
+class AddToCartUseCaseImpl: AddToCartUseCaseProtocol {
     private let repository: RepositoryProtocol
 
     init(repository: RepositoryProtocol) {

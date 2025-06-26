@@ -9,7 +9,7 @@ import Foundation
 @testable import Cartly
 
 final class MockUserSessionService: UserSessionServiceProtocol {
-    
+  
     // MARK: - Spy Properties
     var saveUserSessionCallCount = 0
     var lastSavedCustomer: Customer?

@@ -27,29 +27,27 @@ class ProductDetailsViewModel: ObservableObject {
     ///
     ///
     @Published var isAddingToCart = false
-    private let addToCartUseCase: AddToCartUseCaseImpl
     private let maxCartQuantity = 5
-    private let userSession: UserSessionService = UserSessionService()
-
-    private let getProductUseCase: GetProductDetailsUseCaseProtocol
-    private var currentProduct: ProductInformationEntity?
+    var currentProduct: ProductInformationEntity?
     private var cancellables = Set<AnyCancellable>()
 
-//    //Handling Varient Comes Form Cart
-//    private var productComesFromCartWisthSpecifiedVariation = false
-//    private var varientIdComesFromCart: Int64 = 0
+    private let addToCartUseCase: AddToCartUseCaseProtocol
+    private let userSession: UserSessionServiceProtocol
+    private let getProductUseCase: GetProductDetailsUseCaseProtocol
 
-    init(getProductUseCase: GetProductDetailsUseCaseProtocol) {
+    init(
+        getProductUseCase: GetProductDetailsUseCaseProtocol,
+        addToCartUseCase: AddToCartUseCaseProtocol,
+        userSession: UserSessionServiceProtocol
+    ) {
         self.getProductUseCase = getProductUseCase
-        addToCartUseCase = AddToCartUseCaseImpl(
-            repository: RepositoryImpl(
-                remoteDataSource: RemoteDataSourceImpl(
-                    networkService: AlamofireService()),
-                firebaseRemoteDataSource: FirebaseDataSource(
-                    firebaseServices: FirebaseServices())))
+        self.addToCartUseCase = addToCartUseCase
+        self.userSession = userSession
     }
-
-    func getProduct(for productId: Int64, sourceisCart isComesFromCart:Bool = false , cartVarientId varientId:Int64 = 0) {
+    func getProduct(
+        for productId: Int64, sourceisCart isComesFromCart: Bool = false,
+        cartVarientId varientId: Int64 = 0
+    ) {
         resultState = .loading
         getProductUseCase.execute(productId: productId)
             .receive(on: DispatchQueue.main)
@@ -65,12 +63,13 @@ class ProductDetailsViewModel: ObservableObject {
                     self?.resetSelection()
 
                     if isComesFromCart {
-                        self?.selectedVariant = self?.currentProduct?.variants.first { varient in
-                            varient.id == varientId
-                        }
+                        self?.selectedVariant = self?.currentProduct?.variants
+                            .first { varient in
+                                varient.id == varientId
+                            }
                         self?.selectedSize = self?.selectedVariant?.size ?? ""
                         self?.selectedColor = self?.selectedVariant?.color ?? ""
-                        
+
                     } else {
                         if mappedProduct.availableSizes.count == 1 {
                             self?.selectedSize = mappedProduct.availableSizes[0]
