@@ -1,7 +1,27 @@
 import Combine
 import SwiftUI
 
-class CategoryViewModel: ObservableObject {
+import Combine
+import SwiftUI
+
+protocol CategoryViewModelProtocol: ObservableObject {
+    var productsState: ResultState<[ProductMapper]> { get }
+    var cartState: ResultState<Int> { get }
+    var searchedText: String { get set }
+    var selectedProductType: ProductType { get set }
+    var selectedCategory: CategoryFilter { get set }
+    var minPrice: Double { get }
+    var maxPrice: Double { get }
+    var currentMinPrice: Double { get set }
+    var currentMaxPrice: Double { get set }
+    var showingCategorySheet: Bool { get set }
+    var filteratedProducts: [ProductMapper] { get }
+
+    func loadsProducts()
+    func loadProductsByCategory(categoryId: Int64)
+}
+
+class CategoryViewModel: CategoryViewModelProtocol {
     @Published private(set) var productsState: ResultState<[ProductMapper]> = .loading
     @Published private(set) var cartState: ResultState<Int> = .loading
     @Published var searchedText = ""
@@ -13,8 +33,8 @@ class CategoryViewModel: ObservableObject {
     @Published var currentMaxPrice: Double = 100
     @Published var showingCategorySheet = false
 
-    private let allProductsUseCase: GetAllProductsUseCase
-    private let getProductByCategoryUsecase: GetProductsForCategoryId
+    private let allProductsUseCase: GetAllProductsUseCaseProtocol
+    private let getProductByCategoryUsecase: GetProductsForCategoryIdProtocol
 
     private var cancellables: Set<AnyCancellable> = []
     private var allProducts: [ProductMapper] = []
@@ -45,8 +65,8 @@ class CategoryViewModel: ObservableObject {
     }
 
     init(
-        allProductsUseCase: GetAllProductsUseCase,
-        getProductByCategoryUsecase: GetProductsForCategoryId
+        allProductsUseCase: GetAllProductsUseCaseProtocol,
+        getProductByCategoryUsecase: GetProductsForCategoryIdProtocol
     ) {
         self.allProductsUseCase = allProductsUseCase
         self.getProductByCategoryUsecase = getProductByCategoryUsecase
@@ -93,13 +113,13 @@ class CategoryViewModel: ObservableObject {
 
     private func calculatePriceRange() {
         let prices = allProducts.compactMap { product -> Double? in
-            return parsePrice(from: product.product_Price)
+            parsePrice(from: product.product_Price)
         }
 
         if !prices.isEmpty {
             let actualMinPrice = prices.min() ?? 0
             let actualMaxPrice = prices.max() ?? 1000
-            
+
             minPrice = actualMinPrice
             maxPrice = actualMaxPrice
             currentMinPrice = actualMinPrice

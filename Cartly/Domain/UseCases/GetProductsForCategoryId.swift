@@ -1,6 +1,9 @@
 import Combine
+protocol GetProductsForCategoryIdProtocol {
+    func execute(for category_id: Int64) -> AnyPublisher<[ProductMapper], Error>
+}
 
-final class GetProductsForCategoryId {
+open class GetProductsForCategoryId: GetProductsForCategoryIdProtocol {
     private let repository: RepositoryProtocol
 
     init(repository: RepositoryProtocol) {
