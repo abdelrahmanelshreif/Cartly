@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct PriceRuleResponse: Codable {
+struct PriceRuleResponse: Codable, Equatable {
     let priceRules: [PriceRule]
     
     enum CodingKeys: String, CodingKey {
@@ -14,7 +14,7 @@ struct PriceRuleResponse: Codable {
     }
 }
 
-struct PriceRule: Codable, Identifiable {
+struct PriceRule: Codable, Identifiable, Equatable {
     let id: Int64
     let title: String?
     let valueType: String
@@ -26,7 +26,7 @@ struct PriceRule: Codable, Identifiable {
     let prerequisiteToEntitlementQuantityRatio: QuantityRatio?
     let prerequisiteToEntitlementPurchase: PurchaseCondition?
     
-    struct SubtotalRange: Codable {
+    struct SubtotalRange: Codable, Equatable {
         let greaterThanOrEqualTo: String
         
         enum CodingKeys: String, CodingKey {
@@ -34,7 +34,7 @@ struct PriceRule: Codable, Identifiable {
         }
     }
     
-    struct QuantityRatio: Codable {
+    struct QuantityRatio: Codable, Equatable {
         let prerequisiteQuantity: Int?
         let entitledQuantity: Int?
         
@@ -44,7 +44,7 @@ struct PriceRule: Codable, Identifiable {
         }
     }
     
-    struct PurchaseCondition: Codable {
+    struct PurchaseCondition: Codable, Equatable {
         let prerequisiteAmount: Double?
         
         enum CodingKeys: String, CodingKey {
@@ -63,7 +63,7 @@ struct PriceRule: Codable, Identifiable {
 }
 
 
-struct DiscountCodeResponse: Codable {
+struct DiscountCodeResponse: Codable, Equatable {
     let discountCodes: [DiscountCode]
     
     enum CodingKeys: String, CodingKey {
@@ -71,7 +71,7 @@ struct DiscountCodeResponse: Codable {
     }
 }
 
-struct DiscountCode: Codable, Identifiable {
+struct DiscountCode: Codable, Identifiable, Equatable {
     let id: Int64
     let code: String
     let priceRuleId: Int64
@@ -83,6 +83,6 @@ struct DiscountCode: Codable, Identifiable {
     }
 }
 
-struct AdImage: Codable {
+struct AdImage: Codable, Equatable {
     let image_url: String
 }

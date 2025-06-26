@@ -1,7 +1,7 @@
 
 import Combine
 
-final class GetAllProductsUseCase {
+open class GetAllProductsUseCase {
     private let repository: RepositoryProtocol
 
     init(repository: RepositoryProtocol) {

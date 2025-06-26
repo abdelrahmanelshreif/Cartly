@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Brand Mapper Model
-struct BrandMapper: Identifiable {
+struct BrandMapper: Identifiable, Equatable {
     var id: Int64 { brand_ID }
     var brand_ID: Int64
     var brand_handle: String

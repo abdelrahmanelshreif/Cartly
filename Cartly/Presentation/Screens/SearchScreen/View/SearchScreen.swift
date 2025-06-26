@@ -139,7 +139,6 @@ struct SearchScreen: View {
         .navigationBarBackButtonHidden(false)
         .onAppear {
             viewModel.loadsProducts()
-            viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }
