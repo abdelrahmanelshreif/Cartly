@@ -2,7 +2,6 @@ import SwiftUI
 
 struct CategoryScreen: View {
     @StateObject var viewModel: CategoryViewModel
-    
     init() {
         _viewModel = StateObject(wrappedValue: CategoryViewModel(
             allProductsUseCase: GetAllProductsUseCase(
@@ -33,12 +32,6 @@ struct CategoryScreen: View {
                         .padding(.top, 8)
 
                     VStack(spacing: 16) {
-//                        PriceRangeSlider(
-//                            minPrice: $viewModel.currentMinPrice,
-//                            maxPrice: $viewModel.currentMaxPrice,
-//                            priceRange: viewModel.minPrice ... viewModel.maxPrice
-//                        )
-
                         ProductTypeSegmentControl(selectedType: $viewModel.selectedProductType)
 
                         CategoryFilterButton(
@@ -166,7 +159,6 @@ struct CategoryScreen: View {
         .onAppear {
             viewModel.selectedCategory = .all
             viewModel.loadsProducts()
-         //   viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

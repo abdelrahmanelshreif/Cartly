@@ -1,10 +1,3 @@
-//
-//  SearchScreen.swift
-//  Cartly
-//
-//  Created by Khaled Mustafa on 08/06/2025.
-//
-
 import SwiftUI
 
 struct SearchScreen: View {
@@ -139,7 +132,6 @@ struct SearchScreen: View {
         .navigationBarBackButtonHidden(false)
         .onAppear {
             viewModel.loadsProducts()
-            viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

@@ -1,7 +1,24 @@
 import Combine
 import SwiftUI
 
-class CategoryViewModel: ObservableObject {
+protocol CategoryViewModelProtocol: ObservableObject {
+    var productsState: ResultState<[ProductMapper]> { get }
+    var cartState: ResultState<Int> { get }
+    var searchedText: String { get set }
+    var selectedProductType: ProductType { get set }
+    var selectedCategory: CategoryFilter { get set }
+    var minPrice: Double { get }
+    var maxPrice: Double { get }
+    var currentMinPrice: Double { get set }
+    var currentMaxPrice: Double { get set }
+    var showingCategorySheet: Bool { get set }
+    var filteratedProducts: [ProductMapper] { get }
+
+    func loadsProducts()
+    func loadProductsByCategory(categoryId: Int64)
+}
+
+class CategoryViewModel: CategoryViewModelProtocol {
     @Published private(set) var productsState: ResultState<[ProductMapper]> = .loading
     @Published private(set) var cartState: ResultState<Int> = .loading
     @Published var searchedText = ""
@@ -91,30 +108,15 @@ class CategoryViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func loadCartItemCount() {
-        cartState = .loading
-        Just(5)
-            .delay(for: .seconds(2), scheduler: RunLoop.main)
-            .setFailureType(to: Error.self)
-            .sink(receiveCompletion: { [weak self] completion in
-                if case let .failure(error) = completion {
-                    self?.cartState = .failure(error.localizedDescription)
-                }
-            }, receiveValue: { [weak self] count in
-                self?.cartState = .success(count)
-            })
-            .store(in: &cancellables)
-    }
-
     private func calculatePriceRange() {
         let prices = allProducts.compactMap { product -> Double? in
-            return parsePrice(from: product.product_Price)
+            parsePrice(from: product.product_Price)
         }
 
         if !prices.isEmpty {
             let actualMinPrice = prices.min() ?? 0
             let actualMaxPrice = prices.max() ?? 1000
-            
+
             minPrice = actualMinPrice
             maxPrice = actualMaxPrice
             currentMinPrice = actualMinPrice
@@ -138,7 +140,7 @@ class CategoryViewModel: ObservableObject {
             let numberString = String(cleanedString[range])
             return Double(numberString)
         }
-
+        
         return nil
     }
 }
