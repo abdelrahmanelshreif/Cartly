@@ -26,20 +26,4 @@ class ProductsViewModel: ObservableObject{
             }
             .store(in: &cancellables)
     }
-    
-    func loadCartItemCount() {
-            cartState = .loading
-            Just(5)
-                .delay(for: .seconds(2), scheduler: RunLoop.main)
-                .setFailureType(to: Error.self)
-                .sink(receiveCompletion: { [weak self] completion in
-                    if case .failure(let error) = completion {
-                        self?.cartState = .failure(error.localizedDescription)
-                    }
-                }, receiveValue: { [weak self] count in
-                    self?.cartState = .success(count)
-                })
-                .store(in: &cancellables)
-        }
-    
 }

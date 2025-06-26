@@ -1,6 +1,6 @@
 import Foundation
 
-enum ResultState<Value>{
+enum ResultState<Value: Equatable>: Equatable{
     case loading
     case success(Value)
     case failure(String)

@@ -91,21 +91,6 @@ class CategoryViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func loadCartItemCount() {
-        cartState = .loading
-        Just(5)
-            .delay(for: .seconds(2), scheduler: RunLoop.main)
-            .setFailureType(to: Error.self)
-            .sink(receiveCompletion: { [weak self] completion in
-                if case let .failure(error) = completion {
-                    self?.cartState = .failure(error.localizedDescription)
-                }
-            }, receiveValue: { [weak self] count in
-                self?.cartState = .success(count)
-            })
-            .store(in: &cancellables)
-    }
-
     private func calculatePriceRange() {
         let prices = allProducts.compactMap { product -> Double? in
             return parsePrice(from: product.product_Price)

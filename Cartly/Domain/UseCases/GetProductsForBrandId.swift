@@ -1,6 +1,6 @@
 import Combine
 
-final class GetProductsForBrandId {
+open class GetProductsForBrandId {
     private let repository: RepositoryProtocol
 
     init(repository: RepositoryProtocol) {

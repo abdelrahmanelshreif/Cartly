@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Product Mapper Model
-struct ProductMapper: Identifiable {
+struct ProductMapper: Identifiable, Equatable {
     var id: AnyHashable
     var product_ID: Int64?
     var product_Title: String
