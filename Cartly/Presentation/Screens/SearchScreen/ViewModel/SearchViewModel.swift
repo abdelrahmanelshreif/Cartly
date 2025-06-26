@@ -1,7 +1,20 @@
 import Combine
 import SwiftUI
 
-class SearchViewModel: ObservableObject {
+protocol SearchViewModelProtocol: ObservableObject {
+    var productsState: ResultState<[ProductMapper]> { get }
+    var cartState: ResultState<Int> { get }
+    var searchedText: String { get set }
+    var minPrice: Double { get }
+    var maxPrice: Double { get }
+    var currentMinPrice: Double { get set }
+    var currentMaxPrice: Double { get set }
+    var filteratedProducts: [ProductMapper] { get }
+
+    func loadsProducts()
+}
+
+class SearchViewModel: SearchViewModelProtocol {
     @Published private(set) var productsState: ResultState<[ProductMapper]> = .loading
     @Published private(set) var cartState: ResultState<Int> = .loading
     @Published var searchedText = ""
@@ -59,13 +72,13 @@ class SearchViewModel: ObservableObject {
 
     private func calculatePriceRange() {
         let prices = allProducts.compactMap { product -> Double? in
-            return parsePrice(from: product.product_Price)
+            parsePrice(from: product.product_Price)
         }
 
         if !prices.isEmpty {
             let actualMinPrice = prices.min() ?? 0
             let actualMaxPrice = prices.max() ?? 1000
-            
+
             minPrice = actualMinPrice
             maxPrice = actualMaxPrice
             currentMinPrice = actualMinPrice

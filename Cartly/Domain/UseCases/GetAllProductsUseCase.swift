@@ -1,7 +1,11 @@
 
 import Combine
 
-open class GetAllProductsUseCase {
+protocol GetAllProductsUseCaseProtocol {
+    func execute() -> AnyPublisher<[ProductMapper], Error>
+}
+
+open class GetAllProductsUseCase: GetAllProductsUseCaseProtocol {
     private let repository: RepositoryProtocol
 
     init(repository: RepositoryProtocol) {
