@@ -47,7 +47,6 @@ struct HomeScreen: View {
         }
         .onAppear {
             viewModel.loadBrands()
-            //viewModel.loadCartItemCount()
         }
         .background(Color(.systemGroupedBackground))
     }

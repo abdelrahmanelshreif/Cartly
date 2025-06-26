@@ -6,7 +6,6 @@ struct CartButton: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Button(action: {
-                // Handle cart tap
                 router.push(Route.Cart)
             }) {
                 Image(systemName: "cart.fill")
