@@ -83,3 +83,26 @@ struct ItemsMapper : Codable {
     }
 }
 #endif
+#if DEBUG
+extension ItemsMapper {
+    init(
+        itemId: Int64,
+        variantId: Int64,
+        productId: Int64,
+        productTitle: String,
+        variantTitle: String,
+        quantity: Int,
+        price: String,
+        itemImage: String? = nil
+    ) {
+        self.itemId = itemId
+        self.variantId = variantId
+        self.productId = productId
+        self.productTitle = productTitle
+        self.variantTitle = variantTitle
+        self.quantity = quantity
+        self.price = price
+        self.itemImage = itemImage
+    }
+}
+#endif

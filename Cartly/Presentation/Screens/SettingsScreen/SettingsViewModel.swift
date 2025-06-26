@@ -33,7 +33,7 @@ final class SettingsViewModel: ObservableObject {
         $selectedCurrency
             .removeDuplicates()
             .sink { newCurrency in
-                print("🔁 Selected currency updated to: \(newCurrency)")
+                print(" Selected currency updated to: \(newCurrency)")
                 CurrencyManager.shared.selectedCurrency = newCurrency
             }
             .store(in: &cancellables)
@@ -55,7 +55,7 @@ final class SettingsViewModel: ObservableObject {
         let target = currency ?? selectedCurrency
         let base = "USD"
 
-        print("🌍 Converting from \(base) to: \(target)")
+        print(" Converting from \(base) to: \(target)")
 
         if target == base {
             conversionRate = 1.0
@@ -73,7 +73,7 @@ final class SettingsViewModel: ObservableObject {
                     self?.error = err.localizedDescription
                 }
             }, receiveValue: { [weak self] rate in
-                print("✅ Received rate: \(rate)")
+                print(" Received rate: \(rate)")
                 self?.conversionRate = rate
             })
             .store(in: &cancellables)

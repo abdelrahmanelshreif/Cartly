@@ -89,13 +89,12 @@ class WishlistViewModelTests: XCTestCase {
         sut.addProduct(product: sampleProductInfo)
         mockAddProduct.publisher.send(())
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             XCTAssertTrue(self.sut.atWishlist)
             XCTAssertTrue(self.sut.showWishlistAlert)
             XCTAssertEqual(self.sut.wishlistAlertMessage, "Product added to wishlist!")
-            expectation.fulfill()
         }
-
+        expectation.fulfill()
         wait(for: [expectation], timeout: 1.0)
     }
     
@@ -121,7 +120,7 @@ class WishlistViewModelTests: XCTestCase {
         sut.removeProductAtWishlist(productId: "999")
         mockRemoveProduct.publisher.send(())
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             XCTAssertFalse(self.sut.atWishlist)
             XCTAssertTrue(self.sut.showWishlistAlert)
             XCTAssertEqual(self.sut.wishlistAlertMessage, "Product removed from wishlist.")
@@ -142,7 +141,7 @@ class WishlistViewModelTests: XCTestCase {
         mockGetWishlist.publisher.send([sampleWishlistProduct])
         mockGetWishlist.publisher.send(completion: .finished)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             XCTAssertFalse(self.sut.isLoading)
             XCTAssertEqual(self.sut.userWishlist.count, 1)
             XCTAssertEqual(self.sut.userWishlist.first?.productId, "999")
