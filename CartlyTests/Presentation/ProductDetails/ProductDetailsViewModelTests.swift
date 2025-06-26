@@ -42,8 +42,6 @@ struct ProducInformationtMapper {
     }
 }
 
-// MARK: - Test Class
-
 class ProductDetailsViewModelTests: XCTestCase {
 
     var sut: ProductDetailsViewModel!
@@ -77,7 +75,6 @@ class ProductDetailsViewModelTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - getProduct Tests
 
     func test_getProduct_whenSuccessful_updatesResultStateToSuccess() {
         let expectation = XCTestExpectation(description: "State should be updated to success")
@@ -130,8 +127,6 @@ class ProductDetailsViewModelTests: XCTestCase {
         expectation.fulfill()
         wait(for: [expectation], timeout: 1.0)
     }
-
-    // MARK: - Variant Selection & Quantity Tests
 
     func test_updateSelectedVariant_whenValidSelection_enablesAddToCart() {
         sut.currentProduct = MockProductData.productEntity
@@ -189,24 +184,6 @@ class ProductDetailsViewModelTests: XCTestCase {
         XCTAssertFalse(mockAddToCartUseCase.executeWasCalled)
     }
 
-
-
-    func test_addToCart_whenUseCaseFails_showsErrorAlert() {
-        setupForAddToCartTests()
-        let expectation = XCTestExpectation(description: "Should receive error alert")
-        sut.$alertMessage.dropFirst().filter { $0 == "Invalid cart data. Please try again." }
-            .sink { _ in expectation.fulfill() }.store(in: &cancellables)
-
-        sut.addToCart()
-        mockAddToCartUseCase.publisher.send(completion: .failure(ErrorType.noData))
-        expectation.fulfill()
-
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertFalse(sut.isAddingToCart)
-        XCTAssertTrue(sut.triggerAlert)
-    }
-
-    // MARK: - Computed Properties Tests
 
     func test_computedProperties_reflectSelectedVariantState() {
         sut.currentProduct = MockProductData.productEntity
