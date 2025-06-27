@@ -32,7 +32,7 @@ class AuthRepositoryImpl: AuthRepositoryProtocol {
             .flatMap {
                 [weak self] customer -> AnyPublisher<CustomerResponse?, Error>
                 in
-                guard let self = self, var customer = customer else {
+                guard let self = self, let customer = customer else {
                     return Fail(error: AuthError.shopifySignUpFailed)
                         .eraseToAnyPublisher()
                 }
