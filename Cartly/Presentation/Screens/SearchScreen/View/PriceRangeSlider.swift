@@ -5,7 +5,7 @@ struct PriceRangeSlider: View {
     @Binding var maxPrice: Double
     let priceRange: ClosedRange<Double>
     @State private var isAdjusting = false
-
+    @EnvironmentObject private var currency: CurrencyManager
     var body: some View {
         VStack(spacing: 16) {
             HStack {
@@ -21,7 +21,9 @@ struct PriceRangeSlider: View {
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("$\(Int(minPrice)) - $\(Int(maxPrice))")
+                 //   Text("$\(Int(minPrice)) - $\(Int(maxPrice))")
+                    Text(currency.format((((maxPrice)) - ((minPrice)))))
+                  //  Text("$\(Int(minPrice)) - $\(Int(maxPrice))")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.blue)
                     Text("Selected Range")

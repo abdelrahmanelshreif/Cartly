@@ -17,7 +17,9 @@ final class SettingsViewModel: ObservableObject {
         $selectedCurrency
             .removeDuplicates()
             .sink { [weak self] newCurrency in
-                self?.currencyManager.selectedCurrency = newCurrency
+                DispatchQueue.main.async {
+                    self?.currencyManager.selectedCurrency = newCurrency
+                }
             }
             .store(in: &cancellables)
     }

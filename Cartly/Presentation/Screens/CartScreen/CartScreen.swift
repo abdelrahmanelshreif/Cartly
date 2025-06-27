@@ -5,7 +5,7 @@ struct CartScreen: View {
     @EnvironmentObject private var router: AppRouter
     @State private var animateTotal: Bool = false
     @State private var showCheckoutAnimation: Bool = false
-    @EnvironmentObject private var currencyConverter:CurrencyManager
+    @EnvironmentObject private var currencyConverter: CurrencyManager
 
     init() {
         let repository = RepositoryImpl(
@@ -70,6 +70,7 @@ struct CartScreen: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
     }
 
     private func emptyCartView() -> some View {
@@ -94,6 +95,7 @@ struct CartScreen: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
     }
 
     private func cartContentView(geometry: GeometryProxy) -> some View {
@@ -132,7 +134,7 @@ struct CartScreen: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
             }
-
+            .background(Color(.systemGroupedBackground))
             checkoutSection(geometry: geometry)
         }
     }
@@ -196,7 +198,7 @@ struct CartScreen: View {
             .padding(.horizontal, 20)
             .padding(.bottom, geometry.safeAreaInsets.bottom + 10)
         }
-        .background(Color(.systemBackground))
+        .background(Color(.systemGroupedBackground))
     }
 
     private func operationOverlay() -> some View {
@@ -223,7 +225,7 @@ struct CartScreen: View {
 }
 
 struct OptimizedCartItemView: View {
-    @EnvironmentObject private var currencyConverter:CurrencyManager
+    @EnvironmentObject private var currencyConverter: CurrencyManager
     let item: ItemsMapper
     let isLoading: Bool
     let onQuantityChange: (Int) -> Void
