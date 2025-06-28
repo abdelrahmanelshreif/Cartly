@@ -20,8 +20,8 @@ final class ShopifyServices: ShopifyServicesProtocol {
             "first_name": userData.firstname,
             "last_name": userData.lastname,
             "email": userData.email,
-            "verified_email": true,
-            "send_email_welcome": userData.sendinEmailVerification
+            "verified_email": false,
+            "send_email_welcome": false
 
         ]
    

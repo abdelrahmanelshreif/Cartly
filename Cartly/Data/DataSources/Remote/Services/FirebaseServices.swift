@@ -82,7 +82,6 @@ final class FirebaseServices: FirebaseServiceProtocol {
                 if let error = error {
                     promise(.failure(error))
                 } else if let user = result?.user {
-                    user.sendEmailVerification()
                     promise(.success(user))
                 } else {
                     promise(.success(nil))
