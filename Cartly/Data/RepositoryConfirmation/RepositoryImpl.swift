@@ -282,7 +282,6 @@ class RepositoryImpl: RepositoryProtocol,DraftOrderRepositoryProtocol,DeleteEnti
     func getAllDraftOrdersForCustomer() -> AnyPublisher<[CartMapper], Error> {
         let service = UserSessionService()
         let userEmail = service.getCurrentUserEmail() ?? ""
-        print("\(userEmail) in kosom el repoooooooooooo")
         
         guard !userEmail.isEmpty else {
             return Fail(error: ErrorType.noData)

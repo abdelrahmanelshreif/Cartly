@@ -47,6 +47,7 @@ class FirebaseShopifyLoginUseCase: FirebaseShopifyLoginUseCaseProtocol {
                 }
                 userSessionService.setVerificationStatus(user.isEmailVerified)
                 print("[LoginUseCase] Firebase authentication successful for: \(user.email ?? "Unkown")")
+                print("[LoginUseCase] Firebase EMAIL VERIFICATION \(user.isEmailVerified)")
                 return self.fetchAndMatchCustomer(for: credentials.email)
             }
             .mapError { error -> Error in

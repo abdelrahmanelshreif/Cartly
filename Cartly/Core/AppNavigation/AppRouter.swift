@@ -33,6 +33,9 @@ class AppRouter: ObservableObject {
                     print("in App route in cart case and must execute showLoginRequiredAlert")
                     showLoginRequiredAlert()
                     return
+                }else if !(UserSessionService().isUserEmailVerified() ?? false){
+                    showVerificationRequiredAlert()
+                    return
                 }
             default:
                 break
@@ -58,7 +61,13 @@ class AppRouter: ObservableObject {
             message: "Please log in to access this feature"
         )
     }
-    
+   
+    private func showVerificationRequiredAlert() {
+        alert = AlertContent(
+            title: "Email Verification Required",
+            message: "Please Verifiy your eamil"
+        )
+    }
     func updatePathIfConnected(_ connected: Bool) {
         if connected {
             path = lastKnownPath

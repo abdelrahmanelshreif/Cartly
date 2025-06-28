@@ -32,7 +32,7 @@ struct RootView: View {
         .environmentObject(router)
         .environmentObject(reachability)
         .alert(
-            "Login Required",
+            "Warning",
             isPresented: Binding(get: {
                 router.alert != nil
             }, set: { _ in
